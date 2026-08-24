@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 2 · Sensors — Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article h4 { font-size:17px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .cph { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:40px 0 8px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  .katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 0; }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Index</a>
+      <span class="nav-label">Lab 2 · Student Guide</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Lab 2 — Sensors: Teaching a Robot to "See" and "Feel" <em>(Student Guide)</em></h1>
+<blockquote>
+<p>Adapted from HKUST ISDN 2602 (Spring 2025) Laboratory 2 for secondary school students.</p>
+<p><strong>Original course info</strong> — GitHub Classroom: https://classroom.github.com/a/67yXOYYA · Deadline: 23:59, 1 Oct 2025</p>
+</blockquote>
+<hr />
+<h2>1. Welcome — What You Will Learn</h2>
+<p>In this lab you will work with a <strong>small robotic car</strong>. By the end you will be able to:</p>
+<ul>
+<li> Understand what a <strong>microcontroller (ESP32)</strong> is — the "brain" of the car</li>
+<li> Use the <strong>Arduino IDE</strong> to write and upload code to the car</li>
+<li> Measure distance with an <strong>ultrasonic sensor</strong> (like a bat!)</li>
+<li> Read motion with an <strong>Inertial Measurement Unit (IMU)</strong></li>
+<li> Clean up noisy sensor data with <strong>filters</strong></li>
+</ul>
+<p><strong>Key words you will learn:</strong> microcontroller · sensor · ultrasonic · echo · accelerometer · gyroscope · noise · filter · sensor fusion</p>
+<hr />
+<h2>2. Background — Everything You Need to Know First</h2>
+<h3>2.1 Meet Your Robot Car</h3>
+<p>Here is the car you will use. It has wheels, motors, sensors, and one important chip in the middle — the microcontroller.</p>
+<p><img alt="Composition of the robotic car" src="images/lab2/p01_00.jpg" />
+<em>The composition of the robotic car</em></p>
+<p>And here is the box of materials for Tasks 1 and 2 (ultrasonic sensor, IMU board, cables, and the car chassis):</p>
+<p><img alt="Material for Tasks 1 and 2" src="images/lab2/p02_01.jpg" />
+<em>Materials for Tasks 1 &amp; 2</em></p>
+<h3>2.2 What Is a Microcontroller? (The "Brain")</h3>
+<p>A <strong>microcontroller</strong> is a tiny, complete computer on a single chip. It is much weaker than your laptop, but it is:</p>
+<ul>
+<li><strong>Cheap</strong> and <strong>small</strong> — it fits on your palm</li>
+<li><strong>Great at reading sensors and controlling motors</strong></li>
+<li><strong>Very power-efficient</strong> — it can run on a small battery</li>
+</ul>
+<p>Our car uses the <strong>ESP32-S3</strong>, made by Espressif. Despite being smaller than a coin, it has:</p>
+<ul>
+<li>A processor running at 240 MHz (fast enough to run your code thousands of times per second)</li>
+<li><strong>Wi-Fi</strong> and <strong>Bluetooth</strong> built in (we will use Wi-Fi in a later lab!)</li>
+<li>Many <strong>GPIO pins</strong> — the metal legs of the chip that can read signals from sensors or send signals to motors</li>
+</ul>
+<p>Think of the ESP32 as the brain, the sensors as the eyes and ears, and the motors as the muscles.</p>
+<h3>2.3 What Is the Arduino IDE?</h3>
+<p><strong>IDE</strong> stands for <em>Integrated Development Environment</em> — the app where you write code. The <strong>Arduino IDE</strong> lets you:</p>
+<ol>
+<li>Write a <strong>sketch</strong> (that's what Arduino programs are called) in the C++ language</li>
+<li>Check it for errors (called <strong>compile</strong>)</li>
+<li><strong>Upload</strong> it to the ESP32 through a USB cable</li>
+</ol>
+<p>Every Arduino sketch has two essential parts:</p>
+<pre><code class="language-cpp">void setup() {
+  // Runs ONCE when the board powers up — good for initial settings
+}
+
+void loop() {
+  // Runs FOREVER, over and over, like a spinning record — good for reading sensors
+}
+</code></pre>
+<h3>2.4 What Is a Sensor?</h3>
+<p>A <strong>sensor</strong> converts something from the real world (distance, motion, light, temperature...) into an electrical signal the microcontroller can read. Important truth about sensors:</p>
+<blockquote>
+<p> <strong>No sensor is perfect.</strong> Real sensor data is always a bit "shaky" — we call the random shakiness <strong>noise</strong>. In this lab you will learn a professional trick (filtering) to clean it up.</p>
+</blockquote>
+<p>You will use two sensors today: the <strong>ultrasonic sensor</strong> (measures distance) and the <strong>IMU</strong> (measures motion).</p>
+<hr />
+<h2>3. Setting Up the Arduino IDE (Do This Before Any Task!)</h2>
+<p>The ESP32-S3 board on the car is <strong>not</strong> in Arduino's default board library, so we must configure the settings carefully. If you skip this, the serial port and the flash memory may not work properly. Follow these steps exactly:</p>
+<p><strong>Step 1.</strong> Open the Arduino IDE. Go to <code>Tools → Board → esp32</code> and choose <strong>"ESP32S3 Dev Module"</strong>.</p>
+<p><strong>Step 2.</strong> Then, still under the <code>Tools</code> menu, set every option to match this table:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>USB CDC On Boot</td>
+<td>Enabled</td>
+</tr>
+<tr>
+<td>CPU Frequency</td>
+<td>240MHz (WiFi)</td>
+</tr>
+<tr>
+<td>Core Debug Level</td>
+<td>None</td>
+</tr>
+<tr>
+<td>USB DFU On Boot</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Erase All Flash Before Sketch Upload</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Events Run On</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Flash Mode</td>
+<td>QIO 80MHz</td>
+</tr>
+<tr>
+<td>Flash Size</td>
+<td>8MB (64Mb)</td>
+</tr>
+<tr>
+<td>JTAG Adapter</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Arduino Runs On</td>
+<td>1</td>
+</tr>
+<tr>
+<td>USB Firmware MSC On Boot</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Partition Scheme</td>
+<td>No OTA (2MB APP/2MB SPIFFS)</td>
+</tr>
+<tr>
+<td>PSRAM</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td>Upload Mode</td>
+<td>USB-OTG CDC (TinyUSB)</td>
+</tr>
+<tr>
+<td>Upload Speed</td>
+<td>921600</td>
+</tr>
+<tr>
+<td>USB Mode</td>
+<td>Hardware CDC and JTAG</td>
+</tr>
+<tr>
+<td>Zigbee Mode</td>
+<td>Disabled</td>
+</tr>
+</tbody>
+</table></div>
+<p><img alt="Arduino IDE Tools menu settings" src="images/lab2/p02_02.png" />
+<em>What the Tools menu should look like when everything is set correctly</em></p>
+<p><strong>Step 3.</strong> Connect the car with the USB cable. Under <code>Tools → Port</code>, select the port that appears.</p>
+<p> <strong>Quick check:</strong> if you can see a port appear after plugging in the USB cable, your settings are very likely correct.</p>
+<hr />
+<h2>4. Task 1 — Ultrasonic Sensor: Measuring Distance with Sound</h2>
+<h3>4.1 Background: How Bats Find Their Way</h3>
+<p>Bats can't see well, so they <strong>shout</strong> very high-pitched sounds and <strong>listen for the echo</strong> that bounces back from obstacles. If the echo comes back quickly, the obstacle is close. If it comes back slowly, the obstacle is far.</p>
+<p>Our sensor, the <strong>HC-SR04 ultrasonic sensor</strong>, does exactly the same thing:</p>
+<p><img alt="Work principle of the ultrasonic sensor" src="images/lab2/p03_03.jpg" />
+<em>How the ultrasonic sensor works: send a sound pulse, wait for the echo</em></p>
+<p>Here is the full workflow:</p>
+<ol>
+<li><strong>Transmission</strong> — the sensor's transmitter emits ultrasonic sound waves (above 20 kHz — too high-pitched for human ears to hear).</li>
+<li><strong>Propagation</strong> — the sound waves travel through the air toward the target object.</li>
+<li><strong>Reflection</strong> — when the waves hit an object, they bounce back.</li>
+<li><strong>Reception</strong> — the sensor's receiver detects the reflected waves (the <em>echo</em>).</li>
+<li><strong>Time measurement</strong> — the sensor measures the time between sending the sound and hearing the echo.</li>
+<li><strong>Distance calculation</strong> — using the speed of sound, the distance is:</li>
+</ol>
+<p>$$
+Distance=\frac{Speed\ of\ sound \times Time\ interval}{2}
+$$</p>
+<ol>
+<li><strong>Output</strong> — the distance value is sent to the microcontroller, which can use it for obstacle avoidance, object detection, and so on.</li>
+</ol>
+<p><strong>Why divide by 2?</strong>  Because the sound travels to the object <strong>and back again</strong> — twice the distance! To get the one-way distance, we divide by 2.</p>
+<p><strong>Speed of sound:</strong> approximately <strong>343 m/s</strong> in air at room temperature.</p>
+<p><strong>Worked example:</strong> suppose the echo comes back after 588 microseconds (µs).
+Time = 588 µs = 0.000588 s → Distance = (343 × 0.000588) / 2 ≈ <strong>0.1 m = 10 cm</strong>.</p>
+<h3>4.2 Wiring — The PCB Pinout</h3>
+<p>The ultrasonic sensor is connected to the car's PCB (printed circuit board). This diagram shows which pins carry the <strong>trigger</strong> (send) and <strong>echo</strong> (receive) signals:</p>
+<p><img alt="Pinout of the PCB for the ultrasonic sensor" src="images/lab2/p03_04.png" />
+<em>Pinout of the PCB for the ultrasonic sensor — check which GPIO pins are used for Trig and Echo</em></p>
+<h3>4.3 Step-by-Step Instructions</h3>
+<p><strong>Step 1 — Open the code.</strong>
+Open the file <code>Task_1.ino</code> in the Arduino IDE (in the lab folder you downloaded).</p>
+<p><strong>Step 2 — Check the pin definitions.</strong> They should match the pinout above:</p>
+<pre><code class="language-cpp">#define trigPin 39   // GPIO pin that SENDS the ultrasonic pulse
+#define echoPin 38   // GPIO pin that WAITS for the echo to come back
+</code></pre>
+<p><strong>Step 3 — Define the speed of sound</strong> (in m/s):</p>
+<pre><code class="language-cpp">#define SOUND_SPEED 343   // speed of sound in air, in metres per second
+</code></pre>
+<p><strong>Step 4 — Modify the distance equation</strong> so it uses the speed of sound correctly:</p>
+<pre><code class="language-cpp">distance = (duration * SOUND_SPEED) / 2;   // duration in seconds → distance in metres
+</code></pre>
+<p>Remember: divide by 2 because the sound travels there <strong>and back</strong>.</p>
+<p><strong>Step 5 — Upload.</strong> Click the <strong>Upload</strong> button (→ arrow) in the Arduino IDE and wait for "Upload complete".</p>
+<p><strong>Step 6 — Open the Serial Monitor.</strong> Click the magnifying-glass button (top right) and set the speed (baud rate) to <strong>115200</strong>. You should see distance values printing once per second:</p>
+<p><img alt="Serial monitor showing measured distance" src="images/lab2/p04_05.png" />
+<em>Expected result: the Serial Monitor printing distance values</em></p>
+<p><strong>Step 7 — Test the accuracy.</strong> Point the sensor at a wall or a box and compare the printed value with a ruler measurement. Are they close?</p>
+<p><strong>Step 8 — Record your measurements.</strong> Find three objects (or three distances) to measure, and write the values in the table:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>The object you measured</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<div class="cph">Check Point</div>
+<p>Commit your code to the GitHub Classroom repository, and <strong>show your result to the TA / instructor</strong>.</p>
+<h3>4.4 Appendix — The Full Example Code, Explained Line by Line</h3>
+<p>Here is the complete example program. Read the comments to understand every line:</p>
+<pre><code class="language-cpp">#define trigPin 16          // trigger pin (example pin numbers)
+#define echoPin 15          // echo pin
+#define SOUND_SPEED 340     // speed of sound (m/s)
+
+long duration;   // will store the time the sound wave takes to travel to the obstacle and back (µs)
+float distance;  // will store the calculated distance (m)
+
+void setup() {
+  Serial.begin(115200);         // start talking to the computer at 115200 baud
+  pinMode(trigPin, OUTPUT);     // trigger pin sends signals → OUTPUT
+  pinMode(echoPin, INPUT);      // echo pin receives signals → INPUT
+  Serial.println(&quot;Ultrasonic Sensor is set&quot;);
+  delay(10);                    // wait 10 ms for things to stabilise
+}
+
+void loop() {
+  // --- Send a 10 µs ultrasonic pulse ---
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);         // clear any previous signal
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);        // keep the pin HIGH for 10 µs — this is the &quot;shout&quot;
+  digitalWrite(trigPin, LOW);   // end the pulse
+
+  // --- Listen for the echo ---
+  duration = pulseIn(echoPin, HIGH);            // time (µs) the echo pin stays HIGH
+
+  // --- Calculate distance ---
+  distance = (duration * SOUND_SPEED / 100) / 2;  // ÷100 converts µs·(m/s) into cm
+
+  // --- Print the result ---
+  Serial.print(&quot;Distance (cm): &quot;);
+  Serial.println(distance / 100);
+  delay(1000);                  // measure once per second
+}
+</code></pre>
+<hr />
+<h2>5. Task 2 — IMU and 3D Visualization: Feeling Motion</h2>
+<h3>5.1 Background: What Is Inside an IMU?</h3>
+<p>An <strong>IMU (Inertial Measurement Unit)</strong> is the sensor that lets a phone know which way is up, a drone stay level, and a games controller sense your swing. It is really <strong>two (or three) sensors in one chip</strong>:</p>
+<ul>
+<li><strong>Accelerometer</strong> — measures <em>linear acceleration</em> <code>a</code> in m/s². Even when sitting still, it senses the pull of <strong>gravity</strong> (≈ 9.81 m/s², pointing toward the centre of the Earth). That's how it knows which way is "down".</li>
+<li><strong>Gyroscope</strong> — measures <em>angular velocity</em> <code>ω</code> (how fast you are rotating) in degrees/sec.</li>
+<li><strong>Magnetometer</strong> (optional) — measures magnetic field strength in µT or Gauss, like a digital compass.</li>
+</ul>
+<p><img alt="IMU orientation axes" src="images/lab2/p05_06.jpg" />
+<em>To track orientation, we need to know the car's rotation around the X, Y and Z axes</em></p>
+<h3>5.2 Background: How Do We Get Orientation (Angles)?</h3>
+<p>We want the car's <strong>roll</strong> (tilting left/right), <strong>pitch</strong> (tilting forward/back) and <strong>yaw</strong> (turning left/right). Each sensor alone can give us an estimate:</p>
+<p><strong>Method 1 — Integrate the gyroscope.</strong> If you know how fast you are rotating and for how long, you can add it up (integrate) to get the angle:</p>
+<p>$$
+\theta(t)=\theta_{0}+\int_{0}^{t} \omega(\tau)\, d\tau
+$$</p>
+<p><strong>Method 2 — Use the accelerometer and gravity.</strong> When the device is still (or moving smoothly), the accelerometer mostly measures gravity. By looking at how gravity splits across the X, Y, Z axes, we can compute the tilt angles:</p>
+<p>$$
+Roll=\phi=\arctan!\left(\frac{a_z}{a_y}\right)
+$$</p>
+<p>$$
+Pitch=\theta=\arctan!\left(-\frac{a_x}{\sqrt{a_y^{2}+a_z^{2}}}\right)
+$$</p>
+<h3>5.3 Background: Each Sensor Has a Weakness</h3>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Strengths</th>
+<th>Weakness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gyroscope</td>
+<td>Fast, smooth, no noise</td>
+<td><strong>Drifts</strong> over time</td>
+</tr>
+<tr>
+<td>Accelerometer</td>
+<td>Stable long-term, no drift</td>
+<td><strong>Noisy</strong>, affected by motion</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Gyroscope drift:</strong> integrating is like adding up small errors again and again — after a minute, the angle slowly "wanders" away from the truth even when the car is standing still.</p>
+<p><strong>Accelerometer noise:</strong> every bump and vibration shakes the reading, but averaged over a long time it points at the true "down".</p>
+<h3>5.4 Background: Filters — Making Two Weak Sensors into One Strong One</h3>
+<p><strong>A. Low-Pass Filter (smoothing)</strong></p>
+<ul>
+<li><strong>Purpose:</strong> removes high-frequency noise from the accelerometer data.</li>
+<li><strong>Why it works:</strong> gravity is a <em>constant</em> (low-frequency) signal, while noise vibrates <em>fast</em> (high-frequency). A low-pass filter keeps the slow part and throws away the fast part — like averaging your quiz scores to see the real trend.</li>
+<li><strong>Limitation:</strong> filter too much and you introduce lag — the value reacts slowly to real changes.</li>
+</ul>
+<p><strong>How it works, with numbers:</strong> each step, blend the new reading with the previous filtered value:</p>
+<p>$$
+filtered = \alpha \times new_reading + (1-\alpha) \times filtered_{old}
+$$</p>
+<p><em>Example:</em> α = 0.3, old filtered value = 10, new reading = 20 → new filtered value = 0.3 × 20 + 0.7 × 10 = <strong>13</strong>. The value moves smoothly toward the reading instead of jumping.</p>
+<p><strong>B. Complementary Filter (sensor fusion)</strong></p>
+<ul>
+<li><strong>Purpose:</strong> combine the <em>strengths</em> of both sensors — this is called <strong>sensor fusion</strong>.</li>
+<li>The <strong>gyroscope</strong> handles short-term, fast changes (it's smooth and quick).</li>
+<li>The <strong>accelerometer</strong> handles long-term correction (it doesn't drift, so it pulls the estimate back to the truth).</li>
+</ul>
+<p>$$
+angle = \alpha \times (\text{gyro estimate}) + (1-\alpha) \times (\text{accelerometer estimate})
+$$</p>
+<p>Our car's IMU chip is the <strong>ICM-42688-P</strong> (a 6-axis MEMS sensor = accelerometer + gyroscope):</p>
+<p><img alt="ICM-42688-P and its XYZ axes" src="images/lab2/p06_07.jpg" />
+<em>The ICM-42688-P chip and its X/Y/Z axis orientation</em></p>
+<h3>5.5 The Skeleton Code</h3>
+<p>The lab provides <code>Task_2.ino</code> with most of the work done. Below are the important pieces (also shown in the original manual's screenshots).</p>
+<p><strong>Initialization of the ICM-42688-P over I2C</strong> — I2C is a simple 2-wire language that chips use to talk to each other:</p>
+<pre><code class="language-cpp">// I2C IMU instance
+ICM42688 IMU(Wire, 0x68, IMU_SDA, IMU_SCL);
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial) {}
+  int status = IMU.begin();
+  if (status &lt; 0) {
+    Serial.println(&quot;IMU initialization unsuccessful&quot;);
+    Serial.println(&quot;Check IMU wiring or try cycling power&quot;);
+    Serial.print(&quot;Status: &quot;);
+    Serial.println(status);
+    while (1) {}          // stop here if the IMU is not found
+  }
+  IMU.setAccelFS(ICM42688::gpm8);        // accelerometer range: ±8 g
+  IMU.setGyroFS(ICM42688::dps500);       // gyroscope range: ±500 degrees/sec
+  IMU.setAccelODR(ICM42688::odr12_5);    // accelerometer sampling rate
+  IMU.setGyroODR(ICM42688::odr12_5);     // gyroscope sampling rate
+  Serial.println(&quot;---IMU Initialized---&quot;);
+}
+</code></pre>
+<p><img alt="Skeleton code: initializing the IMU" src="images/lab2/p06_08.png" />
+<em>Initializing the IMU (screenshot from the manual)</em></p>
+<p><img alt="Skeleton code: reading raw IMU data" src="images/lab2/p07_09.png" />
+<em>Reading raw data from the IMU (screenshot from the manual)</em></p>
+<p><strong>Filter parameters and the filter function:</strong></p>
+<pre><code class="language-cpp">// Low-pass filter constants — note that alpha + beta = 1
+const float LowPassFilterAlpha = 0.3f;
+const float LowPassFilterBeta  = 0.7f;
+
+// --- Low-pass filter the accelerometer ---
+filteredAccX = LowPassFilterAlpha * (IMU.accX()) + (1 - LowPassFilterAlpha) * filteredAccX;
+filteredAccY = LowPassFilterAlpha * (IMU.accY()) + (1 - LowPassFilterAlpha) * filteredAccY;
+filteredAccZ = LowPassFilterAlpha * (IMU.accZ()) + (1 - LowPassFilterAlpha) * filteredAccZ;
+
+// --- Low-pass filter the gyroscope (also convert degrees → radians) ---
+filteredGyroX = LowPassFilterBeta * (IMU.gyrX()) * DEG_TO_RAD + (1 - LowPassFilterBeta) * filteredGyroX;
+filteredGyroY = LowPassFilterBeta * (IMU.gyrY()) * DEG_TO_RAD + (1 - LowPassFilterBeta) * filteredGyroY;
+filteredGyroZ = LowPassFilterBeta * (IMU.gyrZ()) * DEG_TO_RAD + (1 - LowPassFilterBeta) * filteredGyroZ;
+
+// --- Estimate roll/pitch from the accelerometer (gravity direction) ---
+float acc_roll  = atan2(filteredAccY, sqrt(filteredAccX * filteredAccX + filteredAccZ * filteredAccZ));
+float acc_pitch = atan2(-filteredAccX, sqrt(filteredAccY * filteredAccY + filteredAccZ * filteredAccZ));
+
+// --- Integrate the gyroscope to get angles (dt = 0.01 s per loop) ---
+float gyro_roll  = roll  + filteredGyroX * dt;
+float gyro_pitch = pitch + filteredGyroY * dt;
+float gyro_yaw   = yaw   + filteredGyroZ * dt;
+
+// --- Complementary filter: trust the gyro short-term, the accelerometer long-term ---
+roll  = ComplementaryFilterALPHA * gyro_roll  + (1 - ComplementaryFilterALPHA) * acc_roll;
+pitch = ComplementaryFilterALPHA * gyro_pitch + (1 - ComplementaryFilterALPHA) * acc_pitch;
+yaw   = gyro_yaw;   // no accelerometer correction for yaw (gravity gives no yaw information)
+</code></pre>
+<p><img alt="Filter parameters in the manual" src="images/lab2/p08_10.png" />
+<img alt="Filter function in the manual" src="images/lab2/p08_11.png" />
+<img alt="Filter function (continued)" src="images/lab2/p08_12.png" />
+<em>The filter code as it appears in the original manual</em></p>
+<p><strong>Display mode switches</strong> — these two lines are what you will switch on/off during the experiment:</p>
+<pre><code class="language-cpp">bool Filter = true;          // true = enable the filters
+bool SerialPlotGrapgh = false; // true = also print data for the Serial Plotter
+</code></pre>
+<p><img alt="Display mode settings" src="images/lab2/p08_13.png" />
+<em>Display mode settings (screenshot from the manual)</em></p>
+<h3>5.6 Step-by-Step Instructions</h3>
+<p><strong>Step 1.</strong> Open <code>Task_2.ino</code> (in the Task 2 folder) in the Arduino IDE.</p>
+<p><strong>Step 2.</strong> <strong>Disable</strong> both the Serial Plot and the filters (set <code>Filter = false</code>).</p>
+<p><strong>Step 3.</strong> Upload the sketch to the board.</p>
+<p><strong>Step 4.</strong> Open the <strong>Chrome</strong> browser and visit <strong>https://imu.isdn2602.site</strong>. Click <strong>"Open Port"</strong> and choose the port connected to the development board. You should see the sensor values and a 3D object labelled "ISDN 2602":</p>
+<p><img alt="IMU web visualization app" src="images/lab2/p09_14.png" />
+<em>The web app showing the live IMU values</em></p>
+<p><img alt="The mapped 3D object" src="images/lab2/p09_15.jpg" />
+<em>The mapped object moves as you move the car</em></p>
+<p><strong>Step 5.</strong> Pick up the car, move it and rotate it. Watch how the values change — and how the 3D object copies your movement. You'll notice the movement is <strong>jumpy</strong> (that's the noise!).</p>
+<p><strong>Step 6.</strong> Change the code to activate <strong>only the Low-Pass Filter</strong>. Upload again and observe — the movement should be smoother but may lag a little.</p>
+<p><strong>Step 7.</strong> Activate <strong>both</strong> the Low-Pass Filter and the Complementary Filter. Observe the result — smooth <strong>and</strong> stable.</p>
+<p><strong>Step 8.</strong> Enable the Serial Plot (<code>SerialPlotGrapgh = true</code>) and open the Arduino <strong>Serial Plotter</strong> (<code>Tools → Serial Plotter</code>) to see the data drawn as live curves. Repeat Steps 6 and 7 and compare the curves.</p>
+<div class="cph">Check Point</div>
+<p>Commit your code to the GitHub Classroom repository, and <strong>show your result to the TA / instructor</strong>.</p>
+<hr />
+<h2>6. Appendix — Extra Explanations from the Manual</h2>
+<h3>6.1 What do <code>pulseIn</code>, <code>digitalWrite</code> and <code>pinMode</code> actually do?</h3>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Function</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pinMode(pin, OUTPUT/INPUT)</code></td>
+<td>Tells the ESP32 whether a pin will send or receive electricity</td>
+</tr>
+<tr>
+<td><code>digitalWrite(pin, HIGH/LOW)</code></td>
+<td>Sets a pin to 3.3 V (HIGH) or 0 V (LOW)</td>
+</tr>
+<tr>
+<td><code>pulseIn(pin, HIGH)</code></td>
+<td>Times how long the pin stays HIGH — this is our echo time</td>
+</tr>
+<tr>
+<td><code>delay(ms)</code> / <code>delayMicroseconds(µs)</code></td>
+<td>Pauses the program for some milliseconds / microseconds</td>
+</tr>
+<tr>
+<td><code>Serial.print()</code></td>
+<td>Sends text to the computer via the Serial Monitor</td>
+</tr>
+</tbody>
+</table></div>
+<h3>6.2 The appendix code screenshots from the original manual</h3>
+<p><img alt="Appendix: I2C initialization code" src="images/lab2/p11_16.jpg" />
+<em>Appendix: initialization of the I2C channel and configuration of the IMU</em></p>
+<p><img alt="Appendix: reading IMU data" src="images/lab2/p12_17.png" />
+<em>Appendix: the function that reads all data from the IMU</em></p>
+<p><img alt="Appendix: low-pass filter code" src="images/lab2/p12_18.jpg" />
+<em>Appendix: the Low-Pass Filter in C++ (Alpha and Beta = 1 − Alpha)</em></p>
+<p><img alt="Appendix: integrating the gyroscope" src="images/lab2/p12_19.png" />
+<em>Appendix: integrating the gyroscope data (multiply by dt = 0.01 s)</em></p>
+<p><img alt="Appendix: the equations used to find pitch and roll" src="images/lab2/p12_20.png" />
+<img alt="Appendix: the equations implemented in C++" src="images/lab2/p12_21.png" />
+<em>Appendix: the pitch/roll equations and their C++ implementation</em></p>
+<hr />
+<p><em>— End of Lab 2 —</em></p>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">Adapted from HKUST ISDN 2602 · Lab 2 · Student Guide</span>
+  </div>
+</footer>
+</body>
+</html>

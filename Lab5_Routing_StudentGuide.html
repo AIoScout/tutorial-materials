@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 5 · Routing — Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article h4 { font-size:17px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .cph { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:40px 0 8px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  .katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 0; }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Index</a>
+      <span class="nav-label">Lab 5 · Student Guide</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Lab 5 — Routing: Finding the Shortest Path <em>(Student Guide)</em></h1>
+<blockquote>
+<p>Adapted from HKUST ISDN 2602 (Fall 2025) Laboratory 5 for secondary school students.</p>
+<p><strong>Original course info</strong> — GitHub Classroom: https://classroom.github.com/a/MzDeb8b5 · Deadline: Nov 5 (Wed), 2025, 23:59 · Submit code via GitHub + answer sheet as a Word file.</p>
+</blockquote>
+<hr />
+<h2>1. Welcome — What You Will Learn</h2>
+<p>How does Google Maps always find the fastest route? In this lab you will learn and <strong>build</strong> the answer:</p>
+<ul>
+<li> Understand <strong>graphs</strong>, <strong>weighted graphs</strong> — the mathematics behind every map and navigation app</li>
+<li> Learn <strong>Dijkstra's algorithm</strong> — the classic method for finding the shortest path</li>
+<li> Simulate the algorithm in <strong>MATLAB</strong></li>
+<li> Program a real robotic car to <strong>follow a line</strong> and <strong>make decisions at a crossroad</strong> using <strong>FreeRTOS</strong> multitasking</li>
+</ul>
+<p><strong>Key words you will learn:</strong> graph · node · edge · weight · shortest path · Dijkstra's algorithm · matrix · multitasking · RTOS · task · IR sensor · truth table</p>
+<hr />
+<h2>2. Background — Graphs and Dijkstra's Algorithm</h2>
+<h3>2.1 Graphs Are Everywhere</h3>
+<p>In mathematics, a <strong>graph</strong> is not a bar chart — it is a set of <strong>nodes</strong> (dots) connected by <strong>edges</strong> (lines). You already use graphs every day:</p>
+<ul>
+<li>The <strong>MTR map</strong>: stations are nodes, train lines are edges</li>
+<li>A <strong>road map</strong>: intersections are nodes, roads are edges</li>
+<li><strong>Social networks</strong>: people are nodes, friendships are edges</li>
+</ul>
+<p>A <strong>weighted graph</strong> adds a number (a <em>weight</em>, or <em>cost</em>) to every edge — for example, the travel <strong>time</strong> between two stations, the <strong>distance</strong> between two intersections, or the <strong>toll</strong> on a road. Weights are usually positive numbers.</p>
+<h3>2.2 The Problem: Shortest Path</h3>
+<p>Given a weighted graph, a start node and an end node, what is the cheapest route? This is exactly what your phone's map app solves every time you ask for directions.</p>
+<h3>2.3 Dijkstra's Algorithm — The Classic Solution</h3>
+<p>Dijkstra's algorithm (invented by computer scientist Edsger Dijkstra in 1956, now used in network routing and pathfinding everywhere) finds the shortest path from a start node to every other node. The idea in three steps:</p>
+<ol>
+<li><strong>Initialization:</strong> Start at the source node. Set its distance to <strong>0</strong>, and every other node's distance to <strong>infinity (∞)</strong> — meaning "we don't know a route there yet".</li>
+<li><strong>Exploration:</strong> Visit the unvisited node with the <em>smallest known distance</em>. Look at its neighbours: if going through this node gives a shorter route, <strong>update</strong> the neighbour's distance.</li>
+<li><strong>Repeat:</strong> Keep picking the nearest unvisited node and updating distances, until all nodes are visited (or until you reach your target).</li>
+</ol>
+<h3>2.4 Worked Example — Watch Dijkstra Think!</h3>
+<p>Here is a small graph (try drawing it on paper):</p>
+<pre><code>        3            4
+   A -------- B ---------- C
+   |          |            |
+   |          | 8          | 2
+   |          +-----+------+
+  10|                |
+   |                D
+   +----------------+
+</code></pre>
+<p>Edges: A–B = 3, A–C = 10, B–C = 4, B–D = 8, C–D = 2. <strong>Find the shortest path A → D.</strong></p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Step</th>
+<th>We visit</th>
+<th>What we check</th>
+<th>Distances after (A, B, C, D)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>— (initial)</td>
+<td>—</td>
+<td>(0, ∞, ∞, ∞)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>A</strong> (dist 0)</td>
+<td>A→B: 0+3=3  · A→C: 0+10=10 </td>
+<td>(0, 3, 10, ∞)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>B</strong> (smallest = 3)</td>
+<td>B→C: 3+4=7 &lt; 10  update! · B→D: 3+8=11 </td>
+<td>(0, 3, 7, 11)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>C</strong> (smallest = 7)</td>
+<td>C→D: 7+2=9 &lt; 11  update!</td>
+<td>(0, 3, 7, 9)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>D</strong> (smallest = 9)</td>
+<td>done!</td>
+<td>(0, 3, 7, 9)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Now <strong>backtrack</strong> from D: D was last updated from <strong>C</strong>, C from <strong>B</strong>, B from <strong>A</strong>. So the shortest path is <strong>A → B → C → D</strong> with total cost <strong>9</strong> — shorter than the direct-looking A–B–D (11) and A–C (10)! That's the magic of Dijkstra: it discovers that a "detour" through more nodes can actually be cheaper.</p>
+<h3>2.5 What Is MATLAB?</h3>
+<p><strong>MATLAB</strong> is a programming environment loved by engineers. Its superpower is working with <strong>matrices</strong> (rectangular tables of numbers) — and a graph's weights can be stored perfectly in a matrix, as you'll see in Part I.</p>
+<hr />
+<h2>3. Part I — Simulating Dijkstra's Algorithm in MATLAB</h2>
+<h3>Task 1 — Find the Shortest Path by Dijkstra's Algorithm</h3>
+<p>In this task we use this weighted graph:</p>
+<p><img alt="Example of a weighted graph" src="images/lab5/p02_00.png" />
+<em>Example of a weighted graph (from the lab manual)</em></p>
+<p><strong>Step 1.</strong> Open the file <code>Task1.m</code> in the MATLAB editor and run it.</p>
+<p><strong>Step 2.</strong> Understand how the graph is stored. There is an <strong>n × n array</strong> <code>Graph(i,j)</code> of weights/costs, where <code>n</code> is the number of nodes:</p>
+<ul>
+<li><code>Graph(i,j)</code> = the cost between nodes <code>i</code> and <code>j</code></li>
+<li><code>Graph(i,j) = 0</code> when <code>i = j</code> (the cost from a node to itself is zero)</li>
+<li><code>Graph(i,j) = inf</code> when nodes <code>i</code> and <code>j</code> are <strong>not</strong> connected</li>
+</ul>
+<p>So for a 4-node graph it looks like this:</p>
+<pre><code class="language-matlab">Graph = [ 0    3   10  inf ;
+          3    0    4    8 ;
+         10    4    0    2 ;
+         inf   8    2    0 ];
+</code></pre>
+<p><strong>Step 3.</strong> The function <code>fun_dijkstra()</code> finds the shortest path. It takes three inputs — the <code>Graph</code> array, the <strong>source</strong> node and the <strong>destination</strong> node — and returns the path and its cost:</p>
+<pre><code class="language-matlab">[path, cost] = fun_dijkstra(Graph, source, dest)
+</code></pre>
+<p>The provided code finds the shortest path from <strong>node 1 to node 3</strong> as <code>(1 &gt; 4 &gt; 5 &gt; 3)</code> with <strong>cost = 4</strong>. Read the result and make sure you understand it.</p>
+<div class="cph">Check Point 1</div>
+<p>Modify the code to find the shortest path from <strong>node 1 to node 6</strong> and note the cost. Write your answer in the answer sheet, and <strong>show your result to the TA / instructor</strong>.</p>
+<h3>Task 2 — Create the Graph (Hong Kong Traffic Map)</h3>
+<p>Now build a real one! This map shows the traffic situation of Hong Kong:</p>
+<p><img alt="Traffic situation of Hong Kong" src="images/lab5/p03_01.png" />
+<em>Traffic situation of Hong Kong — the red integers are the traffic costs between connected districts</em></p>
+<p>The districts are numbered as nodes:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Node</th>
+<th>District</th>
+<th>Node</th>
+<th>District</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>North</td>
+<td>8</td>
+<td>Kwai Tsing</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Tai Po</td>
+<td>9</td>
+<td>Yau Tsim Mong</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Yuen Long</td>
+<td>10</td>
+<td>Kwun Tong</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Tuen Mun</td>
+<td>11</td>
+<td>Wan Chai</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tsuen Wan</td>
+<td>12</td>
+<td>Eastern</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Sha Tin</td>
+<td>13</td>
+<td>Airport</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Sai Kung</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Step 1.</strong> Look at the map: every <strong>red integer</strong> between two connected districts is the traffic cost for that edge.</p>
+<p><strong>Step 2.</strong> Open <code>Task2.m</code> in the MATLAB editor.</p>
+<p><strong>Step 3.</strong> Create the 13 × 13 weighted matrix. Tips:</p>
+<ul>
+<li>Fill the diagonal with 0</li>
+<li>Put the red number in <code>Graph(i,j)</code> <strong>and</strong> <code>Graph(j,i)</code> (roads go both ways!)</li>
+<li>Put <code>inf</code> everywhere the map shows no direct connection</li>
+</ul>
+<div class="cph">Check Point 2</div>
+<ol>
+<li>Show the array you created to represent the weighted graph.</li>
+<li>Find the shortest path from <strong>Yuen Long (node 3) to Eastern (node 12)</strong> and its cost.</li>
+</ol>
+<p>Fill in the answers, commit the revised code to GitHub, and <strong>show your result to the TA / instructor</strong>.</p>
+<hr />
+<h2>4. Part II — Running Dijkstra on a Real Car</h2>
+<h3>Task 3 (Pre) — Meet the Robotic Car</h3>
+<p>This is the same car you will use for the final project:</p>
+<p><img alt="Composition of the robotic car" src="images/lab5/p04_02.jpg" />
+<em>Composition of the robotic car</em></p>
+<p><strong>Hardware:</strong> ESP32-S3 brain, IR sensors underneath (for line tracking), ultrasonic sensor, IMU, encoder motors, RFID reader, servo front wheel, and a 7.4 V Li-Po battery. In this lab we only use the <strong>motor drivers</strong> and the <strong>IR sensors</strong>.</p>
+<p><img alt="Materials for Tasks 3 &amp; 4" src="images/lab5/p05_03.jpg" />
+<em>Materials for Tasks 3 &amp; 4</em></p>
+<p><strong>Code files</strong> you will open in the Arduino IDE:</p>
+<ul>
+<li><code>IRSensors.cpp</code> / <code>IRSensors.hpp</code></li>
+<li><code>Lab06.ino</code> <em>(main sketch — the manual keeps this name)</em></li>
+<li><code>MotorControl.cpp</code> / <code>MotorControl.hpp</code></li>
+<li><code>Movement.cpp</code> / <code>Movement.hpp</code></li>
+<li><code>Pinout.hpp</code></li>
+</ul>
+<p><img alt="The lab code folder" src="images/lab5/p08_08.png" />
+<em>The code folder contents</em></p>
+<blockquote>
+<p> <strong>IMPORTANT: DO NOT change the code UNLESS the manual tells you to</strong> — especially <strong><code>Pinout.cpp</code></strong>. The pinout file maps every wire to the right pin number; change it and nothing will work!</p>
+</blockquote>
+<p>The Arduino IDE board settings are the same as Lab 2 (board = <strong>ESP32S3 Dev Module</strong>; use the same Tools settings table from Lab 2):</p>
+<p><img alt="Upload configuration of the board" src="images/lab5/p08_09.jpg" />
+<em>Upload configuration of the board</em></p>
+<h3>Installing the Battery (Step by Step)</h3>
+<p><strong>Step 1.</strong> Open the battery cover on the <strong>backside</strong> of the car:</p>
+<p><img alt="Opening the battery cover" src="images/lab5/p05_04.jpg" />
+<em>Opening the battery cover on the backside of the car</em></p>
+<p><strong>Step 2.</strong> Place the battery inside:</p>
+<p><img alt="Placement of the battery" src="images/lab5/p06_05.jpg" />
+<em>Placement of the battery</em></p>
+<p><strong>Step 3.</strong> Close the battery cover:</p>
+<p><img alt="Closing the battery cover" src="images/lab5/p06_06.jpg" />
+<em>Closing the battery cover</em></p>
+<p><strong>Step 4.</strong> Plug the battery's power plug (<strong>XT30 connector</strong> — it only fits one way, never force it) into the socket on the car. The <strong>battery voltage indicator</strong> will light up:</p>
+<p><img alt="Plugging in the XT30 power plug" src="images/lab5/p07_07.jpg" />
+<em>Plug the XT30 power plug — the voltage level indicator lights up</em></p>
+<h3>First Upload — the Blinking LED Test</h3>
+<p><strong>Step 1.</strong> Connect the car with USB and upload the provided test code (press <strong>Upload</strong> and wait).</p>
+<p><strong>Step 2.</strong> An LED on the chassis should start <strong>blinking</strong>:</p>
+<p><img alt="Blinking LED of the car" src="images/lab5/p09_10.jpg" />
+<em>The blinking LED of the car</em></p>
+<div class="cph">Check Point</div>
+<ol>
+<li>Check that all the wires are properly connected.</li>
+<li>Plug the Li-Po battery into the power plug.</li>
+<li>Turn on the car.</li>
+<li>Upload the testing code.</li>
+<li>Check whether the LED on the chassis is blinking.</li>
+</ol>
+<p><strong>Show your result to the TA / instructor.</strong></p>
+<hr />
+<h3>Task 2 — Multitasking for ESP32 (FreeRTOS)</h3>
+<p><em>(The manual numbers this section "Task 2" even though it comes after Task 3 (Pre) — that's fine, keep reading!)</em></p>
+<h4>Background: Why Multitask?</h4>
+<p>So far our programs used a <strong>"superloop"</strong>: code runs top-to-bottom, forever, one thing at a time. For simple programs that's fine. But imagine the car is trying to reconnect to Wi-Fi <strong>and</strong> follow a line <strong>and</strong> read sensors — if the Wi-Fi code gets stuck waiting, <strong>everything else stops too</strong>. That's like refusing to start your homework until the washing machine finishes — even though the machine runs by itself!</p>
+<p>The solution: a <strong>multitasking system</strong>, where the chip switches between jobs so fast it looks simultaneous. We will use <strong>FreeRTOS</strong> — a free, open-source <strong>Real-Time Operating System (RTOS)</strong> that is already built into the ESP32. It is designed for the ESP32's <strong>dual-core</strong> processor (two "workers" that can run two tasks truly at the same time), with task priorities, precise timing, and tiny memory use.</p>
+<h4>The Code</h4>
+<p><strong>Step 1 — Include the FreeRTOS libraries</strong> (already in the skeleton):</p>
+<pre><code class="language-cpp">#include &quot;freertos/FreeRTOS.h&quot;
+#include &quot;freertos/task.h&quot;
+#include &quot;freertos/semphr.h&quot;   // semaphores (task signalling)
+#include &quot;freertos/queue.h&quot;    // queues (task messaging)
+</code></pre>
+<p><img alt="FreeRTOS libraries in the skeleton code" src="images/lab5/p10_11.png" />
+<em>The skeleton code with FreeRTOS enabled</em></p>
+<p><strong>Step 2 — Write a task function.</strong> In FreeRTOS, instead of putting everything in <code>loop()</code>, you write separate <strong>tasks</strong>. To create one, a <code>StackType</code>, <code>TaskTCB</code> and <code>TaskHandle</code> are initialized, then the task function looks like this LED blink example:</p>
+<pre><code class="language-cpp">void Blink(void *pvPara) {
+  pinMode(LED1, OUTPUT);          // setup part — runs once
+  while (true) {                  // running part — loops forever
+    digitalWrite(LED1, HIGH);
+    vTaskDelay(100);              // wait 100 ms
+    digitalWrite(LED1, LOW);
+    vTaskDelay(200);
+  }
+}
+</code></pre>
+<p><img alt="Creating a user task — LED blink example" src="images/lab5/p10_12.png" />
+<img alt="The task function in the manual" src="images/lab5/p10_13.png" />
+<em>Creating a user task (screenshots from the manual)</em></p>
+<p>Every task function follows the template <code>void TaskName(void *pvPara)</code> and has two parts:</p>
+<ol>
+<li><strong>The Setup part</strong> — runs only once (e.g. <code>pinMode</code>)</li>
+<li><strong>The Running part</strong> — a <code>while(true)</code> loop that never ends</li>
+</ol>
+<blockquote>
+<p> <strong>IMPORTANT — two rules the manual stresses:</strong>
+1. <code>void *pvPara</code> <strong>must</strong> be there, even if you never use it.
+2. Inside the <code>while</code> loop you must call <strong><code>vTaskDelay()</code></strong>, not Arduino's <code>delay()</code>. (In fact <code>delay()</code> secretly calls <code>vTaskDelay()</code> — but use <code>vTaskDelay()</code> directly.) <strong>Without a <code>vTaskDelay()</code>, your task will never actually run on the MCU!</strong> The delay is FreeRTOS's chance to hand the CPU to other tasks.</p>
+</blockquote>
+<p><strong>Step 3 — Create the task and "pin" it to a CPU core</strong>, inside <code>void setup()</code>:</p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(
+  Blink,              // 1. the task function to run
+  &quot;Blinking&quot;,         // 2. a human-friendly name (shows in debugging)
+  2000,               // 3. stack size (bytes of memory given to the task)
+  NULL,               // 4. parameters to pass (NULL = none)
+  1,                  // 5. priority (bigger = more important)
+  &amp;BlinkTaskHandle,   // 6. handle to control the task later
+  1                   // 7. which CPU core to pin it to (0 or 1)
+);
+</code></pre>
+<p><img alt="Creating the task and pinning it to a core" src="images/lab5/p11_14.png" />
+<em>Creating the task and pinning it to a core (screenshot from the manual)</em></p>
+<p><strong>Step 4 — Also create the Movement task</strong> (bigger stack, because movement code needs more memory):</p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(
+  MovementTask,
+  &quot;Movement&quot;,
+  12000,               // much bigger stack than the Blink task!
+  NULL,
+  1,
+  &amp;MovementTaskHandle,
+  1
+);
+</code></pre>
+<p><img alt="Including the Movement Task" src="images/lab5/p11_15.png" />
+<img alt="Movement task creation" src="images/lab5/p11_16.jpg" />
+<img alt="Task setup code from the manual" src="images/lab5/p11_17.png" />
+<em>Including the Movement Task (screenshots from the manual)</em></p>
+<div class="cph">Check Point — Test the Movement</div>
+<p>Upload and test. The default behaviour of the car is:</p>
+<ul>
+<li>All IR sensors on a <strong>white tile</strong> → move <strong>forward</strong></li>
+<li>All IR sensors off the ground (white background) → <strong>stop</strong></li>
+<li>Otherwise → <strong>turn right</strong> (left wheel clockwise, right wheel anti-clockwise)</li>
+</ul>
+<p><strong>Show your result to the TA / instructor.</strong></p>
+<hr />
+<h3>Task 4 — Basic Line Tracking</h3>
+<p>This is the track your car must follow:</p>
+<p><img alt="The line tracking map" src="images/lab5/p12_18.jpg" />
+<em>The line tracking map</em></p>
+<h4>Background: How Do IR Line Sensors Work?</h4>
+<p>Under the car are <strong>three IR (infrared) sensors</strong> — left, middle, right. Each one shines infrared light at the floor and measures how much bounces back:</p>
+<ul>
+<li>A <strong>black</strong> surface <strong>absorbs</strong> infrared → little reflection → output = <strong>1 (HIGH)</strong></li>
+<li>A <strong>white</strong> surface <strong>reflects</strong> infrared → lots of reflection → output = <strong>0 (LOW)</strong></li>
+</ul>
+<p>The sensor positions and names (defined in <code>IRSensors.hpp</code>):</p>
+<p><img alt="Naming and position of the IR sensors" src="images/lab5/p13_19.png" />
+<em>The naming and position of the IR sensors (IR_L, IR_M, IR_R)</em></p>
+<p>Each combination of the three sensors maps to a named state, defined by this <code>enum</code> in <code>IRSensors.hpp</code>:</p>
+<pre><code class="language-cpp">enum RobotState : uint8_t {
+  Middle_ON_Track,      // only the middle sensor sees the line
+  Left_Middle_ON_Track, // left + middle see the line
+  ALL_ON_Track,         // all three see the line
+  Right_ON_Track,       // only the right sensor sees the line
+  Left_Right_ON_Track,  // left + right (a crossroad!)
+  Middle_Right_ON_Track,// middle + right
+  Left_ON_Track,        // only the left sensor sees the line
+  All_OFF_Track         // no sensor sees the line
+};
+</code></pre>
+<p><img alt="Defined values for the IR sensor outputs" src="images/lab5/p14_20.png" />
+<em>The defined values for each IR sensor condition (screenshot from the manual)</em></p>
+<h4>The Tracking Logic</h4>
+<p>The basic idea is simple:</p>
+<ul>
+<li>If the <strong>middle</strong> sensor is on the dark line → keep going <strong>forward</strong></li>
+<li>If the <strong>left</strong> sensor is on the dark line → the car has drifted right → <strong>turn left</strong></li>
+<li>If the <strong>right</strong> sensor is on the dark line → the car has drifted left → <strong>turn right</strong></li>
+</ul>
+<p>Plan it with a <strong>truth table</strong> — a table that says "for these inputs, do this action". The first row is filled in as an example; complete the rest yourself (one row is given per sensor state — think about what each combination means!):</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Left (IR_L)</th>
+<th>Middle (IR_M)</th>
+<th>Right (IR_R)</th>
+<th>State</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>Middle on track</td>
+<td>Move forward (example)</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>All off track</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>Right on track</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>Middle + right</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>Left on track</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>Left + right</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>Left + middle</td>
+<td><em>your answer</em></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>All on track</td>
+<td><em>your answer</em></td>
+</tr>
+</tbody>
+</table></div>
+<h4>The Code You Need to Complete</h4>
+<p>In <code>void MovementTask(void* pvPara)</code> in the <code>.ino</code> file, the sensor state is read into <code>IRSensors::IRData.state</code>, then a <code>switch</code> statement decides what to do. <strong>Your job is to fill in the missing cases:</strong></p>
+<pre><code class="language-cpp">void MovementTask(void* pPara) {
+  while (true) {
+    IRSensors::IRData.state = IRSensors::Readsensorstate(IRSensors::IRData);
+    switch (IRSensors::IRData.state) {
+      case IRSensors::Middle_ON_Track:
+        MotorControl::LeftWheel.Speed = 1000;    // set left wheel speed
+        MotorControl::Rightwheel.Speed = 1000;   // set right wheel speed
+        break;
+      case IRSensors::Left_Middle_ON_Track:
+        // implement logic
+        break;
+      case IRSensors::ALL_ON_Track:
+        // implement logic
+        break;
+      case IRSensors::Left_Right_ON_Track:
+        Movement::Stop();                        // crossroad → stop (for now)
+        vTaskDelay(100);
+        break;
+      case IRSensors::Middle_Right_ON_Track:
+        // implement logic
+        break;
+      case IRSensors::Right_ON_Track:
+        // implement logic
+        break;
+      case IRSensors::Left_ON_Track:
+        // implement logic
+        break;
+      case IRSensors::All_OFF_Track:
+        Movement::Stop();                        // line lost → stop
+        vTaskDelay(100);
+        break;
+    }
+    vTaskDelay(100);
+  }
+}
+</code></pre>
+<p><img alt="Reading the sensor state" src="images/lab5/p14_21.png" />
+<img alt="The switch-case structure" src="images/lab5/p15_22.png" />
+<em>Reading the sensor state and the switch-case (screenshots from the manual)</em></p>
+<p>To move the car, use the API from <code>Movement.hpp</code> / <code>Movement.cpp</code> (all functions live in the <code>Movement</code> namespace):</p>
+<pre><code class="language-cpp">void RotateLeft();    // spin left
+void RotateRight();   // spin right
+void MoveForward();   // straight ahead
+void MoveBackward();  // reverse
+void Stop();          // stop
+</code></pre>
+<p><img alt="The Movement API in Movement.hpp" src="images/lab5/p16_23.png" />
+<em>The movement API in <code>Movement.hpp</code></em></p>
+<p>To actually drive, both wheels need their <strong>speeds set</strong>, followed by the actuation call:</p>
+<p><img alt="Setting wheel speeds and actuating" src="images/lab5/p16_24.jpg" />
+<em>Setting the speeds of both wheels, then actuating</em></p>
+<blockquote>
+<p> For the full API manual visit: <strong>https://project.isdn2602.site</strong></p>
+</blockquote>
+<h4>Procedure</h4>
+<ol>
+<li>Put the car at the <strong>starting line</strong> of the track.</li>
+<li>Power on the car.</li>
+<li>After 1–2 seconds, the car starts to move.</li>
+<li>It should follow the track and <strong>stop at the end line</strong>.</li>
+</ol>
+<p><strong>Finish the truth table, then change the movement functions and wheel speeds carefully</strong> until the car follows the whole track.</p>
+<div class="cph">Check Point</div>
+<p>Change the movement functions inside the switch-case so the car tracks the line, and <strong>show your result to the TA / instructor</strong>.</p>
+<hr />
+<h3>Task 5 — Line Tracking with Decision Making</h3>
+<p>Now the track has a <strong>crossroad</strong> — your car must make a decision:</p>
+<p><img alt="The Task 5 track with a crossroad" src="images/lab5/p17_25.jpg" />
+<em>The Task 5 map — note the crossroad</em></p>
+<p>In this task the car needs to make a decision at the crossroad, based on the line-tracking logic you built in Task 4.</p>
+<p><strong>Procedure:</strong></p>
+<ol>
+<li>Start the car at the <strong>left side</strong> of the track.</li>
+<li>After 1–2 seconds, the car starts to move.</li>
+<li>When the car arrives at the crossroad, <strong>turn right</strong> and follow the left track.</li>
+<li>Stop the car at the end line.</li>
+</ol>
+<p> <em>Hint: at a crossroad, all sensors see the line at once — that's the <code>ALL_ON_Track</code> or <code>Left_Right_ON_Track</code> state. Instead of stopping, count a short delay and then rotate...</em></p>
+<div class="cph">Check Point</div>
+<p>Modify the logic and conditions of the helper function to finish this task, and <strong>show your result to the TA / instructor</strong>.</p>
+<hr />
+<h2>5. Appendix — How <code>fun_dijkstra()</code> Works (Line by Line)</h2>
+<p>This is the full MATLAB function used in Tasks 1 &amp; 2, with explanations:</p>
+<pre><code class="language-matlab">function [path, cost] = fun_dijkstra(transition, from, to)
+</code></pre>
+<ul>
+<li><strong>Inputs:</strong> <code>transition</code> — the weight matrix; <code>from</code> — list of start nodes; <code>to</code> — list of destination nodes.</li>
+<li><strong>Outputs:</strong> <code>path</code> — cell array storing the shortest paths; <code>cost</code> — matrix of shortest path costs.</li>
+</ul>
+<p><strong>Memory allocation:</strong></p>
+<pre><code class="language-matlab">path = cell(numel(from), numel(to));
+cost = zeros(numel(from), numel(to));
+</code></pre>
+<p>One slot in <code>path</code> and <code>cost</code> for every start–destination pair.</p>
+<p><strong>Main variables:</strong></p>
+<pre><code class="language-matlab">count  = min(size(transition));   % number of nodes
+parent = zeros(count, 1);         % parent(n) = which node we reached n from
+loss   = inf(count, 1);           % loss(n) = best known distance so far
+</code></pre>
+<p><strong>Loop over every start node <code>m</code>:</strong></p>
+<pre><code class="language-matlab">for i = 1:numel(from)
+    m = from(i);
+    if issparse(transition)
+        index = transpose(full(transition(m, :) &gt; 0.0));
+        index(m) = true;
+    else
+        index = transpose(not(isinf(transition(m, :))));
+    end
+</code></pre>
+<p><code>index</code> marks which nodes are <strong>directly reachable</strong> from <code>m</code> (weight is not <code>inf</code>).</p>
+<pre><code class="language-matlab">    loss(:) = inf;                          % reset all distances
+    loss(index) = transpose(transition(m, index));   % known direct distances
+    parent(:) = 0;                          % reset parents
+    parent(index) = m;                      % they all came from m
+    queue = find(index);                    % queue of nodes to examine
+</code></pre>
+<p><strong>The Dijkstra main loop</strong> — exactly the algorithm from Section 2.4:</p>
+<pre><code class="language-matlab">    while not(isempty(queue))
+        k = queue(1);                               % pick the first node in the queue
+        distance = transpose(loss(k) + transition(k, :));  % new distances through k
+        index = distance &lt; loss;                    % where is going through k shorter?
+        if issparse(transition)
+            index = and(index, full(transpose(transition(k, :) &gt; 0)));
+        end
+        if any(index)                    % found improvements!
+            loss(index) = distance(index);    % update best distances
+            parent(index) = k;                % remember we came through k
+            queue = cat(1, queue(2:end, :), find(index));  % add improved nodes to queue
+        else
+            queue = queue(2:end, :);      % no improvement → drop this node
+        end
+    end
+</code></pre>
+<p><strong>Backtracking</strong> — rebuild the path by walking <em>backwards</em> from the destination, following <code>parent</code>:</p>
+<pre><code class="language-matlab">    for j = 1:numel(to)
+        path{i, j} = zeros(size(parent));
+        n = to(j);                          % start at the destination
+        for k = numel(parent):(-1):1
+            if or(eq(m, n), eq(n, 0))
+                break                       % reached the start node (or no path)
+            end
+            path{i, j}(k) = n;              % record node
+            n = parent(n);                  % hop to its parent
+        end
+        if eq(m, n)                         % we successfully walked back to m
+            path{i, j}(k) = n;
+            path{i, j} = path{i, j}(k:end); % trim the leading zeros
+        else
+            path{i, j} = [];                % no valid path exists
+        end
+    end
+    cost(i, :) = loss(to);                  % store the shortest path costs
+end
+end
+</code></pre>
+<hr />
+<p><em>— End of Lab 5 —</em></p>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">Adapted from HKUST ISDN 2602 · Lab 5 · Student Guide</span>
+  </div>
+</footer>
+</body>
+</html>

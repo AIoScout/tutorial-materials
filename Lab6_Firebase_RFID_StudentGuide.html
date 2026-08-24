@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 6 · Firebase & RFID — Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article h4 { font-size:17px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .cph { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:40px 0 8px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  .katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 0; }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Index</a>
+      <span class="nav-label">Lab 6 · Student Guide</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Lab 6 — Firebase &amp; RFID: Connecting Your Car to the Cloud <em>(Student Guide)</em></h1>
+<blockquote>
+<p>Adapted from HKUST ISDN 2602 (Fall 2025) Laboratory 6 for secondary school students.</p>
+<p><strong>Original course info</strong> — GitHub Classroom: https://classroom.github.com/a/NqRJUakP</p>
+</blockquote>
+<hr />
+<h2>1. Welcome — What You Will Learn</h2>
+<p>Today your robot car gets two superpowers: it can <strong>talk to the cloud</strong> and it can <strong>identify objects</strong> by touchless scanning. By the end you will:</p>
+<ul>
+<li> Understand what a <strong>cloud database</strong> is and why it lets devices talk to each other</li>
+<li> Set up your own free <strong>Firebase</strong> project (Google's app platform)</li>
+<li> Read and write data between the <strong>ESP32</strong> and Firebase in <strong>real time</strong></li>
+<li> Use an <strong>RFID reader</strong> to identify RFID tags — the same technology as Hong Kong's <strong>Octopus card</strong>!</li>
+</ul>
+<p><strong>Key words you will learn:</strong> cloud · database · real-time · Firebase · JSON · API key · authentication · UID · RFID · tag · reader</p>
+<hr />
+<h2>2. Background — The Cloud, Firebase, and RFID</h2>
+<h3>2.1 What Is "the Cloud"?</h3>
+<p>"The cloud" sounds mysterious, but it just means: <strong>powerful computers in data centres that store data and run services for you, connected through the internet</strong>. When you save a photo so it appears on all your devices, or when two people edit the same document at once — that's the cloud at work.</p>
+<p>Why does a robot car need it? Imagine the final project: an <strong>app or website</strong> decides the car's mission (start point, end point, whether the exam has started...), and the <strong>car</strong> must receive that information instantly. If both the app and the car talk to <strong>one shared database in the cloud</strong>, changing a value on the app instantly appears on the car — no direct connection needed. It's like a shared Google Doc: you edit here, your classmate sees it there, instantly.</p>
+<h3>2.2 What Is Firebase?</h3>
+<p><strong>Firebase</strong> is Google's platform for building apps. It provides a whole toolbox — real-time database, user login (authentication), hosting, and more. In this lab we use the <strong>Realtime Database</strong>:</p>
+<ul>
+<li>It is a <strong>NoSQL</strong> database that stores data as one big <strong>JSON tree</strong> (see §2.3)</li>
+<li><strong>Real-time sync:</strong> the moment one client changes the data, every other connected client is updated — perfect for our car ↔ app link</li>
+<li><strong>Free</strong> for small projects like this one</li>
+</ul>
+<p>Why Firebase is popular for personal IoT projects: simplified setup (no server to build), real-time sync, built-in authentication, serverless (Google runs the servers for you), and it works across platforms.</p>
+<p><img alt="How ESP32 communicates with the Firebase Realtime Database" src="images/lab6/p01_00.png" />
+<img alt="ESP32 and Firebase architecture" src="images/lab6/p01_01.png" />
+<em>How the ESP32 talks to Firebase's Realtime Database (source: https://randomnerdtutorials.com/esp32-firebase-realtime-database/)</em></p>
+<h3>2.3 A 60-Second JSON Lesson</h3>
+<p><strong>JSON</strong> (JavaScript Object Notation) is the standard "language" for data on the internet — a simple way to write labelled information, like an ID card:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;Smart Car&quot;,
+  &quot;task_id&quot;: 7,
+  &quot;is_started&quot;: false
+}
+</code></pre>
+<p>Curly braces hold a <strong>object</strong>; each line is a <code>"key": value</code> pair. Values can be text (in quotes), numbers, true/false, or even nested objects. Firebase stores your whole database as one JSON tree — you'll import one in Task 1.</p>
+<h3>2.4 API Keys, Users, and UIDs — Your Car's ID Papers</h3>
+<p>To keep random strangers out of your database, Firebase uses <strong>authentication</strong> — proving who you are. Today you will collect three "ID papers" (save them somewhere safe, you'll type them into your code!):</p>
+<ul>
+<li><strong>Web API Key</strong> — like the address + master key of your Firebase project</li>
+<li><strong>Database URL</strong> — the exact internet address of your database (<code>https://…firebasedatabase.app</code>)</li>
+<li><strong>User UID</strong> — a random ID string Firebase gives each user account (each student's data is stored under their own UID, so nobody overwrites anyone else)</li>
+</ul>
+<h3>2.5 What Is RFID?</h3>
+<p><strong>Radio-Frequency Identification (RFID)</strong> lets a small <strong>reader</strong> identify a <strong>tag</strong> using radio waves — no contact, no battery in the tag needed for <em>passive</em> tags (the reader's radio field briefly powers the tag, the tag answers with its stored ID). You use RFID all the time:</p>
+<ul>
+<li> The <strong>Octopus card</strong> (and other contactless payment cards)</li>
+<li> Library book tags</li>
+<li> School / office access cards</li>
+</ul>
+<p>An RFID system has two parts: <strong>tags</strong> (store a unique ID) and a <strong>reader</strong> (sends radio signals; a nearby tag transmits its stored information back).</p>
+<p>In the final project, <strong>RFID tags are placed along the road</strong>, and a <strong>RFID reader at the bottom of the car</strong> scans them as the car drives over. By reading a tag, the car knows exactly <strong>where it is</strong> — like how tapping your Octopus card tells the system which station you entered.</p>
+<hr />
+<h2>3. Prelab — Setting Up Your Firebase (Do This First!)</h2>
+<blockquote>
+<p> <strong>Tip:</strong> do the prelab on your own laptop with Chrome. You will create a Firebase project and collect your three "ID papers". Nothing needs the car yet.</p>
+</blockquote>
+<h3>Step 1 — Install the Arduino Libraries</h3>
+<p>Two libraries must be installed with the <strong>correct versions</strong>:</p>
+<ul>
+<li><strong>FirebaseClient</strong> ≥ <strong>2.2</strong></li>
+<li><strong>ArduinoJson</strong> ≥ <strong>7.4</strong></li>
+</ul>
+<p>How: in the Arduino IDE open <code>Sketch → Include Library → Manage Libraries…</code>, search for each name, pick the version, click <strong>Install</strong>.</p>
+<p><img alt="Installing the Arduino libraries with correct versions" src="images/lab6/p03_02.png" />
+<em>Install FirebaseClient (≥ 2.2) and ArduinoJson (≥ 7.4)</em></p>
+<h3>Step 2 — Create a Firebase Account and Project</h3>
+<p><strong>1.</strong> Visit <strong>https://firebase.google.com</strong> and sign in with your own Google account:</p>
+<p><img alt="The Firebase homepage" src="images/lab6/p04_03.jpg" />
+<em>Sign in at firebase.google.com</em></p>
+<p><strong>2.</strong> Click <strong>Get Started</strong>, then press <strong>Add Project</strong> to create your project, and give it a name:</p>
+<p><img alt="Adding a new project" src="images/lab6/p04_04.jpg" />
+<em>Create your project and set a name</em></p>
+<p><strong>3.</strong> You may choose <strong>not</strong> to enable Google Gemini and <strong>not</strong> to enable Google Analytics — just click <strong>Continue</strong>:</p>
+<p><img alt="Project creation options" src="images/lab6/p04_05.jpg" />
+<em>Disabling Gemini / Analytics is fine for this lab</em></p>
+<p><strong>4.</strong> Wait for the project to be ready — you'll land on the <strong>project overview</strong> page:</p>
+<p><img alt="The project overview page" src="images/lab6/p05_06.png" />
+<em>The project overview page</em></p>
+<p><strong>5.</strong> Under <strong>Product categories → Build</strong>, enable <strong>Authentication</strong> and <strong>Realtime Database</strong>. After selecting them one by one, they appear under <strong>Project shortcuts</strong>:</p>
+<p><img alt="Enabling products under Build" src="images/lab6/p05_07.jpg" />
+<img alt="Authentication and Realtime Database enabled" src="images/lab6/p05_08.png" />
+<img alt="Products shown under Project shortcuts" src="images/lab6/p05_09.jpg" />
+<em>Enable Authentication and Realtime Database under Build</em></p>
+<h3>Step 3 — Set Up the Realtime Database</h3>
+<p><strong>1.</strong> Click the <strong>Realtime Database</strong> shortcut, then <strong>Create Database</strong>:</p>
+<p><img alt="Creating the Realtime Database" src="images/lab6/p06_10.jpg" />
+<em>Realtime Database → Create Database</em></p>
+<p><strong>2.</strong> Set the configuration:</p>
+<ul>
+<li><strong>Location:</strong> keep the default <strong>United States (us-central1)</strong></li>
+<li><strong>Security rules:</strong> choose <strong>Start in test mode</strong> (for now)</li>
+</ul>
+<p><img alt="Choosing the database location" src="images/lab6/p06_11.jpg" />
+<img alt="Test mode security rules" src="images/lab6/p06_12.png" />
+<em>Location: us-central1 · Security rules: test mode</em></p>
+<p><strong>3.</strong> Your database is created! Click the <strong>link icon</strong> to copy your <strong>database URL</strong>:</p>
+<p><img alt="Copying the database URL" src="images/lab6/p07_13.png" />
+<em>Copy your database URL with the link icon</em></p>
+<blockquote>
+<p> <strong>Save it:</strong> your <strong>Database URL</strong> (you'll paste it into the code at TODO 1).</p>
+</blockquote>
+<h3>Step 4 — Get Your Project API Key</h3>
+<p>The ESP32 needs the <strong>API Key</strong> to prove to Firebase which project it belongs to.</p>
+<p><strong>1.</strong> Click the <strong>gear icon</strong>  next to <em>Project Overview</em>, then <strong>Project settings</strong>:</p>
+<p><img alt="Project settings via the gear icon" src="images/lab6/p08_14.png" />
+<em>Gear icon → Project settings</em></p>
+<p><strong>2.</strong> Find and copy your <strong>Web API Key</strong>:</p>
+<p><img alt="The Web API Key in project settings" src="images/lab6/p08_15.png" />
+<em>Copy the Web API key</em></p>
+<p><strong>3.</strong> <em>(If you don't see it there)</em> visit <strong>https://console.cloud.google.com/apis/</strong>, sign in again if needed, select your Firebase project, open the <strong>Credentials</strong> tab, and click <strong>Show key</strong>:</p>
+<p><img alt="The Credentials tab in Google Cloud console" src="images/lab6/p09_16.png" />
+<img alt="Showing the API key" src="images/lab6/p09_17.png" />
+<em>Alternative route: Google Cloud console → Credentials → Show key</em></p>
+<blockquote>
+<p> <strong>Save it:</strong> your <strong>Web API Key</strong> (also TODO 1).</p>
+</blockquote>
+<h3>Step 5 — Set Up Authentication</h3>
+<p><strong>1.</strong> Go to <strong>Authentication</strong> and click <strong>Get started</strong>. In the <strong>Sign-in method</strong> tab, choose <strong>Email/Password</strong>:</p>
+<p><img alt="Choosing the Email/Password sign-in method" src="images/lab6/p10_18.png" />
+<em>Authentication → Get started → Email/Password</em></p>
+<p><strong>2.</strong> Toggle <strong>Email/Password ON</strong> and press <strong>Save</strong>:</p>
+<p><img alt="Enabling Email/Password" src="images/lab6/p10_19.jpg" />
+<em>Toggle on Email/Password and save</em></p>
+<p><strong>3.</strong> In the <strong>Users</strong> tab, click <strong>Add user</strong> and enter an email + password. A simple password is fine — but <strong>remember it</strong>: you will type it into your Arduino code! After adding, your <strong>User UID</strong> is shown:</p>
+<p><img alt="Adding a user" src="images/lab6/p11_20.png" />
+<em>Users → Add user (email + password)</em></p>
+<p><img alt="The User UID" src="images/lab6/p11_21.jpg" />
+<em>After adding the user, note the User UID</em></p>
+<p><strong>4.</strong> Also toggle on the <strong>Anonymous</strong> sign-in method — it makes it convenient for the smart car to access the data:</p>
+<p><img alt="Enabling Anonymous sign-in" src="images/lab6/p12_22.png" />
+<em>Enable the Anonymous sign-in method too</em></p>
+<div class="cph">Pre-Lab Complete! Your Checklist</div>
+<p>Up to this point you should have these three things ready (paste them into a note file):</p>
+<ul>
+<li> <strong>Firebase Project Web API Key</strong></li>
+<li> <strong>Realtime Database URL</strong></li>
+<li> <strong>User ID (UID)</strong></li>
+</ul>
+<hr />
+<h2>4. Lab Tasks</h2>
+<h3>Task 1 — Reading Data from Firebase Using the ESP32</h3>
+<p>In the final project, your smart car receives information from Firebase — the start and end points, the task ID, the exam status (has the demo started or not?) — and makes real-time decisions based on it. In this task you practise reading.</p>
+<p><strong>Step 1.</strong> Open the file <strong><code>sample.json</code></strong> and replace <code>&lt;YOUR_UID&gt;</code> with your actual UID:</p>
+<p><img alt="Editing sample.json with your UID" src="images/lab6/p13_24.png" />
+<em>Replace <code>&lt;YOUR_UID&gt;</code> with your real UID in sample.json</em></p>
+<p>This JSON format is similar to the final project's format, where each student's individual data is stored <strong>under their own UID</strong> to avoid conflicts and overwriting.</p>
+<p><strong>Step 2.</strong> Go to the <strong>Firebase Realtime Database console</strong>, click the <strong>⋮ (three dots)</strong> at the top right corner, and select <strong>Import JSON</strong> to upload <code>sample.json</code>:</p>
+<p><img alt="Importing JSON into the database" src="images/lab6/p13_23.jpg" />
+<em>Three dots → Import JSON</em></p>
+<p><strong>Step 3.</strong> Add your credentials to the code at <strong><code>// TODO 1</code></strong>:</p>
+<pre><code class="language-cpp">#define API_KEY &quot;&quot;       // ← paste your Web API Key here
+#define DATABASE_URL &quot;&quot;  // ← paste your Database URL here
+</code></pre>
+<p><img alt="TODO 1 in the code" src="images/lab6/p13_25.png" />
+<em>Fill in API_KEY and DATABASE_URL at TODO 1</em></p>
+<p><strong>Step 4.</strong> Add your UID at <strong><code>// TODO 2</code></strong>:</p>
+<pre><code class="language-cpp">String UID = &quot;&quot;;         // ← paste your User UID here
+</code></pre>
+<p><img alt="TODO 2 in the code" src="images/lab6/p13_26.png" />
+<em>Fill in the UID at TODO 2</em></p>
+<p><strong>Step 5.</strong> Enable the <strong>"Firebase Read Task"</strong> in <code>setup()</code>, exactly as shown:</p>
+<p><img alt="Enabling the Firebase Read Task" src="images/lab6/p14_27.png" />
+<em>Enable the Firebase Read Task</em></p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, &quot;Firebase Main Task&quot;, 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
+
+// TODO 3: enable the read task
+xTaskCreatePinnedToCore(firebaseReadTask, &quot;Firebase.Read.Task&quot;, 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
+
+//xTaskCreatePinnedToCore(firebaseWriteTask, &quot;Firebase Write Task&quot;, 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
+//xTaskCreatePinnedToCore(RFIDTagReaderTask, &quot;RFID.Tag-Reader.Task&quot;, 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
+vTaskDelay(10);
+</code></pre>
+<p><em>(Notice this uses the FreeRTOS <code>xTaskCreatePinnedToCore</code> you learned in Lab 5 — one task talks to Firebase while others run the car! The two commented-out lines are for Task 2.)</em></p>
+<p><strong>Step 6.</strong> <strong>Flash the code</strong> and watch the Serial Monitor: the exam-state values from your database should print out. Try <strong>manually editing a value in the Firebase web console</strong> (e.g. set <code>time_remain</code> to 100) — and watch the change appear on your car within a second or two. That's <strong>real-time sync</strong> in action!</p>
+<div class="cph">Check Point</div>
+<p><strong>Show the serial print result of your received data to the TA / instructor.</strong></p>
+<hr />
+<h3>Task 2 — Reading RFID and Writing Data to Firebase</h3>
+<p>Now the flow reverses: the car <strong>reads an RFID tag</strong> and <strong>writes</strong> the result <strong>up</strong> to Firebase.</p>
+<p><em>(Recall §2.5: an RFID reader sends radio signals; a nearby tag replies with its stored ID. In the final project, tags along the road let the car know its current location.)</em></p>
+<p><strong>Step 1.</strong> In the code at <strong>TODO 3</strong>, comment out the read task and enable the <strong>"Firebase Write Task"</strong> and the <strong>"RFID Reader Task"</strong> instead:</p>
+<p><img alt="Enabling the Firebase Write and RFID Reader tasks" src="images/lab6/p15_28.png" />
+<img alt="Task setup code from the manual" src="images/lab6/p15_29.jpg" />
+<em>Enable the Firebase Write Task and RFID Reader Task at TODO 3 (screenshots from the manual)</em></p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, &quot;Firebase Main Task&quot;, 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
+
+//xTaskCreatePinnedToCore(firebaseReadTask, &quot;Firebase.Read.Task&quot;, 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
+
+xTaskCreatePinnedToCore(firebaseWriteTask, &quot;Firebase Write Task&quot;, 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
+xTaskCreatePinnedToCore(RFIDTagReaderTask, &quot;RFID.Tag-Reader.Task&quot;, 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
+vTaskDelay(10);
+</code></pre>
+<p><strong>Step 2.</strong> Place an <strong>RFID tag</strong> under the RFID reader at the <strong>bottom of the car</strong> (like tapping an Octopus card on the reader, upside-down!). Watch two things:</p>
+<ol>
+<li>The <strong>Serial Monitor</strong> prints the tag's value</li>
+<li>The tag value appears in the <strong>Firebase console</strong> — the car uploaded it to the cloud by itself!</li>
+</ol>
+<p>Expected serial output looks like:</p>
+<pre><code>RFID Initialized
+Connecting to WiFi...
+---Initializing---
+Connected to WiFi network with IP Address: 192.168.110.159
+RFID Tag: c3a75214
+RFID_tag: &quot;c3a75214&quot;
+</code></pre>
+<p><img alt="Scanning an RFID tag with the car" src="images/lab6/p16_30.png" />
+<em>Scanning an RFID tag under the car's reader</em></p>
+<p><img alt="The tag data appearing in the Firebase console" src="images/lab6/p16_31.png" />
+<em>The tag value appearing in the Firebase console</em></p>
+<div class="cph">Check Point</div>
+<p><strong>Show your RFID scanning serial output and the Firebase console result to the TA / instructor.</strong></p>
+<hr />
+<p><em>— End of Lab 6 —</em></p>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">Adapted from HKUST ISDN 2602 · Lab 6 · Student Guide</span>
+  </div>
+</footer>
+</body>
+</html>

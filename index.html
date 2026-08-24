@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIoScout Curriculum · Physical AI &amp; Autonomous Robotics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ================= AIoScout design tokens (DESIGN.md alpha) ================= */
+  :root {
+    --primary: #000000;
+    --on-primary: #ffffff;
+    --ink: #1a1c1c;
+    --body-c: #525252;
+    --mute: #78716c;
+    --hairline: #d8d9d8;
+    --canvas: #ffffff;
+    --canvas-soft: #f9f9f8;
+    --accent-orange: #f58331;
+    --accent-purple: #5b5ba8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: Inter, Arial, sans-serif;
+    background: var(--canvas-soft);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ================= typography ================= */
+  .t-hero { font-size: clamp(40px, 6vw, 72px); font-weight: 800; line-height: 1.1; letter-spacing: -0.04em; }
+  .t-lg   { font-size: clamp(30px, 4vw, 48px); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+  .t-md   { font-size: clamp(22px, 2.4vw, 32px); font-weight: 600; line-height: 1.3; text-wrap: balance; }
+  .t-sm   { font-size: 20px; font-weight: 400; line-height: 1.4; }
+  .body-lg { font-size: 18px; font-weight: 400; line-height: 1.6; }
+  .body-md { font-size: 16px; font-weight: 400; line-height: 1.55; }
+  .body-sm { font-size: 14px; font-weight: 400; line-height: 1.5; }
+  .cap { font-size: 12px; font-weight: 700; line-height: 16px; text-transform: uppercase; }
+  .lbl-purple { color: var(--accent-purple); font-size: 14.4px; font-weight: 700; line-height: 1.6; letter-spacing: 0.72px; }
+  .lbl-dark   { color: var(--ink); font-size: 12px; font-weight: 700; line-height: 1.4; letter-spacing: 1.2px; text-transform: uppercase; }
+
+  .dim { color: var(--body-c); }
+  .quiet { color: var(--mute); }
+  .center { text-align: center; }
+
+  /* ================= layout rail ================= */
+  .rail { max-width: 1320px; margin: 0 auto; padding-left: 64px; padding-right: 64px; }
+  @media (max-width: 768px) { .rail { padding-left: 24px; padding-right: 24px; } }
+
+  section.band { padding-top: 48px; padding-bottom: 48px; }
+  section.band.tight { padding-top: 32px; padding-bottom: 32px; }
+
+  /* ================= nav ================= */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+  }
+  .wordmark { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
+  .wordmark span { color: var(--accent-orange); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+    color: var(--mute); text-decoration: none; padding: 0 0 6px 0; border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); border-bottom-color: var(--ink); }
+  @media (max-width: 900px) { .nav-links { display: none; } }
+
+  /* ================= hero ================= */
+  .hero { padding-top: 96px; padding-bottom: 96px; }
+  .hero .eyebrow-row { display: flex; justify-content: center; margin-bottom: 24px; }
+  .hero h1 { max-width: 22ch; margin: 0 auto; }
+  .hero .lede { max-width: 68ch; margin: 24px auto 0; }
+  .hero .cta-row { display: flex; justify-content: center; gap: 16px; margin-top: 40px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    font: 700 12px/16px Inter, Arial, sans-serif;
+    padding: 15px 32px; cursor: pointer; text-decoration: none; text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .btn-primary { background: var(--primary); color: var(--on-primary); border: 1px solid var(--primary); }
+  .btn-primary:hover { background: var(--ink); border-color: var(--ink); }
+  .btn-outline { background: var(--canvas); color: var(--ink); border: 1px solid var(--ink); }
+  .btn-outline:hover { background: var(--canvas-soft); }
+
+  /* ================= stat strip ================= */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); }
+  .stat { background: var(--canvas); padding: 32px; }
+  .stat .n { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .stat .n em { font-style: normal; color: var(--accent-orange); }
+  .stat .l { margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+  @media (max-width: 900px) { .stats { grid-template-columns: 1fr 1fr; } }
+
+  /* ================= section head ================= */
+  .sec-head { margin-bottom: 48px; }
+  .sec-head .lbl-purple { display: block; margin-bottom: 12px; }
+  .sec-head h2 { max-width: 24ch; }
+  .sec-head .sub { max-width: 70ch; margin-top: 16px; }
+
+  /* ================= part sections (feature rows) ================= */
+  .part-head { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .part-index {
+    font-size: 64px; font-weight: 800; letter-spacing: -0.05em; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px var(--mute);
+  }
+  .meta-chips { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0 32px; }
+  .chip { border: 1px solid var(--hairline); background: var(--canvas); padding: 8px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+  .chip.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+  .abstract { border-left: 2px solid var(--ink); padding-left: 24px; padding-bottom: 8px; margin-bottom: 32px; max-width: 80ch; }
+
+  .row { display: flex; gap: clamp(32px, 5vw, 80px); align-items: flex-start; }
+  .row > * { flex: 1; min-width: 0; }
+  .row.rev { flex-direction: row-reverse; }
+  @media (max-width: 900px) { .row, .row.rev { flex-direction: column; } }
+
+  .figure { border: 1px solid var(--hairline); background: var(--canvas); padding: 16px; }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure figcaption { margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+
+  /* module blocks */
+  .module { border-top: 1px solid var(--hairline); padding-top: 24px; margin-top: 32px; }
+  .module:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+  .module .lbl-purple { margin-bottom: 8px; }
+  .module h3 { font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: 12px; }
+  .module ul { list-style: none; }
+  .module ul li { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 16px; line-height: 1.55; color: var(--body-c); }
+  .module ul li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; background: var(--hairline); }
+  .module ul li strong { color: var(--ink); font-weight: 600; }
+
+  /* outcomes */
+  .outcome-card { border: 1px solid var(--hairline); background: var(--canvas); padding: 32px; }
+  .outcome-card ul { list-style: none; }
+  .outcome-card li { position: relative; padding-left: 24px; margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: var(--body-c); }
+  .outcome-card li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; background: var(--accent-orange); }
+  .outcome-card li:last-child { margin-bottom: 0; }
+
+  /* milestone strip */
+  .milestone { background: var(--primary); color: var(--on-primary); padding: 32px 48px; margin-top: 48px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .milestone .tag { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent-orange); white-space: nowrap; }
+  .milestone p { font-size: 18px; line-height: 1.5; }
+  .milestone p strong { font-weight: 700; }
+
+  /* ================= timeline ================= */
+  .timeline { position: relative; margin-top: 8px; }
+  .phase { display: flex; gap: 32px; padding: 24px 0; border-top: 1px solid var(--hairline); }
+  .phase:last-child { border-bottom: 1px solid var(--hairline); }
+  .phase .p-num { flex: none; width: 96px; font-size: 14px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); padding-top: 6px; }
+  .phase .p-body h3 { font-size: 32px; font-weight: 600; line-height: 1.3; }
+  .phase .p-body .essence { color: var(--accent-purple); font-size: 14.4px; font-weight: 700; letter-spacing: 0.72px; margin-bottom: 8px; }
+  .phase .p-body p { margin-top: 8px; max-width: 80ch; }
+
+  /* ================= tables ================= */
+  table.spec { border-collapse: collapse; width: 100%; }
+  table.spec th, table.spec td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  table.spec th { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+  table.spec td { font-size: 15px; color: var(--ink); line-height: 1.5; }
+  table.spec td .sub { display: block; margin-top: 4px; font-size: 13px; color: var(--mute); }
+  table.spec a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 1px; }
+  table.spec a:hover { background: var(--canvas-soft); }
+  .avail { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--accent-purple); color: var(--accent-purple); }
+  .avail.soon { border-color: var(--hairline); color: var(--mute); }
+
+  /* ================= 3-col cards ================= */
+  .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .cards3 .card { background: var(--canvas); border: 1px solid var(--hairline); padding: 40px 48px; }
+  .cards3 .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .cards3 .card .lbl-dark { display: block; margin-bottom: 12px; }
+  .cards3 .card p { font-size: 16px; line-height: 1.55; color: var(--body-c); }
+  @media (max-width: 900px) { .cards3 { grid-template-columns: 1fr; } }
+
+  /* ================= footer ================= */
+  footer { background: var(--canvas); border-top: 1px solid var(--hairline); padding: 48px 64px; }
+  .foot-rail { max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+  footer .f-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  footer a { color: var(--mute); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+  footer a:hover { color: var(--ink); }
+
+  .wrap-list { overflow-x: auto; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav">
+  <div class="rail nav-inner">
+    <a class="wordmark" href="#top">AIo<span>Scout</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#part1">Part 1</a>
+      <a href="#part2">Part 2</a>
+      <a href="#part3">Part 3</a>
+      <a href="#part4">Part 4</a>
+      <a href="#labmap">Lab map</a>
+      <a href="#pathways">Pathways</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="rail center">
+    <div class="eyebrow-row"><span class="lbl-purple">AIoScout Curriculum · Physical AI &amp; Autonomous Robotics</span></div>
+    <h1 class="t-hero">From first motor spin to full autonomy.</h1>
+    <p class="body-lg dim lede">
+      A four-part, hands-on curriculum for secondary-school students: build a robotic car (Move), add
+      environmental sensing (Sense), connect it to cloud infrastructure (Connect), and run onboard AI
+      (Think). Adapted from HKUST ISDN 2602 university laboratory material for classroom use.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#part1">Explore the curriculum</a>
+      <a class="btn btn-outline" href="#labmap">Jump to the lab map</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= STAT STRIP ================= -->
+<section class="band tight" id="overview">
+  <div class="rail">
+    <div class="stats">
+      <div class="stat"><div class="n">4</div><div class="l">Progressive parts</div></div>
+      <div class="stat"><div class="n">~32</div><div class="l">Guided 90-min sessions</div></div>
+      <div class="stat"><div class="n">6<em>+</em></div><div class="l">Hands-on labs &amp; capstone</div></div>
+      <div class="stat"><div class="n">12–18</div><div class="l">Junior &amp; senior pathways</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 1 ================= -->
+<section class="band" id="part1">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">01</span>
+      <div>
+        <span class="lbl-purple">Part 1 · Move</span>
+        <h2 class="t-lg" style="margin-top:8px;">Fundamentals of Mobile Robotics &amp; Closed-Loop Control</h2>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Weeks 1–6</span>
+      <span class="chip">Junior + Senior</span>
+      <span class="chip">Prerequisite: none — the entry point</span>
+    </div>
+
+    <div class="row" style="margin-bottom:48px;">
+      <div>
+        <p class="abstract body-lg dim">
+          Before a machine can make intelligent decisions, it must first master physical movement and deterministic
+          execution. This foundational module deconstructs the mobile robot into its three underlying engineering
+          pillars — Electrical Systems, Mechanical Kinematics, and Software Control. Students explore how low-level
+          hardware interfaces convert raw electrical energy into controlled motion, laying the groundwork for
+          closed-loop stability without relying on external perception sensors.
+        </p>
+        <div class="module">
+          <span class="lbl-purple">Module 1.1 · Electrical Foundations &amp; Actuation</span>
+          <ul>
+            <li><strong>Power distribution &amp; regulation</strong> — battery packs and voltage sag, regulators and brownouts, wiring gauges, and computing a current budget for motors + logic.</li>
+            <li><strong>Motor architectures</strong> — DC brushed motors (voltage ↔ speed, torque curves), servo actuation (PWM-encoded position), and quadrature encoders (tick counts → distance and speed).</li>
+            <li><strong>H-Bridge driver circuits</strong> — transistors as switches, the H-bridge direction truth table, Pulse-Width Modulation (PWM) for speed, and braking vs. coasting.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 1.2 · Mechanical Kinematics &amp; Physical Dynamics</span>
+          <ul>
+            <li><strong>Differential drive</strong> — body speed <em>v</em> = (<em>v</em><sub>L</sub> + <em>v</em><sub>R</sub>)/2 and turn rate <em>ω</em> = (<em>v</em><sub>R</sub> − <em>v</em><sub>L</sub>)/<em>W</em>; turn radius, centre of rotation, and pivot turns.</li>
+            <li><strong>Steering vs. holonomic geometries</strong> — Ackermann-style steering compared with differential and omnidirectional (holonomic) motion.</li>
+            <li><strong>Chassis dynamics</strong> — mass distribution, centre of gravity and tip-over, wheel-ground friction and traction, and why real robots slip.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 1.3 · Software Control &amp; Motion Determinism</span>
+          <ul>
+            <li><strong>Open-loop vs. closed-loop</strong> — why timing-only motion drifts, and how feedback corrects it.</li>
+            <li><strong>Conditional control logic</strong> — primitive if/else execution paths for deterministic reactions.</li>
+            <li><strong>Proportional (P) response</strong> — error, gain, and the steady-state offset; tuning a P-only speed controller.</li>
+            <li><strong>Full PID control</strong> — integral action and windup, derivative damping, and a step-by-step tuning walkthrough for smooth speed regulation and straight-line tracking.</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <figure class="figure">
+          <img src="images/lab5/p05_03.jpg" alt="Robot car hardware kit: chassis, motors, wheels, battery and controller">
+          <figcaption>The Part 1 hardware kit</figcaption>
+        </figure>
+        <div class="outcome-card" style="margin-top:24px;">
+          <span class="lbl-dark" style="display:block; margin-bottom:16px;">Students will be able to</span>
+          <ul>
+            <li>Trace the full chain from battery → driver → motor → motion, and budget power for it</li>
+            <li>Predict a differential-drive robot's path from its two wheel speeds</li>
+            <li>Implement and tune a PID loop that holds a commanded speed or heading</li>
+            <li>Explain why deterministic execution is the foundation every later part stands on</li>
+          </ul>
+        </div>
+        <div class="meta-chips" style="margin:24px 0 0;">
+          <span class="chip">Lab 1 · Motor &amp; Motion</span>
+          <span class="chip orange">Milestone · The perfectly straight line</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Milestone project</span>
+      <p><strong>The Perfectly Straight Line.</strong> With encoders as the only feedback, the car holds a commanded heading for 2 metres under PID — measured deviation under 5&nbsp;cm, reproducible across five runs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 2 ================= -->
+<section class="band" id="part2" style="background: var(--canvas);">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">02</span>
+      <div>
+        <span class="lbl-purple">Part 2 · Sense</span>
+        <h2 class="t-lg" style="margin-top:8px;">Environmental Perception &amp; Reactive Sensing</h2>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Weeks 7–14</span>
+      <span class="chip">Junior + Senior</span>
+      <span class="chip">Prerequisite: Part 1</span>
+      <span class="chip orange">Labs 2 &amp; 5 included in this pack</span>
+    </div>
+
+    <div class="row rev" style="margin-bottom:48px;">
+      <div>
+        <p class="abstract body-lg dim">
+          An autonomous agent cannot navigate an unpredictable environment through timing and dead reckoning alone.
+          Part 2 introduces the physical world into the control loop by adding environmental sensors. Students learn
+          how physical phenomena — light, sound, magnetic fields, and obstacles — are converted into digital
+          telemetry, enabling real-time, event-driven behaviours and obstacle avoidance.
+        </p>
+        <div class="module">
+          <span class="lbl-purple">Module 2.1 · Transducers &amp; Signal Acquisition</span>
+          <ul>
+            <li><strong>Analog vs. digital signals</strong> — continuous phenomena, analog-to-digital conversion (ADC), resolution, and sampling rates.</li>
+            <li><strong>Distance perception</strong> — ultrasonic Time-of-Flight (ToF) measurement with the speed-of-sound equation, and Infrared (IR) reflectance proximity sensing.</li>
+            <li><strong>Spatial orientation</strong> — Inertial Measurement Units (IMU): accelerometer (gravity → tilt), gyroscope (rotation rate → angle by integration), magnetometer (heading).</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 2.2 · Sensor Calibration &amp; Noise Reduction</span>
+          <ul>
+            <li><strong>Noise &amp; degradation</strong> — environmental interference, signal drift, and threshold calibration against ground truth.</li>
+            <li><strong>Filtering techniques</strong> — moving averages and low-pass filters for smoothing; hysteresis implementation to prevent erratic oscillation between two states.</li>
+            <li><strong>Sensor fusion</strong> — combining a drifting gyro with a noisy accelerometer via the complementary filter (Lab 2's centrepiece).</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 2.3 · Event-Driven Reactive Control</span>
+          <ul>
+            <li><strong>Sensor-in-the-loop control</strong> — feeding real-time sensor streams into the PID loops of Part 1.</li>
+            <li><strong>Reactive behaviours</strong> — dynamic obstacle avoidance, wall-following algorithms, and cliff detection.</li>
+            <li><strong>Finite State Machines (FSM)</strong> — switching cleanly between cruising, stopping, and maneuvering states; designing the transitions as a truth table.</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <figure class="figure">
+          <img src="images/lab2/p03_03.jpg" alt="Diagram of an ultrasonic sensor transmitting a pulse and receiving its echo">
+          <figcaption>Ultrasonic ToF — Lab 2's first sensor</figcaption>
+        </figure>
+        <div class="outcome-card" style="margin-top:24px;">
+          <span class="lbl-dark" style="display:block; margin-bottom:16px;">Students will be able to</span>
+          <ul>
+            <li>Read a sensor datasheet and wire it correctly to a microcontroller</li>
+            <li>Convert raw readings into physical units — µs → cm, gravity → tilt angles</li>
+            <li>Diagnose noise and drift, then fix them with calibration and filters</li>
+            <li>Design an FSM that reacts to the environment deterministically</li>
+          </ul>
+        </div>
+        <div class="meta-chips" style="margin:24px 0 0;">
+          <span class="chip">Lab 2 · Sensors (ultrasonic + IMU + filters)</span>
+          <span class="chip">Lab 5 · Routing (IR tracking + decisions)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Milestone project</span>
+      <p><strong>Sense &amp; React.</strong> The car follows a line through the full track, stops behind an obstacle, and takes the correct branch at a crossroad — a finite-state machine driving PID-controlled motion, demonstrated live.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 3 ================= -->
+<section class="band" id="part3">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">03</span>
+      <div>
+        <span class="lbl-purple">Part 3 · Connect</span>
+        <h2 class="t-lg" style="margin-top:8px;">Connected Infrastructure, IoT &amp; Smart City Ecosystems</h2>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Weeks 15–22</span>
+      <span class="chip">Senior focus (Junior extension)</span>
+      <span class="chip">Prerequisite: Part 2</span>
+      <span class="chip orange">Lab 6 included in this pack</span>
+    </div>
+
+    <div class="row" style="margin-bottom:48px;">
+      <div>
+        <p class="abstract body-lg dim">
+          True autonomy operates within a broader, connected environment. Part 3 bridges the gap between isolated
+          edge devices and networked cloud infrastructure. By examining how data travels across local networks and
+          the global web, students transform a standalone robot into an interactive node within a Smart City
+          ecosystem. The AIoScout playfield becomes an active infrastructure layer providing localization, external
+          telemetry, and remote orchestration.
+        </p>
+        <div class="module">
+          <span class="lbl-purple">Module 3.1 · Internet Architecture &amp; Network Protocols</span>
+          <ul>
+            <li><strong>Client-server models</strong> — requests and responses, IP addressing and ports, sockets, DNS, and bandwidth/latency constraints on small devices.</li>
+            <li><strong>Data serialization &amp; transport</strong> — JSON as the lingua franca, the HTTP request cycle, and lightweight MQTT publish/subscribe for telemetry.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 3.2 · Local-to-Shared Data Streams</span>
+          <ul>
+            <li><strong>Shared telemetry</strong> — publishing live vehicle status, speed, and battery health to central servers.</li>
+            <li><strong>Real-time dashboards</strong> — live sensor visualisation and camera stream passthroughs.</li>
+            <li><strong>Cloud-to-device commands</strong> — over-the-air (OTA) parameter updates and remote overrides, with a serious conversation about remote-control safety.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 3.3 · Smart Infrastructure &amp; Connected Playfields</span>
+          <ul>
+            <li><strong>V2X communication</strong> — Vehicle-to-Everything models: V2I, V2V, V2C in the playfield ecosystem.</li>
+            <li><strong>Interactive field signals</strong> — smart traffic lights broadcasting their state over network sockets.</li>
+            <li><strong>RFID localization arrays</strong> — passive tags embedded in the playfield as "landmarks"; a reader under the car resolves its position to a node (Lab 6's Octopus-card physics).</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <figure class="figure">
+          <img src="images/lab6/p01_00.png" alt="Diagram of an ESP32 exchanging data with a Firebase Realtime Database">
+          <figcaption>ESP32 ⇄ realtime database — Lab 6</figcaption>
+        </figure>
+        <div class="outcome-card" style="margin-top:24px;">
+          <span class="lbl-dark" style="display:block; margin-bottom:16px;">Students will be able to</span>
+          <ul>
+            <li>Explain the client-server model and choose JSON / HTTP / MQTT appropriately</li>
+            <li>Publish live telemetry to a cloud database and render it on a dashboard</li>
+            <li>Receive and safely act on remote commands and OTA parameter changes</li>
+            <li>Use an RFID array as an outdoor-localization layer, and state its limits</li>
+          </ul>
+        </div>
+        <div class="meta-chips" style="margin:24px 0 0;">
+          <span class="chip">Lab 6 · Firebase &amp; RFID</span>
+          <span class="chip orange">Milestone · The fleet dashboard</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Milestone project</span>
+      <p><strong>The Fleet Dashboard.</strong> Every car publishes status and RFID-resolved position to a shared cloud; one dashboard shows the whole fleet live — and a remote operator can start, stop, or retask any car in seconds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 4 ================= -->
+<section class="band" id="part4" style="background: var(--canvas);">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">04</span>
+      <div>
+        <span class="lbl-purple">Part 4 · Think</span>
+        <h2 class="t-lg" style="margin-top:8px;">Edge AI, Multimodal Perception &amp; Human-Robot Interaction</h2>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Weeks 23–32 + capstone</span>
+      <span class="chip">Senior pathway</span>
+      <span class="chip">Prerequisite: Parts 1–3</span>
+    </div>
+
+    <div class="row rev" style="margin-bottom:48px;">
+      <div>
+        <p class="abstract body-lg dim">
+          Low-level sensors and rigid logic rules quickly reach their limit when faced with the ambiguity of the
+          real world. Part 4 introduces Edge AI and onboard machine learning, giving the vehicle human-like spatial
+          understanding without cloud latency. Students progress from computer-vision pipelines to multimodal
+          interaction, exploring how Large Language Models (LLMs), Text-to-Speech (TTS), and Vision-Language Models
+          bridge the gap between high-level human intent and fully autonomous execution.
+        </p>
+        <div class="module">
+          <span class="lbl-purple">Module 4.1 · On-Device Computer Vision &amp; Deep Learning</span>
+          <ul>
+            <li><strong>Why learn?</strong> — the limits of deterministic code vs. learning-based perception on messy real-world input.</li>
+            <li><strong>Vision pipelines</strong> — an image as a matrix: downsampling, colour-space transformations (RGB → HSV), and convolution as a matrix operation.</li>
+            <li><strong>Convolutional Neural Networks (CNNs)</strong> — building and training an image classifier; real-time object detection on edge hardware.</li>
+            <li><strong>Deployment constraints</strong> — model quantization, frame rate (FPS) budgets, and low-latency inference on microcontroller-class chips.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 4.2 · End-to-End Autonomous Driving</span>
+          <ul>
+            <li><strong>Visual lane detection</strong> — colour segmentation, perspective, and extracting a steering signal from the image.</li>
+            <li><strong>Signs &amp; pedestrians</strong> — dynamic road-sign recognition and pedestrian awareness with the onboard CNN.</li>
+            <li><strong>Fusion into control</strong> — feeding AI vision outputs directly into the motor PID loops of Part 1 ("Pixels to Actuators"), with deterministic safety fallbacks.</li>
+          </ul>
+        </div>
+        <div class="module">
+          <span class="lbl-purple">Module 4.3 · Next-Gen Human-Robot Interaction</span>
+          <ul>
+            <li><strong>Natural language understanding</strong> — integrating onboard/cloud LLMs for natural command interpretation.</li>
+            <li><strong>Multimodal pipelines</strong> — Voice-to-action (Speech → LLM → Action) and visual query answering with Vision-Language Models; TTS for spoken feedback.</li>
+            <li><strong>Intent translation</strong> — converting abstract human prompts ("Park safely near the green sign") into deterministic kinetic execution, with prompt design and safety guardrails.</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <figure class="figure">
+          <img src="images/lab5/p17_25.jpg" alt="A playfield track with a crossroad where the car must decide its route">
+          <figcaption>The AIoScout playfield with a crossroad</figcaption>
+        </figure>
+        <div class="outcome-card" style="margin-top:24px;">
+          <span class="lbl-dark" style="display:block; margin-bottom:16px;">Students will be able to</span>
+          <ul>
+            <li>Train, evaluate, and deploy a compact CNN on edge hardware within an FPS budget</li>
+            <li>Turn camera input into steering commands inside a PID control loop</li>
+            <li>Chain speech, an LLM, and structured actions into one reliable pipeline</li>
+            <li>Anticipate failure modes and design fallback behaviours for AI-driven motion</li>
+          </ul>
+        </div>
+        <div class="meta-chips" style="margin:24px 0 0;">
+          <span class="chip">Lab 0 · Edge AI vision</span>
+          <span class="chip orange">Capstone · Full-mission autonomy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Capstone project</span>
+      <p><strong>Full-mission autonomy.</strong> The car receives its task from the cloud, localises via RFID, navigates the playfield under its own vision, obeys road signs, responds to one spoken command, and parks itself — then reports completion to the dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TIMELINE ================= -->
+<section class="band" id="timeline">
+  <div class="rail">
+    <div class="sec-head">
+      <span class="lbl-purple">The progression</span>
+      <h2 class="t-lg">The four-phase progression</h2>
+      <p class="body-lg dim sub">Each phase ends with a working capability that the next phase builds on.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="phase">
+        <div class="p-num">Phase 01<br>Weeks 1–6</div>
+        <div class="p-body">
+          <p class="essence">Move</p>
+          <h3>Fundamentals of Mobile Robotics &amp; Closed-Loop Control</h3>
+          <p class="body-lg dim">Electrical systems, kinematics, and PID control — ending with reliable straight-line motion.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="p-num">Phase 02<br>Weeks 7–14</div>
+        <div class="p-body">
+          <p class="essence">Sense</p>
+          <h3>Environmental Perception &amp; Reactive Sensing</h3>
+          <p class="body-lg dim">Sensors, calibration and filtering, and reactive state-machine behaviours — Labs 2 and 5.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="p-num">Phase 03<br>Weeks 15–22</div>
+        <div class="p-body">
+          <p class="essence">Connect</p>
+          <h3>Connected Infrastructure, IoT &amp; Smart City Ecosystems</h3>
+          <p class="body-lg dim">Networking, cloud databases, remote dashboards, and RFID localization on the smart playfield — Lab 6.</p>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="p-num">Phase 04<br>Weeks 23–32</div>
+        <div class="p-body">
+          <p class="essence">Think</p>
+          <h3>Edge AI, Multimodal Perception &amp; Human-Robot Interaction</h3>
+          <p class="body-lg dim">Onboard computer vision, autonomous driving behaviours, and voice and language interaction — closing with the capstone project.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LAB MAP ================= -->
+<section class="band" id="labmap" style="background: var(--canvas);">
+  <div class="rail">
+    <div class="sec-head">
+      <span class="lbl-purple">Materials map</span>
+      <h2 class="t-lg">Labs, guides &amp; decks in this pack</h2>
+      <p class="body-lg dim sub">Every lab ships with a student guide (Markdown) and a classroom slide deck (single-file HTML), both adapted from HKUST ISDN 2602 laboratory material. Click a lab to open its materials — labs marked <em>in preparation</em> will be added as they are ready.</p>
+    </div>
+    <div class="wrap-list">
+      <table class="spec">
+        <tr><th style="width:26%;">Lab</th><th style="width:14%;">Maps to</th><th>Skills demonstrated</th><th style="width:18%;">Deliverable</th><th style="width:12%;">Materials</th></tr>
+        <tr>
+          <td><strong><a href="slides/Lab0_EdgeAI_Vision_Slides.html">Lab 0 · Edge AI Vision</a></strong><span class="sub">TensorFlow Lite Micro on ESP32-P4</span></td>
+          <td>Part 4 · Module 4.1</td>
+          <td>Image collection and preprocessing, CNN training with TFLiteTraining, hyperparameters, int8 quantization and export, live on-device inference</td>
+          <td>Trained classifier running on the board</td>
+          <td><a href="slides/Lab0_EdgeAI_Vision_Slides.html">Slides</a> · <a href="Lab0_EdgeAI_Vision_StudentGuide.html">Guide</a></td>
+        </tr>
+        <tr>
+          <td><strong>Lab 1 · Motor &amp; Motion</strong><span class="sub">Part 1's hands-on core</span></td>
+          <td>Part 1</td>
+          <td>H-bridge driving, encoders, P → PID speed &amp; heading control</td>
+          <td>Straight-line PID demo + tuning log</td>
+          <td><span class="avail soon">In preparation</span></td>
+        </tr>
+        <tr>
+          <td><strong><a href="slides/Lab2_Sensors_Slides.html">Lab 2 · Sensors</a></strong><span class="sub">Ultrasonic + IMU + filters</span></td>
+          <td>Part 2 · Modules 2.1–2.2</td>
+          <td>ToF distance measurement, IMU telemetry, low-pass &amp; complementary filtering, sensor fusion</td>
+          <td>Measurement table + filter comparison</td>
+          <td><a href="slides/Lab2_Sensors_Slides.html">Slides</a> · <a href="Lab2_Sensors_StudentGuide.html">Guide</a></td>
+        </tr>
+        <tr>
+          <td><strong><a href="slides/Lab5_Routing_Slides.html">Lab 5 · Routing</a></strong><span class="sub">Dijkstra + line tracking</span></td>
+          <td>Part 2 · Module 2.3</td>
+          <td>Weighted graphs &amp; Dijkstra's algorithm, MATLAB simulation, FreeRTOS multitasking, IR tracking, crossroad FSM</td>
+          <td>Shortest-path results + tracked-line demo</td>
+          <td><a href="slides/Lab5_Routing_Slides.html">Slides</a> · <a href="Lab5_Routing_StudentGuide.html">Guide</a></td>
+        </tr>
+        <tr>
+          <td><strong><a href="slides/Lab6_Firebase_RFID_Slides.html">Lab 6 · Firebase &amp; RFID</a></strong><span class="sub">Cloud + localization</span></td>
+          <td>Part 3 · Modules 3.1–3.3</td>
+          <td>Firebase Realtime Database, JSON, authentication &amp; API keys, realtime read/write, RFID identification</td>
+          <td>Live read/write loop demo</td>
+          <td><a href="slides/Lab6_Firebase_RFID_Slides.html">Slides</a> · <a href="Lab6_Firebase_RFID_StudentGuide.html">Guide</a></td>
+        </tr>
+        <tr>
+          <td><strong>Capstone · Full-Mission Autonomy</strong><span class="sub">Final project</span></td>
+          <td>Part 4 · all parts</td>
+          <td>Edge vision, sign recognition, LLM voice command, full mission orchestration</td>
+          <td>Capstone demo + engineering log</td>
+          <td><span class="avail soon">In preparation</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PATHWAYS ================= -->
+<section class="band" id="pathways">
+  <div class="rail">
+    <div class="sec-head">
+      <span class="lbl-purple">Pathways</span>
+      <h2 class="t-lg">Three routes through the curriculum</h2>
+    </div>
+    <div class="cards3">
+      <div class="card">
+        <span class="lbl-dark">Junior form · ages 12–15</span>
+        <h3>Move &amp; Sense</h3>
+        <p>Parts 1–2 over one school year (≈ 24 sessions), with concepts introduced on the hardware first. Ends with the Sense &amp; React milestone: line following with obstacle avoidance and crossroad decisions.</p>
+      </div>
+      <div class="card">
+        <span class="lbl-dark">Senior form · ages 15–18</span>
+        <h3>The full arc</h3>
+        <p>All four parts (≈ 32 sessions) closing with the capstone. University-caliber material — same lab lineage as HKUST ISDN 2602 — paced for secondary school, with checkpoints and an engineering log throughout.</p>
+      </div>
+      <div class="card">
+        <span class="lbl-dark">Team &amp; competition</span>
+        <h3>Mock mission league</h3>
+        <p>An after-school track that replays the capstone as a timed mission on the smart playfield: cloud tasking, RFID checkpoints, sign obedience, and voice commands — scored on reliability, not speed alone.</p>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:64px;">
+      <span class="lbl-purple">Pedagogy</span>
+      <h2 class="t-lg">How the curriculum teaches</h2>
+    </div>
+    <div class="cards3">
+      <div class="card">
+        <span class="lbl-dark">Hands-on first</span>
+        <h3>Concepts start on the car</h3>
+        <p>Each new concept is introduced through something observable on the car — drift shows up in the data before it is explained as integration error. The formal theory follows.</p>
+      </div>
+      <div class="card">
+        <span class="lbl-dark">Checkpoint-driven</span>
+        <h3>Demos and committed code</h3>
+        <p>Each lab ends at a checkpoint: demonstrate the behaviour to an instructor, commit the code. Progress is measured in working demos, not quizzes.</p>
+      </div>
+      <div class="card">
+        <span class="lbl-dark">Compounding build</span>
+        <h3>A single growing system</h3>
+        <p>The PID loop tuned in week 4 still runs at the capstone — students maintain the same car and codebase across the whole programme.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-rail">
+    <div>
+      <a class="wordmark" href="#top" style="display:block; margin-bottom:12px;">AIo<span>Scout</span></a>
+      <p class="body-sm quiet">Physical AI &amp; Autonomous Robotics · Curriculum overview</p>
+      <p class="body-sm quiet">Adapted from HKUST ISDN 2602 laboratory material (2025)</p>
+    </div>
+    <div class="f-links">
+      <a href="#part1">Part 1</a>
+      <a href="#part2">Part 2</a>
+      <a href="#part3">Part 3</a>
+      <a href="#part4">Part 4</a>
+      <a href="#labmap">Lab map</a>
+      <a href="#pathways">Pathways</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* minimal scrollspy for nav active states */
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('#navLinks a'));
+  var ids = links.map(function (a) { return a.getAttribute('href').slice(1); });
+  var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+
+  function onScroll() {
+    var y = window.scrollY + 140;
+    var current = 0;
+    targets.forEach(function (t, i) { if (t.offsetTop <= y) current = i; });
+    links.forEach(function (a, i) { a.classList.toggle('active', i === current); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

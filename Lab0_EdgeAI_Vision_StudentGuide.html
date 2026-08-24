@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 0 · Edge AI Vision — Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article h4 { font-size:17px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .cph { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:40px 0 8px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  .katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 0; }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Index</a>
+      <span class="nav-label">Lab 0 · Student Guide</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Lab 0 — Edge AI Vision: TensorFlow Lite Micro <em>(Student Guide)</em></h1>
+<blockquote>
+<p>Adapted from the AIoScout TF Lite Training Manual (2026) for secondary school students.</p>
+<p><strong>Lab focus</strong> — collect images, train an image-classification neural network (no coding needed), and run it live on the ESP32-P4 microcontroller.</p>
+</blockquote>
+<hr />
+<h2>1. Welcome — What You Will Learn</h2>
+<p>In this lab you will give your robot car the ability to <strong>recognize what it sees</strong>. By the end you can:</p>
+<ul>
+<li>Set up the <strong>ESP32-P4</strong> development board with the Arduino IDE</li>
+<li><strong>Collect and preprocess</strong> image samples from a camera</li>
+<li><strong>Train</strong> a convolutional neural network (CNN) with the <strong>TFLiteTraining</strong> app — without writing training code</li>
+<li>Understand <strong>hyperparameters</strong> and how they change training results</li>
+<li><strong>Export</strong> a quantized model and <strong>deploy</strong> it to the microcontroller for real-time inference</li>
+</ul>
+<p><strong>Key words you will learn:</strong> machine learning · training · sample · CNN · hyperparameter · overfitting · quantization · inference · edge AI</p>
+<hr />
+<h2>2. Background — Machine Learning on a Chip</h2>
+<h3>2.1 Rules vs. Learning</h3>
+<p>Normal programs follow rules a human wrote: <em>if the pixel is dark, do X</em>. But how would you write rules to recognize "a stop sign" in an image? Nobody can write those rules by hand. <strong>Machine learning</strong> flips the process: instead of writing rules, you show the computer many <strong>labeled examples</strong> (images + their correct answers) and let it <strong>learn</strong> the rules by itself. This is called <strong>training</strong>.</p>
+<h3>2.2 What Is a CNN?</h3>
+<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural network for images. You can think of it as a stack of small <strong>feature detectors</strong>: early layers detect simple patterns (edges, blobs), later layers combine them into complex ones (shapes, objects). The final layer outputs a <strong>confidence</strong> for each class — e.g., "sign: 92%, wall: 5%, floor: 3%".</p>
+<h3>2.3 What Is TensorFlow Lite Micro?</h3>
+<p><strong>TensorFlow Lite Micro</strong> (now called <strong>LiteRT for Microcontrollers</strong>) is a version of Google's ML runtime designed for microcontrollers — chips with only kilobytes of memory:</p>
+<ul>
+<li>The core runtime fits in <strong>16 KB</strong> of memory</li>
+<li>No operating system, no standard C/C++ libraries, no dynamic memory allocation needed</li>
+<li>Models are <strong>quantized</strong> to <strong>int8</strong> (each number stored as 1 byte instead of 4) so they are small and fast enough for a microcontroller</li>
+</ul>
+<p>Running AI directly on the chip (instead of sending images to a server) is called <strong>edge AI</strong> — it means fast response, no network needed, and privacy.</p>
+<h3>2.4 Meet the ESP32-P4</h3>
+<p>The <strong>ESP32-P4</strong> is a high-performance system-on-a-chip (SoC) from Espressif, made for exactly this kind of work:</p>
+<ul>
+<li><strong>Dual-core</strong> processor with plenty of speed for real-time inference</li>
+<li>Rich peripheral interfaces and <strong>camera support</strong> (e.g., the IMX219 camera module)</li>
+<li>Captures images, processes them on-device, and runs TensorFlow Lite models in real time</li>
+</ul>
+<p>It programs with the familiar <strong>Arduino IDE</strong> — the same environment you used in earlier labs.</p>
+<h3>2.5 The TFLiteTraining App</h3>
+<p><strong>TFLiteTraining</strong> is a desktop application for training lightweight image classifiers — inspired by Google's Teachable Machine. With it you can:</p>
+<ol>
+<li><strong>Collect</strong> labeled image samples — from a <strong>webcam</strong>, <strong>uploaded files</strong>, or a <strong>serial camera</strong> (our ESP32-P4!)</li>
+<li><strong>Preprocess</strong> them (crop, filter noise) — no code</li>
+<li><strong>Train</strong> a CNN by adjusting hyperparameters</li>
+<li><strong>Preview</strong> how the model performs live</li>
+<li><strong>Export</strong> a fully quantized <strong>int8 TensorFlow Lite model</strong> plus the C/C++ files, ready to deploy to the microcontroller</li>
+</ol>
+<p>The full workflow of this lab: <strong>Collect → Preprocess → Train → Preview → Export → Deploy</strong>.</p>
+<hr />
+<h2>3. Task 1 — Set Up Arduino IDE and the ESP32-P4</h2>
+<h3>Step-by-step</h3>
+<p><strong>Step 1.</strong> Download the latest <strong>Arduino IDE</strong> (version 2.3.10 or higher) from https://www.arduino.cc/en/software and install it.</p>
+<p><strong>Step 2.</strong> Open the settings page (<code>cmd/ctrl + ,</code>):</p>
+<ul>
+<li><strong>macOS:</strong> <em>Arduino IDE → Settings → Additional Boards Manager URLs</em></li>
+<li><strong>Windows:</strong> <em>File → Preferences → Settings → Additional Boards Manager URLs</em></li>
+</ul>
+<p><img alt="Windows Arduino settings" src="images/cv/image1.png" />
+<em>Windows: Preferences dialog</em></p>
+<p><img alt="Mac Arduino settings" src="images/cv/image3.png" />
+<em>macOS: Settings dialog</em></p>
+<p><strong>Step 3.</strong> Add the ESP32 board index URL and click <strong>OK</strong>:</p>
+<pre><code>https://dl.espressif.com/dl/package_esp32_index.json
+</code></pre>
+<p><img alt="Adding the board manager URL" src="images/cv/image4.png" />
+<em>Paste the URL into "Additional Boards Manager URLs"</em></p>
+<p><strong>Step 4.</strong> Go to <em>Tools → Board → Board Manager</em>, search <strong>esp32</strong>, install <strong>"esp32 by Espressif Systems"</strong>, and select <strong>version 3.3.1</strong> exactly.</p>
+<p><img alt="Installing the esp32 board package" src="images/cv/image5.png" />
+<em>Board Manager: install esp32 by Espressif Systems, version 3.3.1</em></p>
+<p><strong>Step 5.</strong> Unzip the provided <strong><code>esp32_mannual.zip</code></strong> and place the folder into your Arduino hardware path:</p>
+<ul>
+<li><strong>macOS:</strong> <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/</code></li>
+<li><strong>Windows:</strong> <code>C:\Users\&lt;you&gt;\Documents\Arduino\hardware\</code></li>
+</ul>
+<p>The final path should look like: <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/esp32_mannual</code></p>
+<p><strong>Step 6.</strong> Back in the IDE: <em>Tools → Board → ESP32_mannual</em> → select <strong>ESP32P4 Dev Module</strong>, and copy the board settings shown in the manual <strong>one by one</strong> (for now, <strong>do not</strong> set the "Port" yet):</p>
+<p><img alt="Board settings for the ESP32P4 Dev Module" src="images/cv/image6.png" />
+<em>Copy the board variable settings one by one</em></p>
+<p><strong>Step 7.</strong> Now choose the <strong>Port</strong> that connects to your board:</p>
+<p><img alt="Choosing the port" src="images/cv/image7.png" />
+<em>Select the port your board is connected to</em></p>
+<p><strong>Step 8.</strong> Open and <strong>upload the sample code</strong> (it streams grayscale images from the camera over serial):</p>
+<p><img alt="Uploading the sample code" src="images/cv/image8.png" />
+<em>Click Upload and wait for success</em></p>
+<p><strong>Step 9.</strong> Open the <strong>Serial Monitor</strong>. If you see "garbled characters" streaming in the text box — that's the binary image data, and it means the upload <strong>worked</strong>. Then <strong>close the Serial Monitor</strong> (important: it occupies the port, and the TFLiteTraining app will need that port later).</p>
+<p><img alt="Serial monitor showing the image stream" src="images/cv/image9.png" />
+<em>Garbled characters = the grayscale image stream — success!</em></p>
+<div class="cph">Check Point</div>
+<p>Show the TA / instructor: the sample code uploaded successfully, and the image stream visible in the Serial Monitor — then closed.</p>
+<hr />
+<h2>4. Task 2 — The TFLiteTraining App</h2>
+<h3>4.1 Install and Open the Project</h3>
+<p><strong>Step 1.</strong> Install the app from the provided <code>.dmg</code> (macOS) or <code>.exe</code> (Windows), and download the template project file <strong><code>template.tmproj</code></strong>.</p>
+<p><strong>Step 2.</strong> Open the app, click <strong>Open Project</strong>, and select <code>template.tmproj</code>:</p>
+<p><img alt="Opening the template project" src="images/cv/image11.png" />
+<em>Open Project → template.tmproj</em></p>
+<h3>4.2 The Three Areas of the Workspace</h3>
+<p>The workspace is divided into three areas:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sample Area</strong></td>
+<td>Collect and preprocess the data (images)</td>
+</tr>
+<tr>
+<td><strong>Train Area</strong></td>
+<td>Control training via hyperparameters</td>
+</tr>
+<tr>
+<td><strong>Preview Area</strong></td>
+<td>Preview the model's live performance</td>
+</tr>
+</tbody>
+</table></div>
+<p><img alt="Full view of the TFLiteTraining workspace" src="images/cv/image12.png" />
+<em>Sample Area, Train Area, and Preview Area</em></p>
+<h3>4.3 Collecting Samples</h3>
+<p>There are three ways to collect images:</p>
+<ul>
+<li><strong>Webcam</strong> — uses your laptop's (or external) camera; pick a specific camera with the <strong>Gear</strong> icon</li>
+<li><strong>Upload</strong> — choose picture files from your computer</li>
+<li><strong>Device</strong> — captures images straight from the <strong>ESP32-P4's serial camera</strong></li>
+</ul>
+<p>For <strong>Device</strong> input: click <strong>Device</strong>, select the board's serial port, and check the <strong>Gear</strong> settings. The defaults — <strong>96×96, Grayscale, 115200 baud, sync header AA 55 AA</strong> — match the sample code you flashed in Task 1. Don't change them for this lab.</p>
+<p>Capturing: click <strong>Capture</strong> for a single picture, or press-and-hold <strong>Hold to Capture</strong> for a continuous stream.</p>
+<p><img alt="Collecting samples: webcam, upload, or device" src="images/cv/image13.png" />
+<em>Sample collection — capture single images or hold to capture continuously</em></p>
+<p><strong>Classes:</strong> each category (e.g., "left arrow", "right arrow", "wall") is a <strong>class</strong>. Add classes with the + button, rename by clicking the name, delete with the × button. Aim for a <strong>similar number of samples in each class</strong> (e.g., 30–50 each).</p>
+<p><strong>Deleting a sample:</strong> hover over any sampled image and click to delete it.</p>
+<h3>4.4 Preprocessing — Making Cleaner Data</h3>
+<p>Good data matters more than a clever model. Enter the image-processing page by clicking the <strong>Edit</strong> icon. The page has two parts: the <strong>Image Viewer</strong> (left) and the <strong>Sample Worktable</strong> (right).</p>
+<p><img alt="The image processing page" src="images/cv/image14.png" />
+<em>Image Viewer (original + processed) and the Sample Worktable</em></p>
+<p>Key concepts:</p>
+<ul>
+<li><strong>ROI (Region of Interest)</strong> — the purple rectangle marking the area that will be <strong>cropped</strong> and used for training; everything outside is thrown away</li>
+<li><strong>Dark Thr (Darkness Threshold)</strong> — pixels <strong>darker</strong> than this value become pure white</li>
+<li><strong>Lum Thr (Luminosity Threshold)</strong> — pixels <strong>brighter</strong> than this value become pure white</li>
+</ul>
+<p>These two thresholds remove environmental noise — background that is much darker or brighter than your subject simply disappears.</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preprocess Mode</strong></td>
+<td><strong>Auto</strong> — a search box in the middle finds and crops the darkest area automatically. <strong>Manual ROI</strong> — you drag the crop region yourself on the original image.</td>
+</tr>
+<tr>
+<td><strong>Dark Thr</strong></td>
+<td>Pixels below this brightness → white. Global setting for the whole class.</td>
+</tr>
+<tr>
+<td><strong>Lum Thr</strong></td>
+<td>Pixels above this brightness → white. Global setting for the whole class.</td>
+</tr>
+<tr>
+<td><strong>ROI x1, y1, x2, y2</strong></td>
+<td>Relative coordinates of the crop's top-left (x1, y1) and bottom-right (x2, y2) corners. E.g., x1 = 0.2, y1 = 0.1 on a 96×96 image → pixel (19, 10), rounded to the nearest integer. (Manual ROI mode only.)</td>
+</tr>
+</tbody>
+</table></div>
+<p>All processed images are <strong>resized to image size × image size</strong> (set in the Train Area) before training.</p>
+<p><strong>Keyboard shortcuts in the edit page:</strong></p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arrow keys</td>
+<td>Move between samples</td>
+</tr>
+<tr>
+<td>Shift + Arrow keys</td>
+<td>Move the ROI (Manual ROI mode)</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>Switch to <strong>Auto</strong> preprocess mode</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>Switch to <strong>Manual ROI</strong> mode</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Delete the current sample</td>
+</tr>
+<tr>
+<td>S</td>
+<td><strong>Save changes</strong></td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Exit the edit view</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p> <strong>Remember to save after every change</strong> — unsaved preprocessing is lost.</p>
+</blockquote>
+<h3>4.5 Hyperparameters — The Knobs of Training</h3>
+<p>Open the hyperparameter panel with the <strong>Advanced</strong> icon in the Train Area:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Hyperparameter</th>
+<th>Default</th>
+<th>Range</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Image size</strong></td>
+<td>96</td>
+<td>96, 160, 384</td>
+<td>Input resolution. Larger = more detail, but slower training and inference. Must match the input size in the Preview Area.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Color mode</strong></td>
+<td>grayscale</td>
+<td>rgb / grayscale</td>
+<td>Input channels (1 or 3). Always use <strong>grayscale</strong> for the B-G / G-channel pipeline.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Batch size</strong></td>
+<td>16</td>
+<td>8 / 16 / 32 / 64</td>
+<td>Samples per training step. Larger = faster but more RAM. 16 is good for 96×96.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Epochs</strong></td>
+<td>20</td>
+<td>1–200</td>
+<td>Full passes through the dataset. More = better fit, but risks <strong>overfitting</strong> (memorizing instead of learning).</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Validation split</strong></td>
+<td>0.25</td>
+<td>0.05–0.50</td>
+<td>Fraction of samples held out to check the model. 0.25 = 75% train, 25% validate.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Learning rate</strong></td>
+<td>0.001</td>
+<td>0.00001–0.1</td>
+<td>Step size of each weight update. Higher = faster but unstable. 0.001 is a safe default.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Conv1 filters</strong></td>
+<td>8</td>
+<td>4 / 8 / 16 / 32</td>
+<td>Feature detectors in the first convolution layer. More = better patterns, bigger model.</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Conv2 filters</strong></td>
+<td>16</td>
+<td>8 / 16 / 32 / 64</td>
+<td>Feature detectors in the second convolution layer. Typically 2× Conv1.</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Dense units</strong></td>
+<td>32</td>
+<td>16 / 32 / 64 / 128</td>
+<td>Neurons in the fully-connected layer. More = more complex decision boundaries.</td>
+</tr>
+</tbody>
+</table></div>
+<p><img alt="Setting hyperparameters and starting training" src="images/cv/image15.png" />
+<em>The Advanced panel: set hyperparameters, then click "Train Embedded Model"</em></p>
+<blockquote>
+<p><strong>The trade-off:</strong> bigger filters, more dense units, and larger image size <em>may</em> improve accuracy — but they <strong>always</strong> make inference slower. Real edge-AI engineering is finding the balance for real-time performance.</p>
+</blockquote>
+<h3>4.6 Training</h3>
+<p>After setting the hyperparameters, click <strong>Train Embedded Model</strong> and wait for training to finish. Watch the validation accuracy — if it is high while live performance is poor, your model has probably <strong>overfit</strong> or your samples don't vary enough (try recapturing in different lighting and angles).</p>
+<h3>4.7 Preview — Live Testing</h3>
+<p>Before previewing, make sure the image-uploading code from Task 1 is still flashed on the board.</p>
+<p><strong>Step 1.</strong> Click the <strong>Gear</strong> icon in the Preview Area, set the input source to <strong>Device</strong>, and choose the port. (The "export" setting doesn't matter here.) All preview images are resized to <em>image size × image size</em> in grayscale, exactly as in training.</p>
+<p><img alt="Preview settings" src="images/cv/image16.png" />
+<em>Set source to Device and choose the port</em></p>
+<p><strong>Step 2.</strong> Toggle <strong>Input</strong> to see the live image, and read the <strong>confidence bar</strong> at the bottom — switch between <strong>show %</strong> and <strong>show score</strong> to change its units. Toggle <strong>ROI</strong> to see exactly what the model receives, or <strong>Orig</strong> to see the processed image. You can also adjust the <strong>Dark/Lum thresholds</strong> here and watch the effect live.</p>
+<p><img alt="Live interpretation view" src="images/cv/image17.png" />
+<em>Interpretation view: live image, ROI, and the confidence bar</em></p>
+<h3>4.8 Export and Save</h3>
+<p>When you're happy with the model: click <strong>Export model</strong>, and save your work via the top-left menu → <strong>Save Project</strong>.</p>
+<div class="cph">Check Point</div>
+<p>Show the TA / instructor: a trained model with at least two classes, live preview recognizing your objects, and the exported model files.</p>
+<hr />
+<h2>5. Task 3 — Deploy the Model on the MCU</h2>
+<p>You now have a trained model — the final step is running it on the chip.</p>
+<p><strong>Step 1.</strong> Open the folder where you exported the model, and the project folder containing <strong><code>TFLite.ino</code></strong>.</p>
+<p><strong>Step 2.</strong> Copy these <strong>five files</strong> from the export folder into the project folder (replace existing ones):</p>
+<ul>
+<li><code>tm_model_data.cpp</code> — the quantized model weights</li>
+<li><code>tm_model_data.h</code></li>
+<li><code>model_resolver.h</code></li>
+<li><code>model_settings.cpp</code></li>
+<li><code>model_settings.h</code></li>
+</ul>
+<p><img alt="Copying the five exported files" src="images/cv/image18.png" />
+<em>The five export files, copied into the TFLite.ino project</em></p>
+<p><strong>Step 3.</strong> Open <code>TFLite.ino</code> and make sure <strong><code>IMG_SIZE</code> matches the "image size"</strong> you chose in the TFLiteTraining app (default: 96). A mismatch means the model receives wrongly-sized images and outputs garbage.</p>
+<p><strong>Step 4.</strong> Upload the code, open the Serial Monitor, and watch your model classify the live camera stream:</p>
+<p><img alt="Live inference output on the board" src="images/cv/image19.png" />
+<em>The model running on the ESP32-P4 — live inference output</em></p>
+<div class="cph">Check Point</div>
+<p>Show the TA / instructor: the model running on the ESP32-P4, classifying live camera images with sensible confidences.</p>
+<hr />
+<h2>6. Appendix — Experiments to Try</h2>
+<ul>
+<li><strong>Epochs:</strong> train with 5, 20, and 60 epochs — watch validation accuracy and decide where more training stops helping</li>
+<li><strong>Model size:</strong> set Conv1/Conv2 filters and Dense units to the minimum vs. the maximum — compare accuracy <strong>and</strong> how fast the serial output updates</li>
+<li><strong>Data quality:</strong> train once with messy backgrounds, once with strict Dark/Lum thresholds — which matters more, cleaner data or a bigger model?</li>
+<li><strong>Image size:</strong> try 96 vs. 160 — can you measure the inference speed difference?</li>
+</ul>
+<p>These are the same trade-offs professional edge-AI engineers make every day — you now have the tools to explore them yourself.</p>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">Adapted from HKUST ISDN 2602 · Lab 0 · Student Guide</span>
+  </div>
+</footer>
+</body>
+</html>
