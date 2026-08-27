@@ -26,13 +26,22 @@ You don't need to memorize this — it just makes the lesson much easier to foll
 
 A normal program follows rules a human wrote: *"if the pixel is dark, do X."* That works for blinking an LED. It does not work for recognizing a road sign in a photo — nobody can write those rules by hand. **Machine learning** flips the approach: instead of writing rules, you show the computer many **labeled examples** (images with the correct answer attached) and let it find the rules by itself. That process is called **training**.
 
+![Classic programming vs. machine learning](img/rules-vs-learning.svg)
+*What goes in, and what comes out: classic programming vs. machine learning*
+
 ### 2.2 What gets trained? A CNN
 
 A **Convolutional Neural Network (CNN)** is the standard neural network for images. Think of it as a stack of small **feature detectors**: the first layers detect simple patterns (edges, blobs), deeper layers combine them into shapes and objects, and the final layer outputs a **confidence** for each class — for example "left arrow: 91%, right arrow: 7%, wall: 2%". In this workshop the CNN is tiny — small enough to run on a microcontroller in real time.
 
+![How a CNN processes an image](img/cnn.svg)
+*A small CNN, end to end: image → feature detectors → one confidence score per class*
+
 ### 2.3 The failure mode to know: overfitting
 
 A model can **memorize** your training photos instead of **learning** the concept — like a student who memorizes past papers but can't answer a new question. We detect this by holding part of the data out (**validation split**) and testing with images the model has never seen. You will meet this in the project when you test your digit recognizer on handwriting it wasn't trained on.
+
+![Generalizing vs. overfitting](img/overfitting.svg)
+*How to read the training curves: healthy (left) vs. overfit (right)*
 
 ### 2.4 Running AI on a chip: edge AI
 
@@ -45,6 +54,9 @@ The **ESP32-P4** is a high-performance microcontroller from Espressif with a dua
 ### 2.6 The tool: TFLiteTraining
 
 **TFLiteTraining** is a desktop app (inspired by Google's Teachable Machine) that gives you the whole pipeline in one window: **collect** images → **preprocess** (crop and clean) → **train** → **preview** live → **export** the model as files ready for the board.
+
+![The six-step pipeline](img/pipeline.svg)
+*The six steps you will follow — first on road signs in the lesson, then on digits in the project*
 
 ---
 

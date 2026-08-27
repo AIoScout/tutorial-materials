@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" font-family="Inter, Arial, sans-serif">
+  <rect width="880" height="300" fill="#ffffff"/>
+  <line x1="440" y1="24" x2="440" y2="240" stroke="#d8d9d8" stroke-width="1"/>
+
+  <!-- Panel A: generalizing -->
+  <text x="32" y="42" font-size="12" font-weight="700" letter-spacing="2" fill="#78716c">GENERALIZING</text>
+  <line x1="40" y1="220" x2="420" y2="220" stroke="#d8d9d8" stroke-width="1.5"/>
+  <line x1="40" y1="220" x2="40" y2="60" stroke="#d8d9d8" stroke-width="1.5"/>
+  <text x="40" y="52" font-size="11" fill="#78716c">accuracy</text>
+  <text x="420" y="240" font-size="11" fill="#78716c" text-anchor="end">epochs</text>
+  <polyline points="40,210 80,150 120,110 160,92 200,84 240,80 280,78 320,77 360,76 400,76" fill="none" stroke="#1a1c1c" stroke-width="2.5"/>
+  <polyline points="40,214 80,160 120,124 160,104 200,96 240,92 280,90 320,89 360,88 400,88" fill="none" stroke="#f58331" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <line x1="40" y1="264" x2="70" y2="264" stroke="#1a1c1c" stroke-width="2.5"/>
+  <text x="78" y="268" font-size="12" fill="#1a1c1c">training</text>
+  <line x1="150" y1="264" x2="180" y2="264" stroke="#f58331" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <text x="188" y="268" font-size="12" fill="#1a1c1c">validation</text>
+  <text x="32" y="292" font-size="13" fill="#525252">Both curves track each other — the model generalizes to new images.</text>
+
+  <!-- Panel B: overfitting -->
+  <text x="472" y="42" font-size="12" font-weight="700" letter-spacing="2" fill="#78716c">OVERFITTING</text>
+  <line x1="480" y1="220" x2="860" y2="220" stroke="#d8d9d8" stroke-width="1.5"/>
+  <line x1="480" y1="220" x2="480" y2="60" stroke="#d8d9d8" stroke-width="1.5"/>
+  <text x="480" y="52" font-size="11" fill="#78716c">accuracy</text>
+  <text x="860" y="240" font-size="11" fill="#78716c" text-anchor="end">epochs</text>
+  <polyline points="480,210 520,140 560,100 600,84 640,76 680,70 720,66 760,63 800,61 840,60" fill="none" stroke="#1a1c1c" stroke-width="2.5"/>
+  <polyline points="480,214 520,150 560,116 600,100 640,96 680,100 720,108 760,116 800,122 840,126" fill="none" stroke="#f58331" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <line x1="800" y1="61" x2="800" y2="122" stroke="#d8d9d8" stroke-width="1.5"/>
+  <text x="792" y="98" font-size="11" fill="#f58331" text-anchor="end">the gap</text>
+  <text x="472" y="292" font-size="13" fill="#525252">Validation stalls and falls while training keeps climbing — the model is memorizing.</text>
+</svg>

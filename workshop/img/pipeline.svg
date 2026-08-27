@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 110" font-family="Inter, Arial, sans-serif">
+  <defs>
+    <marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#78716c"/>
+    </marker>
+  </defs>
+  <rect width="880" height="110" fill="#ffffff"/>
+
+  <g font-size="11" font-weight="700" fill="#78716c" text-anchor="middle" letter-spacing="1">
+    <text x="99" y="30">01</text><text x="243" y="30">02</text><text x="387" y="30">03</text>
+    <text x="531" y="30">04</text><text x="675" y="30">05</text><text x="819" y="30">06</text>
+  </g>
+
+  <g font-size="14" font-weight="600" text-anchor="middle">
+    <rect x="40" y="40" width="118" height="44" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+    <text x="99" y="67" fill="#1a1c1c">Collect</text>
+    <rect x="184" y="40" width="118" height="44" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+    <text x="243" y="67" fill="#1a1c1c">Preprocess</text>
+    <rect x="328" y="40" width="118" height="44" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+    <text x="387" y="67" fill="#1a1c1c">Train</text>
+    <rect x="472" y="40" width="118" height="44" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+    <text x="531" y="67" fill="#1a1c1c">Preview</text>
+    <rect x="616" y="40" width="118" height="44" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+    <text x="675" y="67" fill="#1a1c1c">Export</text>
+    <rect x="760" y="40" width="118" height="44" fill="#1a1c1c"/>
+    <text x="819" y="67" fill="#ffffff">Deploy</text>
+  </g>
+
+  <g stroke="#78716c" stroke-width="1.5">
+    <line x1="161" y1="62" x2="180" y2="62" marker-end="url(#arr4)"/>
+    <line x1="305" y1="62" x2="324" y2="62" marker-end="url(#arr4)"/>
+    <line x1="449" y1="62" x2="468" y2="62" marker-end="url(#arr4)"/>
+    <line x1="593" y1="62" x2="612" y2="62" marker-end="url(#arr4)"/>
+    <line x1="737" y1="62" x2="756" y2="62" marker-end="url(#arr4)"/>
+  </g>
+</svg>
