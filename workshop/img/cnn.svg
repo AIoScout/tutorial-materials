@@ -6,8 +6,14 @@
   </defs>
   <rect width="880" height="330" fill="#ffffff"/>
 
-  <!-- input image grid -->
+  <!-- top label row: short labels, no collisions -->
   <text x="36" y="92" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">96×96 IMAGE</text>
+  <text x="271" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8" text-anchor="middle">CONV1</text>
+  <text x="435" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8" text-anchor="middle">CONV2</text>
+  <text x="547" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8" text-anchor="middle">DENSE</text>
+  <text x="612" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">CONFIDENCE PER CLASS</text>
+
+  <!-- input image grid -->
   <rect x="36" y="110" width="110" height="110" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
   <g stroke="#eaeaea" stroke-width="1">
     <line x1="58" y1="110" x2="58" y2="220"/><line x1="80" y1="110" x2="80" y2="220"/>
@@ -21,7 +27,6 @@
   <line x1="152" y1="165" x2="188" y2="165" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
 
   <!-- conv1 -->
-  <text x="196" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">CONV1 · 8 FILTERS</text>
   <g>
     <rect x="200" y="140" width="42" height="42" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
     <line x1="207" y1="147" x2="235" y2="147" stroke="#1a1c1c" stroke-width="2"/>
@@ -30,12 +35,11 @@
     <rect x="300" y="140" width="42" height="42" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
     <line x1="307" y1="175" x2="335" y2="175" stroke="#1a1c1c" stroke-width="2"/>
   </g>
-  <text x="200" y="204" font-size="12" fill="#78716c">edges, blobs</text>
+  <text x="271" y="204" font-size="12" fill="#78716c" text-anchor="middle">8 filters · edges, blobs</text>
 
   <line x1="350" y1="161" x2="374" y2="161" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
 
   <!-- conv2 -->
-  <text x="378" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">CONV2 · 16 FILTERS</text>
   <g>
     <rect x="378" y="144" width="34" height="34" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
     <path d="M385,158 l10,-8 10,8 -10,8 z" fill="#1a1c1c"/>
@@ -44,24 +48,22 @@
     <rect x="458" y="144" width="34" height="34" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
     <path d="M465,168 l12,-14" stroke="#1a1c1c" stroke-width="2.5"/>
   </g>
-  <text x="378" y="204" font-size="12" fill="#78716c">shapes, strokes</text>
+  <text x="435" y="204" font-size="12" fill="#78716c" text-anchor="middle">16 filters · shapes</text>
 
-  <line x1="500" y1="161" x2="524" y2="161" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <line x1="500" y1="161" x2="534" y2="161" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
 
   <!-- dense -->
-  <text x="530" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">DENSE · 32 UNITS</text>
   <g stroke="#1a1c1c" stroke-width="1.5" fill="#ffffff">
     <circle cx="547" cy="133" r="7"/>
     <circle cx="547" cy="152" r="7"/>
     <circle cx="547" cy="171" r="7"/>
     <circle cx="547" cy="190" r="7"/>
   </g>
-  <text x="530" y="216" font-size="12" fill="#78716c">decisions</text>
+  <text x="547" y="216" font-size="12" fill="#78716c" text-anchor="middle">32 units</text>
 
-  <line x1="570" y1="161" x2="598" y2="161" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <line x1="562" y1="161" x2="598" y2="161" stroke="#78716c" stroke-width="1.5" marker-end="url(#arr2)"/>
 
   <!-- output bars -->
-  <text x="612" y="126" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">CONFIDENCE PER CLASS</text>
   <rect x="612" y="140" width="196" height="20" fill="#f58331"/>
   <text x="620" y="154" font-size="12" font-weight="700" fill="#ffffff">left</text>
   <text x="818" y="154" font-size="13" font-weight="700" fill="#1a1c1c">91%</text>
