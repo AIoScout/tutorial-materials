@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edge AI Workshop — Pre-lab Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Workshop</a>
+      <span class="nav-label">Pre-lab Manual</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Edge AI Vision Workshop — Pre-lab Manual</h1>
+<blockquote>
+<p>Read this before the workshop. It takes about <strong>15 minutes of reading + 30 minutes of installation</strong>. If you arrive with the software installed and the self-check passed, you will spend the whole session building — not downloading.</p>
+</blockquote>
+<hr />
+<h2>1. What This Workshop Is About</h2>
+<p>In the lesson (about 45 minutes) we will train a small neural network to <strong>recognize road signs</strong>, live, on a microcontroller — no machine-learning experience needed. Then, in the project session, <strong>you will build your own</strong>: a digit recognizer (0–9) that runs on the same board.</p>
+<p>Everything runs on real hardware:</p>
+<ul>
+<li>The <strong>ESP32-P4</strong> development board with a camera module (provided at the workshop)</li>
+<li>The <strong>TFLiteTraining</strong> desktop app, which trains image classifiers without writing code</li>
+<li><strong>TensorFlow Lite Micro</strong>, Google's runtime that runs the trained model on the chip itself</li>
+</ul>
+<p>You do not need to know how to program. Every step is menu-driven; the lab manual tells you exactly what to click.</p>
+<hr />
+<h2>2. Background Reading (15 minutes)</h2>
+<p>You don't need to memorize this — it just makes the lesson much easier to follow.</p>
+<h3>2.1 Why not just write rules?</h3>
+<p>A normal program follows rules a human wrote: <em>"if the pixel is dark, do X."</em> That works for blinking an LED. It does not work for recognizing a road sign in a photo — nobody can write those rules by hand. <strong>Machine learning</strong> flips the approach: instead of writing rules, you show the computer many <strong>labeled examples</strong> (images with the correct answer attached) and let it find the rules by itself. That process is called <strong>training</strong>.</p>
+<h3>2.2 What gets trained? A CNN</h3>
+<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural network for images. Think of it as a stack of small <strong>feature detectors</strong>: the first layers detect simple patterns (edges, blobs), deeper layers combine them into shapes and objects, and the final layer outputs a <strong>confidence</strong> for each class — for example "left arrow: 91%, right arrow: 7%, wall: 2%". In this workshop the CNN is tiny — small enough to run on a microcontroller in real time.</p>
+<h3>2.3 The failure mode to know: overfitting</h3>
+<p>A model can <strong>memorize</strong> your training photos instead of <strong>learning</strong> the concept — like a student who memorizes past papers but can't answer a new question. We detect this by holding part of the data out (<strong>validation split</strong>) and testing with images the model has never seen. You will meet this in the project when you test your digit recognizer on handwriting it wasn't trained on.</p>
+<h3>2.4 Running AI on a chip: edge AI</h3>
+<p>Sending camera images to a server is slow and needs Wi-Fi. <strong>Edge AI</strong> runs the model directly on the device. To fit, the model is <strong>quantized</strong> to <strong>int8</strong> — every number stored as 1 byte instead of 4 — making it about 4× smaller and faster, at a negligible cost in accuracy. <strong>TensorFlow Lite Micro</strong> (now called LiteRT for Microcontrollers) is the runtime that executes such models on microcontrollers, in as little as 16 KB of memory.</p>
+<h3>2.5 The hardware: ESP32-P4</h3>
+<p>The <strong>ESP32-P4</strong> is a high-performance microcontroller from Espressif with a dual-core processor, camera support (e.g., the IMX219 module), and enough speed to run image classification in real time. You program it with the familiar <strong>Arduino IDE</strong> over a USB cable.</p>
+<h3>2.6 The tool: TFLiteTraining</h3>
+<p><strong>TFLiteTraining</strong> is a desktop app (inspired by Google's Teachable Machine) that gives you the whole pipeline in one window: <strong>collect</strong> images → <strong>preprocess</strong> (crop and clean) → <strong>train</strong> → <strong>preview</strong> live → <strong>export</strong> the model as files ready for the board.</p>
+<hr />
+<h2>3. Software Checklist (install before you come)</h2>
+<p>Install these in order. Versions matter — the workshop steps assume them.</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>What</th>
+<th>Version</th>
+<th>Where / Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Arduino IDE</strong></td>
+<td>2.3.10 or higher</td>
+<td>https://www.arduino.cc/en/software</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>esp32 board package</strong></td>
+<td><strong>3.3.1 exactly</strong></td>
+<td>In the IDE: Settings → <em>Additional Boards Manager URLs</em> → add <code>https://dl.espressif.com/dl/package_esp32_index.json</code> → OK. Then <em>Tools → Board → Board Manager</em> → search "esp32" → install <strong>esp32 by Espressif Systems, version 3.3.1</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>esp32_mannual core</strong></td>
+<td>as provided</td>
+<td>Unzip <code>esp32_mannual.zip</code> (we will send it with this manual) into your Arduino hardware folder — see paths below</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>TFLiteTraining app</strong></td>
+<td>as provided</td>
+<td>Install from the <code>.dmg</code> (macOS) or <code>.exe</code> (Windows) we send you. Do not launch it yet</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>template project</strong></td>
+<td><code>template.tmproj</code></td>
+<td>Download it; you will open it during the workshop</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Where the esp32_mannual folder goes</strong> — the final path must be:</p>
+<ul>
+<li><strong>macOS:</strong> <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/esp32_mannual</code></li>
+<li><strong>Windows:</strong> <code>C:\Users\&lt;you&gt;\Documents\Arduino\hardware\esp32_mannual</code></li>
+</ul>
+<p>If the <code>Arduino/hardware</code> folder does not exist, create it.</p>
+<hr />
+<h2>4. Self-Check (2 minutes, do this the night before)</h2>
+<ol>
+<li>Open the Arduino IDE</li>
+<li>Open <em>Tools → Board</em></li>
+<li>You should see an entry called <strong>ESP32_mannual</strong> in the list (with ESP32P4 Dev Module inside it)</li>
+</ol>
+<p>If it's there, you're ready. If not, step 3 of the checklist didn't land in the right folder — recheck the path.</p>
+<hr />
+<h2>5. What to Bring</h2>
+<ul>
+<li>Laptop with the software above installed, <strong>fully charged</strong> (power sockets may be limited)</li>
+<li>A <strong>USB-C data cable</strong> (one that transfers data, not charge-only)</li>
+<li>About <strong>1 GB of free disk space</strong></li>
+<li>A thick black marker (for writing digits during the project — spares available)</li>
+</ul>
+<hr />
+<h2>6. FAQ</h2>
+<p><strong>The port doesn't appear in the IDE.</strong> Try another USB port and another cable (charge-only cables are the most common cause). On Windows, the CH34x/CP210x driver may be needed.</p>
+<p><strong>I see "esp32" in Board Manager but version 3.3.1 is not listed.</strong> Make sure you added the Espressif board URL (checklist step 2) <em>before</em> opening Board Manager, then refresh.</p>
+<p><strong>macOS says the app "can't be opened because it is from an unidentified developer".</strong> Right-click the app → Open → Open. </p>
+<p><strong>I already have an older Arduino IDE.</strong> Install 2.3.10+ alongside it and use that one for the workshop.</p>
+<hr />
+<h2>7. Where the Materials Live</h2>
+<p>All workshop materials (lesson slides, project lab manual) are on the workshop page you downloaded this manual from. See you at the session.</p>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">AIoScout · Edge AI Vision Workshop · Pre-lab Manual</span>
+  </div>
+</footer>
+</body>
+</html>

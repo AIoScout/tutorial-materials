@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edge AI Workshop — Project Lab Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Workshop</a>
+      <span class="nav-label">Project Lab Manual</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Edge AI Vision Workshop — Project Lab Manual</h1>
+<blockquote>
+<p><strong>Your project: build a digit recognizer (0–9) and run it on the ESP32-P4.</strong> Follow the steps in order; every click is written out. Budget about <strong>75–90 minutes</strong>. Ask for help the moment something doesn't match what the manual says.</p>
+</blockquote>
+<hr />
+<h2>0. The Project at a Glance</h2>
+<p><strong>Goal</strong> — train a CNN that recognizes handwritten digits 0–9, shown to it on paper, and runs live on the ESP32-P4 board.</p>
+<p><strong>Success criteria</strong> (for the demo at the end):</p>
+<ol>
+<li>Your model is deployed on the board and classifying live camera images</li>
+<li>It gets <strong>at least 8 of 10</strong> correct on a set of <strong>unseen</strong> test digits (written by someone other than you)</li>
+<li>You can explain one thing you changed to improve it</li>
+</ol>
+<p><strong>Rules</strong> — the model must be trained by you in this session, with samples you collected here. No pre-trained networks.</p>
+<p><strong>Workflow</strong> (same as the road-sign demo in the lesson): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.</p>
+<hr />
+<h2>Part A — Setup Check (5 min)</h2>
+<p>If you completed the pre-lab installs, this is quick.</p>
+<p><strong>A1.</strong> Connect the board with your USB-C cable.</p>
+<p><strong>A2.</strong> Arduino IDE: <em>Tools → Board → ESP32_mannual → ESP32P4 Dev Module</em>, and copy the board settings shown by the instructor (do not set the Port yet).</p>
+<p><strong>A3.</strong> Open the provided <strong>camera-stream sample sketch</strong>, choose the Port, and click <strong>Upload</strong>.</p>
+<p><strong>A4.</strong> Open the <strong>Serial Monitor</strong>. A stream of garbled characters = the grayscale camera data = success.</p>
+<p><strong>A5.</strong> <strong>Close the Serial Monitor.</strong> It occupies the port that TFLiteTraining needs. (If you later see "port busy" in the app — this is why.)</p>
+<hr />
+<h2>Part B — Create Your Project (3 min)</h2>
+<p><strong>B1.</strong> Open the TFLiteTraining app → <strong>Open Project</strong> → <code>template.tmproj</code>.</p>
+<p><strong>B2.</strong> Immediately save your own copy: menu (top-left) → <strong>Save Project</strong> → name it <code>digits.tmproj</code>. Save often from now on.</p>
+<p><strong>B3.</strong> Identify the three areas: <strong>Sample</strong> (left), <strong>Train</strong> (right), <strong>Preview</strong> (bottom).</p>
+<p><img alt="The TFLiteTraining workspace" src="../images/cv/image12.png" />
+<em>The three areas of the workspace</em></p>
+<hr />
+<h2>Part C — Collect the Data (20 min)</h2>
+<p>The single biggest factor in your results. Follow this recipe.</p>
+<p><strong>C1. Prepare the paper digits.</strong> Use the thick marker and blank paper. Write each digit <strong>large and bold</strong> (about 8–10 cm tall), one digit per sheet — you will hold them up to the camera.</p>
+<p><strong>C2. Connect the camera.</strong> In the Sample Area click <strong>Device</strong>, select your board's port, and open the <strong>Gear</strong> settings. Keep the defaults exactly: <strong>96×96 · Grayscale · 115200 · sync header AA 55 AA</strong> — they match the flashed code.</p>
+<p><img alt="Capturing samples" src="../images/cv/image13.png" />
+<em>Capture / Hold-to-Capture, and the Gear settings — defaults stay as shown</em></p>
+<p><strong>C3. Create the classes.</strong> Make one class per digit: name them <code>0</code>, <code>1</code>, … <code>9</code>. (Short of time? Do <code>1, 2, 3, 7</code> first — see Part D — and add the rest once the first version works. Four accurate classes beat ten broken ones.)</p>
+<p><strong>C4. Capture, with variety.</strong> For each class, capture <strong>30–50 samples</strong> using <em>Capture</em> (single) or <em>Hold to Capture</em> (continuous). While capturing, vary for every handful of shots:</p>
+<ul>
+<li><strong>Distance</strong> — near, mid, far</li>
+<li><strong>Angle</strong> — straight on, tilted left/right</li>
+<li><strong>Position</strong> — center, edges of the frame</li>
+<li><strong>Lighting</strong> — turn to face different directions</li>
+<li><strong>Rotation</strong> — digits slightly rotated (as a driver would see them)</li>
+</ul>
+<p>Keep the counts <strong>roughly equal</strong> across classes — an unbalanced dataset makes the model biased toward the biggest class.</p>
+<p><strong>C5. Clean up.</strong> Hover any blurry or accidental capture and click to delete it. Bad samples teach wrong things.</p>
+<blockquote>
+<p><strong>Why capture with Device instead of your laptop webcam?</strong> The model will live behind the board's camera — training on images from that same camera (same lens, same angle, same lighting) gives it the best chance. This general rule is called <em>matching the deployment domain</em>.</p>
+</blockquote>
+<hr />
+<h2>Part D — Preprocess (10 min)</h2>
+<p><strong>D1.</strong> Click the <strong>Edit</strong> icon to enter the image-processing page. Left is the <strong>Image Viewer</strong> (original + processed), right is the <strong>Sample Worktable</strong>.</p>
+<p><img alt="The image processing page" src="../images/cv/image14.png" />
+<em>Edit page — Image Viewer with ROI, and the Sample Worktable</em></p>
+<p><strong>D2. Choose a mode:</strong></p>
+<ul>
+<li><strong>Auto</strong> (F1) — the app finds and crops the darkest region automatically. Good when the digit is the darkest thing in frame.</li>
+<li><strong>Manual ROI</strong> (F2) — you drag the crop box yourself (Shift + arrow keys nudge it). More control; use it if Auto grabs shadows or your hand.</li>
+</ul>
+<p><strong>D3. Set the thresholds</strong> (they apply to the whole class):</p>
+<ul>
+<li><strong>Dark Thr</strong> — pixels darker than this become pure white (removes dark shadows, sleeves, background)</li>
+<li><strong>Lum Thr</strong> — pixels brighter than this become pure white (removes blown-out highlights)</li>
+</ul>
+<p>The goal: on the processed preview, the digit is black and almost everything else is white. Keep the thresholds <em>moderate</em> — if the digit itself starts dissolving, you've gone too far.</p>
+<p><strong>D4. Move between samples</strong> with the arrow keys, check a few samples <strong>of every class</strong>, adjust per class as needed.</p>
+<p><strong>D5. Press S to save. Then press S again.</strong> Unsaved preprocessing is lost — this is the most common way groups lose 10 minutes.</p>
+<p><strong>D6.</strong> All processed images are automatically resized to <code>image size × image size</code> (default 96) for training — that's expected.</p>
+<hr />
+<h2>Part E — Train (5 min)</h2>
+<p><strong>E1.</strong> In the Train Area click the <strong>Advanced</strong> icon. Start from the defaults:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Start with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Image size</td>
+<td>96</td>
+</tr>
+<tr>
+<td>Color mode</td>
+<td>grayscale</td>
+</tr>
+<tr>
+<td>Batch size</td>
+<td>16</td>
+</tr>
+<tr>
+<td>Epochs</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Validation split</td>
+<td>0.25</td>
+</tr>
+<tr>
+<td>Learning rate</td>
+<td>0.001</td>
+</tr>
+<tr>
+<td>Conv1 / Conv2 filters</td>
+<td>8 / 16</td>
+</tr>
+<tr>
+<td>Dense units</td>
+<td>32</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>E2.</strong> Click <strong>Train Embedded Model</strong> and wait for training to finish.</p>
+<p><img alt="The training panel" src="../images/cv/image15.png" />
+<em>Advanced panel — set hyperparameters, then Train Embedded Model</em></p>
+<p><strong>E3.</strong> Read the <strong>validation accuracy</strong>. Around/above 90% is a good first run for 4–10 digit classes. 60–70% means the data needs work, not the hyperparameters — go back to C4 (more variety) or D3 (cleaner preprocessing).</p>
+<hr />
+<h2>Part F — Test on Unseen Data (10 min)</h2>
+<p>This is where you find out if your model <em>learned</em> or <em>memorized</em>.</p>
+<p><strong>F1.</strong> In the Preview Area, click the <strong>Gear</strong> → source <strong>Device</strong> + your port.</p>
+<p><strong>F2.</strong> Toggle <strong>Input</strong> and hold up a digit written by <strong>another team member</strong> (not in your training set).</p>
+<p><strong>F3.</strong> Read the <strong>confidence bar</strong> (toggle <em>show %</em>). Note what <strong>ROI</strong> shows — that's what the model actually sees.</p>
+<p><img alt="Live interpretation view" src="../images/cv/image17.png" />
+<em>Interpretation view — live image, ROI, and the confidence bar</em></p>
+<p><strong>F4.</strong> Common confusions and their fixes:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Confusion</th>
+<th>Usual cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 ↔ 7</td>
+<td>thin strokes, similar shapes</td>
+<td>more samples, thicker marker, larger ROI</td>
+</tr>
+<tr>
+<td>3 ↔ 8, 9 ↔ 8</td>
+<td>loops closing up in gray</td>
+<td>raise Dark Thr so faint loops vanish; more lighting variety</td>
+</tr>
+<tr>
+<td>4 ↔ 9</td>
+<td>open vs closed top</td>
+<td>more rotated variants of both</td>
+</tr>
+<tr>
+<td>everything → one class</td>
+<td>unbalanced dataset</td>
+<td>equalize the sample counts (C4)</td>
+</tr>
+<tr>
+<td>great on training, poor live</td>
+<td>overfitting / too little variety</td>
+<td>more varied samples, sometimes fewer epochs</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>F5.</strong> After any fix: retrain (E2) and retest. Two or three iterations are normal — that's the engineering loop.</p>
+<hr />
+<h2>Part G — Export and Deploy (10 min)</h2>
+<p><strong>G1.</strong> Click <strong>Export model</strong> and pick a folder you can find. Then menu → <strong>Save Project</strong>.</p>
+<p><strong>G2.</strong> From the export folder, copy these <strong>five files</strong> into the <code>TFLite.ino</code> project folder (replace existing):</p>
+<p><img alt="The five exported files" src="../images/cv/image18.png" />
+<em>The five export files, ready to copy into the project folder</em></p>
+<pre><code>tm_model_data.cpp     // the quantized model
+tm_model_data.h
+model_resolver.h
+model_settings.cpp
+model_settings.h
+</code></pre>
+<p><strong>G3.</strong> Open <code>TFLite.ino</code> and check that <strong><code>IMG_SIZE</code> equals the image size you trained with</strong> (default 96). A mismatch = nonsense predictions.</p>
+<p><strong>G4.</strong> Upload to the board, open the Serial Monitor, and hold up a digit — your model, running on the chip, answers live.</p>
+<hr />
+<h2>Part H — Final Evaluation (10 min)</h2>
+<p><strong>H1.</strong> Ask another team (or the instructor) to write <strong>10 test digits</strong> you have never shown the model.</p>
+<p><strong>H2.</strong> Show each one to the board and record the results:</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>True digit</th>
+<th>Predicted</th>
+<th>Confidence</th>
+<th>Correct?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>H3.</strong> <strong>≥ 8/10 correct = project complete.</strong> Show your table and the live demo to the instructor.</p>
+<hr />
+<h2>Part I — Extensions (if you finish early)</h2>
+<ul>
+<li><strong>Sample efficiency:</strong> delete samples until accuracy drops — what's the minimum per class that still works?</li>
+<li><strong>Speed vs. size:</strong> set Conv1/Conv2/Dense to the maximums and retrain — can you <em>feel</em> the slower inference on the serial output? Compare against 4/8/16.</li>
+<li><strong>New handwriting:</strong> have a friend add 10 samples of their own handwriting per class — does the model generalize better?</li>
+<li><strong>Confuse the model:</strong> deliberately show partial digits, far digits, digits at extreme angles — where exactly does it break? That's your model's real-world boundary.</li>
+</ul>
+<hr />
+<h2>Troubleshooting</h2>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Port busy" in the app</td>
+<td>Close the Arduino Serial Monitor (A5)</td>
+</tr>
+<tr>
+<td>No port in Device list</td>
+<td>Replug USB; try a data cable; check board is powered</td>
+</tr>
+<tr>
+<td>All predictions one class, low confidence</td>
+<td>Unbalanced or too-few samples — see F4</td>
+</tr>
+<tr>
+<td>Export missing files</td>
+<td>Re-export with the default settings; all five files generate together</td>
+</tr>
+<tr>
+<td>Upload fails in IDE</td>
+<td>Board settings mismatch — compare against the instructor's table again</td>
+</tr>
+</tbody>
+</table></div>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">AIoScout · Edge AI Vision Workshop · Project Lab Manual</span>
+  </div>
+</footer>
+</body>
+</html>
