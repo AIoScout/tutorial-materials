@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 1 · Motor &amp; Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #000000; --on-primary: #ffffff; --ink: #1a1c1c; --body-c: #525252; --mute: #78716c;
+    --hairline: #d8d9d8; --canvas: #ffffff; --canvas-soft: #f9f9f8; --accent-orange: #f58331; --accent-purple: #5b5ba8;
+    --sp-xs: 8px; --sp-sm: 12px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 40px; --sp-3xl: 48px; --sp-4xl: 64px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { font-family: Inter, Arial, sans-serif; background: var(--canvas-soft); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+  .t-hero   { font-size: clamp(44px, 6.5vw, 72px); font-weight: 800; line-height: 1.1;  letter-spacing: -0.04em; }
+  .t-lg     { font-size: clamp(30px, 4.2vw, 48px); font-weight: 600; line-height: 1.2;  letter-spacing: -0.02em; text-wrap: balance; }
+  .body-lg  { font-size: 18px; font-weight: 400; line-height: 1.6; }
+  .body-md  { font-size: 16px; font-weight: 400; line-height: 1.5; }
+  .body-sm  { font-size: 14px; font-weight: 400; line-height: 1.45; }
+  .cap      { font-size: 12px; font-weight: 700; line-height: 16px; text-transform: uppercase; }
+  .lbl-purple { color: var(--accent-purple); font-size: 14.4px; font-weight: 700; line-height: 1.6; letter-spacing: 0.72px; }
+  .lbl-dark   { color: var(--ink); font-size: 12px; font-weight: 700; line-height: 1.4; letter-spacing: 1.2px; text-transform: uppercase; }
+  .dim { color: var(--body-c); }
+  .quiet { color: var(--mute); }
+  .deck { height: 100dvh; display: flex; flex-direction: column; }
+  .bar { flex: none; display: flex; align-items: center; justify-content: space-between; background: var(--canvas); padding: 0 var(--sp-4xl); }
+  .bar.top { height: 56px; border-bottom: 1px solid var(--hairline); }
+  .wordmark { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; text-decoration: none; }
+  .wordmark span { color: var(--accent-orange); }
+  .bar.bottom { height: 52px; border-top: 1px solid var(--hairline); gap: var(--sp-lg); }
+  .counter { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .counter .of { color: var(--mute); }
+  .track { flex: 1; height: 2px; background: var(--hairline); position: relative; }
+  .track .fill { position: absolute; inset: 0 auto 0 0; width: 0%; background: var(--primary); transition: width .3s ease; }
+  .sec-label { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); white-space: nowrap; }
+  .nav-btns { display: flex; gap: var(--sp-xs); }
+  .nav-btns button { width: 34px; height: 34px; background: var(--canvas); color: var(--ink); border: 1px solid var(--ink); font: 700 16px/1 Inter, Arial, sans-serif; cursor: pointer; }
+  .nav-btns button:hover { background: var(--primary); color: var(--on-primary); }
+  :focus-visible { outline: 2px solid var(--accent-purple); outline-offset: 3px; }
+  .stage { flex: 1; position: relative; overflow: hidden; }
+  .slide { position: absolute; inset: 0; display: flex; align-items: stretch; padding: clamp(28px, 5vh, 64px) clamp(32px, 6vw, 96px); opacity: 0; transform: translateX(24px); transition: opacity .3s ease, transform .3s ease; visibility: hidden; overflow-y: auto; }
+  .slide.active { opacity: 1; transform: none; visibility: visible; }
+  .slide.soft { background: var(--canvas-soft); }
+  .slide.white { background: var(--canvas); }
+  .slide.black { background: var(--primary); color: var(--on-primary); }
+  .rail { width: min(1320px, 100%); margin: auto; }
+  .row { display: flex; gap: clamp(32px, 5vw, 80px); align-items: center; }
+  .row > * { flex: 1; min-width: 0; }
+  .row.rev { flex-direction: row-reverse; }
+  .figure { border: 1px solid var(--hairline); background: var(--canvas); padding: var(--sp-md); }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure figcaption { margin-top: var(--sp-sm); font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+  .card { background: var(--canvas-soft); padding: var(--sp-2xl) var(--sp-3xl); }
+  .card h3 { font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: var(--sp-sm); }
+  .card p  { font-size: 16px; line-height: 1.5; color: var(--body-c); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-lg); }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-lg); }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-lg); }
+  .step-num { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; color: var(--mute); text-transform: uppercase; margin-bottom: var(--sp-xs); }
+  .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.75; background: var(--canvas); color: var(--ink); border: 1px solid var(--hairline); padding: var(--sp-lg) var(--sp-xl); white-space: pre; overflow-x: auto; }
+  .code .cm { color: var(--mute); }
+  .btn { display: inline-flex; align-items: center; gap: var(--sp-sm); background: var(--primary); color: var(--on-primary); border: 1px solid var(--primary); font: 700 12px/16px Inter, Arial, sans-serif; padding: 15px 32px; cursor: pointer; text-decoration: none; }
+  .hl-orange { color: var(--accent-orange); font-weight: inherit; }
+  .hl-box { display: inline-block; background: var(--accent-orange); color: var(--on-primary); font-weight: 700; padding: 0 8px; }
+  ul.tick { list-style: none; }
+  ul.tick li { position: relative; padding-left: var(--sp-xl); margin-bottom: var(--sp-sm); }
+  ul.tick li::before { content: ""; position: absolute; left: 0; top: .52em; width: 8px; height: 8px; background: var(--accent-orange); }
+  table.spec { border-collapse: collapse; width: 100%; }
+  table.spec th, table.spec td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--hairline); }
+  table.spec th { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+  table.spec td { font-size: 15px; color: var(--ink); }
+  table.spec td.k { font-weight: 600; }
+  table.spec td.n { font-variant-numeric: tabular-nums; }
+  .slide.black .dim { color: rgba(255,255,255,.72); }
+  .slide.black .quiet { color: rgba(255,255,255,.55); }
+  .slide.black .card { background: #141414; }
+  .slide.black .card p { color: rgba(255,255,255,.72); }
+  .keys { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+  .divider .rail { display: flex; flex-direction: column; gap: var(--sp-lg); justify-content: center; }
+  .divider .meta-strip { display: flex; gap: var(--sp-lg); flex-wrap: wrap; margin-top: var(--sp-sm); }
+  .chip { border: 1px solid var(--hairline); background: var(--canvas); padding: 8px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+  @media (max-width: 900px) {
+    .row, .row.rev { flex-direction: column; align-items: stretch; }
+    .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .bar { padding: 0 var(--sp-lg); }
+    .sec-label { display: none; }
+  }
+  @media (max-width: 600px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    .bar.top { height: auto; min-height: 56px; padding-top: 10px; padding-bottom: 10px; }
+    .bar-label { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slide { transition: opacity .15s linear; transform: none; }
+    .track .fill { transition: none; }
+  }
+  @media print {
+    body { overflow: visible; background: var(--canvas); }
+    .deck { height: auto; }
+    .bar.bottom { display: none; }
+    .stage { overflow: visible; }
+    .slide { position: static; opacity: 1; transform: none; visibility: visible; page-break-after: always; min-height: 90vh; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <header class="bar top">
+    <a class="wordmark" href="../index.html">AIo<span>Scout</span></a>
+    <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; justify-content:flex-end;">
+      <a class="cap" href="../index.html" style="color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px;">← Index</a>
+      <span class="cap quiet bar-label">HKUST ISDN 2602 · Lab 1 · Motor &amp; Motion</span>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+
+    <section class="slide soft" data-section="Intro" aria-roledescription="slide">
+      <div class="rail">
+        <p class="lbl-purple" style="margin-bottom:24px;">AIoScout Lab Series · Motor &amp; Motion</p>
+        <h1 class="t-hero" style="max-width:16ch;">From blind motion to controlled motion.</h1>
+        <p class="body-lg dim" style="max-width:62ch; margin-top:24px;">
+          Today the car moves for the first time: drive the motors with <strong style="color:var(--ink)">PWM</strong>,
+          measure every rotation with <strong style="color:var(--ink)">encoders</strong>, and close the loop with a
+          <strong style="color:var(--ink)">PID controller</strong> until it holds a straight line by itself.
+        </p>
+        <div style="display:flex; align-items:center; gap:32px; margin-top:40px;">
+          <button class="btn" data-go="next">Begin <span aria-hidden="true">→</span></button>
+          <span class="keys">← → navigate · space next</span>
+        </div>
+        <p class="cap quiet" style="margin-top:40px;">DC motor · PWM · H-bridge · encoder · quadrature · feedback · PID · ≈ 90 min</p>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Intro" aria-roledescription="slide">
+      <div class="rail">
+        <p class="lbl-dark" style="margin-bottom:12px;">Today's mission</p>
+        <h2 class="t-lg" style="margin-bottom:32px;">By the end, you can…</h2>
+        <div class="grid-4">
+          <div class="card">
+            <p class="step-num">01 · Drive</p>
+            <h3>Control the motors</h3>
+            <p>Set speed with PWM duty cycle and direction with the H-bridge.</p>
+          </div>
+          <div class="card">
+            <p class="step-num">02 · Measure</p>
+            <h3>Read the encoders</h3>
+            <p>Convert wheel pulses into real distance and speed in m/s.</p>
+          </div>
+          <div class="card">
+            <p class="step-num">03 · Close the loop</p>
+            <h3>Add feedback</h3>
+            <p>See why open loop drifts and how measurement corrects it.</p>
+          </div>
+          <div class="card">
+            <p class="step-num">04 · Tune</p>
+            <h3>Build a PID</h3>
+            <p>Go from P to PI to PID and tune it until the car runs straight.</p>
+          </div>
+        </div>
+        <p class="cap quiet" style="margin-top:32px;">Keywords — motor · PWM · duty cycle · H-bridge · encoder · quadrature · error · steady-state error · overshoot · tuning</p>
+      </div>
+    </section>
+
+    <section class="slide soft" data-section="Background" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Background · the motor</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">Voltage in, rotation out</h2>
+          <p class="body-lg dim" style="margin-bottom:20px;">
+            A <strong style="color:var(--ink)">DC motor</strong> is the simplest actuator there is: apply a voltage,
+            it spins; remove it, it stops. More voltage, faster spin.
+          </p>
+          <ul class="tick body-md dim">
+            <li>But we can't cleanly give a motor "half a voltage"…</li>
+            <li>…so we give it full voltage <strong style="color:var(--ink)">half the time</strong></li>
+            <li>The switching is <strong style="color:var(--ink)">PWM</strong> — thousands of on/off cycles per second</li>
+            <li>The ON fraction — the <span class="hl-orange" style="font-weight:700;">duty cycle</span> — sets the average power, and the speed</li>
+          </ul>
+        </div>
+        <figure class="figure">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzAwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8cmVjdCB3aWR0aD0iODgwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHg9IjM2IiB5PSI0MCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZmlsbD0iIzViNWJhOCI+UFVMU0UtV0lEVEggTU9EVUxBVElPTiAoUFdNKTwvdGV4dD4KCiAgPCEtLSAyNSUgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNMTIwLDgwIHYtMzUgaDI3IHYzNSBoODEgdi0zNSBoMjcgdjM1IGg4MSB2LTM1IGgyNyB2MzUgaDgxIHYtMzUgaDI3IHYzNSBoODEiLz4KICA8L2c+CiAgPHRleHQgeD0iMzYiIHk9Ijg1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjMWExYzFjIj4yNSU8L3RleHQ+CiAgPHRleHQgeD0iNTAwIiB5PSI4NSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUyNTI1MiI+b24gMSBtcywgb2ZmIDMgbXMg4oCUIHNsb3c8L3RleHQ+CgogIDwhLS0gNTAlIC0tPgogIDxnIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiPgogICAgPHBhdGggZD0iTTEyMCwxNzAgdi0zNSBoNTQgdjM1IGg1NCB2LTM1IGg1NCB2MzUgaDU0IHYtMzUgaDU0IHYzNSBoNTQgdi0zNSBoNTQgdjM1IGg1NCB2LTM1IGg1NCB2MzUgaDU0Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjM2IiB5PSIxNzUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiMxYTFjMWMiPjUwJTwvdGV4dD4KICA8dGV4dCB4PSI1MDAiIHk9IjE3NSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUyNTI1MiI+b24gMiBtcywgb2ZmIDIgbXMg4oCUIG1lZGl1bTwvdGV4dD4KCiAgPCEtLSA3NSUgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNMTIwLDI2MCB2LTM1IGg4MSB2MzUgaDI3IHYtMzUgaDgxIHYzNSBoMjcgdi0zNSBoODEgdjM1IGgyNyB2LTM1IGg4MSB2MzUgaDI3IHYtMzUgaDgxIHYzNSBoMjciLz4KICA8L2c+CiAgPHRleHQgeD0iMzYiIHk9IjI2NSIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iIzFhMWMxYyI+NzUlPC90ZXh0PgogIDx0ZXh0IHg9IjUwMCIgeT0iMjY1IiBmb250LXNpemU9IjEzIiBmaWxsPSIjNTI1MjUyIj5vbiAzIG1zLCBvZmYgMSBtcyDigJQgZmFzdDwvdGV4dD4KCiAgPCEtLSBwZXJpb2QgYW5ub3RhdGlvbiAtLT4KICA8bGluZSB4MT0iMTIwIiB5MT0iMjk1IiB4Mj0iMjI4IiB5Mj0iMjk1IiBzdHJva2U9IiM3ODcxNmMiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGxpbmUgeDE9IjEyMCIgeTE9IjI4OCIgeDI9IjEyMCIgeTI9IjMwMiIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMjgiIHkxPSIyODgiIHgyPSIyMjgiIHkyPSIzMDIiIHN0cm9rZT0iIzc4NzE2YyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8dGV4dCB4PSIxNzQiIHk9IjI4NSIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzc4NzE2YyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+b25lIHBlcmlvZCAoZS5nLiA0IG1zKTwvdGV4dD4KPC9zdmc+Cg==" alt="PWM square waves at 25, 50 and 75 percent duty cycle">
+          <figcaption>PWM — same voltage, different ON-time</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Background" aria-roledescription="slide">
+      <div class="rail row rev">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Background · the driver</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">The H-bridge: choosing direction</h2>
+          <p class="body-md dim" style="margin-bottom:16px;">
+            Reversing a motor means reversing the current through it. An <strong style="color:var(--ink)">H-bridge</strong>
+            is four switches arranged around the motor:
+          </p>
+          <ul class="tick body-md dim">
+            <li><strong style="color:var(--ink)">S1 + S4 closed</strong> → current left-to-right → forward (as drawn)</li>
+            <li><strong style="color:var(--ink)">S2 + S3 closed</strong> → current reversed → backward</li>
+            <li>All open → stop</li>
+          </ul>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Combined</span>&nbsp; the switch pair sets direction; PWM on the pair sets speed. The driver chip on the car does this for you.</p>
+        </div>
+        <figure class="figure">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzgwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9ImlhcnIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjciIG1hcmtlckhlaWdodD0iNyIgb3JpZW50PSJhdXRvIj4KICAgICAgPHBhdGggZD0iTTAsMCBMMTAsNSBMMCwxMCB6IiBmaWxsPSIjZjU4MzMxIi8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9Ijg4MCIgaGVpZ2h0PSIzODAiIGZpbGw9IiNmZmZmZmYiLz4KICA8dGV4dCB4PSIzNiIgeT0iNDAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPlRIRSBILUJSSURHRSDigJQgRElSRUNUSU9OIENPTlRST0w8L3RleHQ+CgogIDwhLS0gcmFpbHMgLS0+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjgwIiB4Mj0iNjIwIiB5Mj0iODAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI2NDAiIHk9Ijg1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj4rViAoYmF0dGVyeSk8L3RleHQ+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjMwMCIgeDI9IjYyMCIgeTI9IjMwMCIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDx0ZXh0IHg9IjY0MCIgeT0iMzA1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNzg3MTZjIj5HTkQ8L3RleHQ+CgogIDwhLS0gc3dpdGNoZXM6IFMxIFMyICh0b3ApLCBTMyBTNCAoYm90dG9tKSwgY2xvc2VkIHBhaXJzIGRyYXduIGFzIHNvbGlkIGxpbmUsIG9wZW4gYXMgZ2FwIC0tPgogIDwhLS0gUzEgdG9wLWxlZnQ6IENMT1NFRCAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iODAiIHgyPSIyMDAiIHkyPSIxMjUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTI1IiB4Mj0iMjAwIiB5Mj0iMTgwIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDx0ZXh0IHg9IjE2MCIgeT0iMTYwIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj5TMTwvdGV4dD4KICA8dGV4dCB4PSIxMzgiIHk9IjE1OCIgZm9udC1zaXplPSIxMSIgZmlsbD0iI2Y1ODMzMSI+Y2xvc2VkPC90ZXh0PgogIDwhLS0gUzIgdG9wLXJpZ2h0OiBPUEVOIC0tPgogIDxsaW5lIHgxPSI1NjAiIHkxPSI4MCIgeDI9IjU2MCIgeTI9IjEzMCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxNzUiIHgyPSI1NjAiIHkyPSIxOTUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjE2MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzI8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIxNzYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiPm9wZW48L3RleHQ+CiAgPCEtLSBTMyBib3R0b20tbGVmdDogT1BFTiAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iMjY1IiB4Mj0iMjAwIiB5Mj0iMzAwIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iMTYwIiB5PSIyODUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPlMzPC90ZXh0PgogIDx0ZXh0IHg9IjEzOCIgeT0iMjgzIiBmb250LXNpemU9IjExIiBmaWxsPSIjNzg3MTZjIj5vcGVuPC90ZXh0PgogIDwhLS0gUzQgYm90dG9tLXJpZ2h0OiBDTE9TRUQgLS0+CiAgPGxpbmUgeDE9IjU2MCIgeTE9IjI0MCIgeDI9IjU2MCIgeTI9IjMwMCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjI4MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzQ8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIyOTYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiNmNTgzMzEiPmNsb3NlZDwvdGV4dD4KCiAgPCEtLSBtb3RvciBicmlkZ2UgLS0+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjE5MCIgeDI9IjMzMCIgeTI9IjE5MCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIxOTAiIHgyPSI1NjAiIHkyPSIxOTAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8Y2lyY2xlIGN4PSIzODAiIGN5PSIxOTAiIHI9IjUwIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjM4MCIgeT0iMTk4IiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0PgogIDx0ZXh0IHg9IjM4MCIgeT0iMTMyIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNzg3MTZjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5tb3RvcjwvdGV4dD4KCiAgPCEtLSBjdXJyZW50IHBhdGggKG9yYW5nZSkgLS0+CiAgPHBhdGggZD0iTTIwMCw4NCBMMjAwLDEyMCBNMjAwLDE4MiBMMjAwLDE4OCBMMzMyLDE4OCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KICA8bGluZSB4MT0iNDI4IiB5MT0iMTkyIiB4Mj0iNTU2IiB5Mj0iMTkyIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iMyIgbWFya2VyLWVuZD0idXJsKCNpYXJyKSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxOTYiIHgyPSI1NjAiIHkyPSIyMzYiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI2lhcnIpIi8+CiAgPHRleHQgeD0iMzgwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmNTgzMzEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmN1cnJlbnQgZmxvd3MgbGVmdCDihpIgcmlnaHQgOiBGT1JXQVJEPC90ZXh0PgoKICA8IS0tIHN0YXRlcyBzdW1tYXJ5IC0tPgogIDxnIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1MjUyNTIiPgogICAgPHRleHQgeD0iMzYiIHk9IjM0NSI+Rm9yd2FyZDogUzEgKyBTNCBjbG9zZWQgKGFzIGRyYXduKSAgIMK3ICAgUmV2ZXJzZTogUzIgKyBTMyBjbG9zZWQgICDCtyAgIEJyYWtlL3N0b3A6IGFsbCBvcGVuPC90ZXh0PgogICAgPHRleHQgeD0iMzYiIHk9IjM2OCI+U3BlZWQ6IFBXTSBzd2l0Y2hlcyBTMS9TNCAob3IgUzIvUzMpIG9uIGFuZCBvZmYgdGhvdXNhbmRzIG9mIHRpbWVzIHBlciBzZWNvbmQg4oCUIGR1dHkgY3ljbGUgc2V0cyBzcGVlZCwgc3dpdGNoIHBhaXIgc2V0cyBkaXJlY3Rpb24uPC90ZXh0PgogIDwvZz4KPC9zdmc+Cg==" alt="H-bridge circuit with S1 and S4 closed and current flowing through the motor">
+          <figcaption>Forward state — S1 + S4 closed</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide soft divider" data-section="Task 1 · Open loop" aria-roledescription="slide">
+      <div class="rail">
+        <p style="font-size:clamp(72px,10vw,140px); font-weight:800; letter-spacing:-0.05em; line-height:1; color:transparent; -webkit-text-stroke:1.5px var(--mute);">01</p>
+        <p class="lbl-purple">Task 1 · First motion</p>
+        <h2 class="t-lg">Blind driving — open loop</h2>
+        <div class="meta-strip">
+          <span class="chip">Same PWM, both wheels</span>
+          <span class="chip">Three runs</span>
+          <span class="chip">Measure the drift</span>
+        </div>
+        <p class="body-lg dim" style="max-width:56ch;">No measurement, no correction — just command and hope. Watch what the car does with identical commands.</p>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Task 1 · Open loop" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Task 1 · The experiment</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">Identical commands, different motion</h2>
+          <ul class="tick body-md dim">
+            <li>Open <strong style="color:var(--ink)">Task_1.ino</strong>, set both wheels to the same PWM (e.g. 1000)</li>
+            <li>Run the car 2 metres from a fixed start line — mark where it ends</li>
+            <li>Repeat <strong style="color:var(--ink)">three times</strong>, same start, same command</li>
+            <li>Record: how far from straight? Same endpoint every run?</li>
+          </ul>
+          <p class="body-lg" style="margin-top:20px;"><span class="hl-box">Why?</span>&nbsp; no two motors are identical — different friction, different windings. "50% duty" never means the same speed twice.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div class="card">
+            <p class="step-num">What you'll see</p>
+            <h3>A curve, and three different curves</h3>
+            <p>The car drifts to one side, and each run drifts differently. Open loop cannot hold a line.</p>
+          </div>
+          <div class="card" style="background:var(--canvas); border:1px solid var(--hairline);">
+            <p class="step-num">Analogy</p>
+            <h3>Walking with your eyes closed</h3>
+            <p>You might aim straight, but without sensing, small differences accumulate into a big miss.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide black" data-section="Task 1 · Open loop" aria-roledescription="slide">
+      <div class="rail">
+        <p class="cap" style="color:var(--accent-orange); margin-bottom:16px;">Checkpoint 01 · Open loop</p>
+        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Show the drift — and explain it.</h2>
+        <div class="grid-2" style="margin-top:40px; max-width:900px;">
+          <div class="card">
+            <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable A</p>
+            <h3 style="color:var(--on-primary);">Three drift measurements</h3>
+            <p>Your table of endpoints for three identical-command runs.</p>
+          </div>
+          <div class="card">
+            <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable B</p>
+            <h3 style="color:var(--on-primary);">One-sentence diagnosis</h3>
+            <p>Why identical commands don't give identical motion.</p>
+          </div>
+        </div>
+        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">Keep the drift numbers — you'll compare them with the PID runs at the end of the lab</p>
+      </div>
+    </section>
+
+    <section class="slide soft divider" data-section="Task 2 · Encoders" aria-roledescription="slide">
+      <div class="rail">
+        <p style="font-size:clamp(72px,10vw,140px); font-weight:800; letter-spacing:-0.05em; line-height:1; color:transparent; -webkit-text-stroke:1.5px var(--mute);">02</p>
+        <p class="lbl-purple">Task 2 · Reading the encoders</p>
+        <h2 class="t-lg">The car learns to feel its wheels</h2>
+        <div class="meta-strip">
+          <span class="chip">Slotted disk + light</span>
+          <span class="chip">Counts → distance</span>
+          <span class="chip">Counts → speed</span>
+        </div>
+        <p class="body-lg dim" style="max-width:56ch;">In the body analogy, encoders are proprioception — the sense that tells your muscles where your limbs are without looking.</p>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Task 2 · Encoders" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Task 2 · How it works</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">A disk that chops light into pulses</h2>
+          <ul class="tick body-md dim">
+            <li>An <strong style="color:var(--ink)">LED</strong> shines through a slotted <strong style="color:var(--ink)">code disk</strong> on the wheel shaft</li>
+            <li>A <strong style="color:var(--ink)">photosensor</strong> sees light — slot — or dark — spoke</li>
+            <li>Each slot that passes = one <strong style="color:var(--ink)">pulse</strong>; count pulses, know the rotation</li>
+            <li>Two channels <strong style="color:var(--ink)">A and B</strong>, offset by 90° — <strong style="color:var(--ink)">quadrature</strong></li>
+          </ul>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Quadrature gifts</span>&nbsp; direction (which channel rises first) and 4× resolution (count every edge of both channels).</p>
+        </div>
+        <figure class="figure">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzIwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8cmVjdCB3aWR0aD0iODgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHg9IjM2IiB5PSI0MCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZmlsbD0iIzViNWJhOCI+T1BUSUNBTCBFTkNPREVSIOKAlCBESVNLPC90ZXh0PgogIDx0ZXh0IHg9IjQ3MCIgeT0iNDAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPlFVQURSQVRVUkUgT1VUUFVUIOKAlCBDSEFOTkVMUyBBICZhbXA7IEI8L3RleHQ+CgogIDwhLS0gZW5jb2RlciBkaXNrOiBjaXJjbGUgd2l0aCBzbG90cyAtLT4KICA8Y2lyY2xlIGN4PSIxOTAiIGN5PSIxODAiIHI9IjEwNSIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8IS0tIHNsb3RzICh3aGl0ZSBnYXBzIGluIGRhcmsgcmluZyk6IGRyYXcgYXMgdGhpY2sgc2hvcnQgYXJjcyBhcm91bmQgdGhlIHJpbmcgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjMiPgogICAgPCEtLSByaW5nIHNlZ21lbnRzOiBkcmF3IHJpbmcgYXMgbWFueSBhcmNzOyBzaW1wbGVyOiBvdXRlciBjaXJjbGUgKyBpbm5lciBjaXJjbGUgKyByYWRpYWwgc2xvdCBsaW5lcyAtLT4KICA8L2c+CiAgPGNpcmNsZSBjeD0iMTkwIiBjeT0iMTgwIiByPSI3OCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDhkOWQ4IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gaHViIC0tPgogIDxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMjYiIGZpbGw9IiMxYTFjMWMiLz4KICA8IS0tIHNsb3QgbWFya3MgYmV0d2VlbiByPTc4IGFuZCByPTEwNTogMTIgc2xvdHMgLS0+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE0Ij4KICAgIDxsaW5lIHgxPSIxOTAiIHkxPSI3NSIgeDI9IjE5MCIgeTI9IjEwMiIvPgogICAgPGxpbmUgeDE9IjI2OCIgeTE9IjEwMiIgeDI9IjI0OSIgeTI9IjEyMSIvPgogICAgPGxpbmUgeDE9IjI5NSIgeTE9IjE4MCIgeDI9IjI2OCIgeTI9IjE4MCIvPgogICAgPGxpbmUgeDE9IjI2OCIgeTE9IjI1OCIgeDI9IjI0OSIgeTI9IjIzOSIvPgogICAgPGxpbmUgeDE9IjE5MCIgeTE9IjI4NSIgeDI9IjE5MCIgeTI9IjI1OCIvPgogICAgPGxpbmUgeDE9IjExMiIgeTE9IjI1OCIgeDI9IjEzMSIgeTI9IjIzOSIvPgogICAgPGxpbmUgeDE9Ijg1IiB5MT0iMTgwIiB4Mj0iMTEyIiB5Mj0iMTgwIi8+CiAgICA8bGluZSB4MT0iMTEyIiB5MT0iMTAyIiB4Mj0iMTMxIiB5Mj0iMTIxIi8+CiAgPC9nPgogIDwhLS0gTEVEICsgcGhvdG9kZXRlY3RvciBzdHJhZGRsaW5nIHRoZSByaW5nIC0tPgogIDxyZWN0IHg9IjEzMCIgeT0iNTIiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgZmlsbD0iIzViNWJhOCIvPgogIDx0ZXh0IHg9IjcwIiB5PSI2NCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViNWJhOCI+TEVEPC90ZXh0PgogIDxyZWN0IHg9IjEzMCIgeT0iMjkyIiB3aWR0aD0iMjYiIGhlaWdodD0iMTYiIGZpbGw9IiM1YjViYTgiLz4KICA8dGV4dCB4PSI1NiIgeT0iMzA0IiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNWI1YmE4Ij5zZW5zb3I8L3RleHQ+CiAgPGxpbmUgeDE9IjE0MyIgeTE9IjY4IiB4Mj0iMTQzIiB5Mj0iNzYiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMTQzIiB5MT0iNzYiIHgyPSIxNDMiIHkyPSIyODQiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI0IDQiLz4KICA8bGluZSB4MT0iMTQzIiB5MT0iMjg0IiB4Mj0iMTQzIiB5Mj0iMjkyIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iMTkwIiB5PSIzMjAiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM3ODcxNmMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmxpZ2h0IHBhc3NlcyB0aHJvdWdoIGEgc2xvdCDihpIgcHVsc2U8L3RleHQ+CgogIDwhLS0gY2hhbm5lbCBBIC0tPgogIDx0ZXh0IHg9IjQ3MCIgeT0iODAiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPkE8L3RleHQ+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNNTAwLDEyMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCIvPgogIDwvZz4KICA8IS0tIGNoYW5uZWwgQiBvZmZzZXQgYnkgaGFsZiBhIHN0ZXAgKDkwwrApIC0tPgogIDx0ZXh0IHg9IjQ3MCIgeT0iMjAwIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZjU4MzMxIj5CPC90ZXh0PgogIDxnIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiPgogICAgPHBhdGggZD0iTTUwMCwyNDUgdi0zMCBoMTUgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMTUiLz4KICA8L2c+CiAgPCEtLSBleHBsYW5hdGlvbiAtLT4KICA8dGV4dCB4PSI1MDAiIHk9IjI4NSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzc4NzE2YyI+dHdvIGNoYW5uZWxzLCBvZmZzZXQgYnkgOTDCsDwvdGV4dD4KICA8dGV4dCB4PSI1MDAiIHk9IjMwNSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzUyNTI1MiI+4oaSIGRpcmVjdGlvbiBmcm9tIHdoaWNoIHJpc2VzIGZpcnN0LCA0w5cgcmVzb2x1dGlvbiBmcm9tIGJvdGggZWRnZXM8L3RleHQ+Cjwvc3ZnPgo=" alt="Encoder disk with LED and sensor, and quadrature channels A and B offset by 90 degrees">
+          <figcaption>Disk (left) · quadrature output (right)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide soft" data-section="Task 2 · Encoders" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Task 2 · The math</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">From counts to metres</h2>
+          <div class="code" style="font-size:14px;">revolutions = counts / CPR
+distance   = revolutions × wheel circumference
+speed      = distance / time
+
+<span class="cm">// example: 65 mm wheel (circum ≈ 204 mm), CPR = 360</span>
+<span class="cm">// 720 counts = 2 revs = 408 mm</span></div>
+          <p class="body-md dim" style="margin-top:16px;">Resolution: N slots → 360/N° per count; count both edges → 360/2N; full quadrature → <span class="hl-orange" style="font-weight:700;">360/4N</span>.</p>
+        </div>
+        <div>
+          <p class="lbl-dark" style="margin-bottom:16px;">Your measurements</p>
+          <table class="spec">
+            <tr><th>Step</th><th>Do</th></tr>
+            <tr><td class="n">1</td><td>Spin wheels by hand — watch counts climb on Serial Monitor</td></tr>
+            <tr><td class="n">2</td><td>Push the car exactly 1 m — record counts per wheel</td></tr>
+            <tr><td class="n">3</td><td>Compute counts-per-metre; compare with CPR / circumference</td></tr>
+            <tr><td class="n">4</td><td>Add speed: every 100 ms, print (Δcounts → m/s)</td></tr>
+          </table>
+          <p class="body-sm quiet" style="margin-top:16px;">Checkpoint: live speed readouts while pushing the car at a steady pace.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Feedback" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Concept · feedback</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">Closing the loop</h2>
+          <p class="body-lg dim" style="margin-bottom:16px;">
+            <strong style="color:var(--ink)">Open loop</strong>: command → motion, no measurement. Drifts.
+            <strong style="color:var(--ink)">Closed loop</strong>: measure the output, compare with the target,
+            <strong style="color:var(--ink)">correct the difference</strong> — every few milliseconds.
+          </p>
+          <p class="body-md dim" style="margin-bottom:16px;">
+            Cruise control: without feedback the car slows on every hill; with speed feeding back, power is added the
+            instant speed drops. Same four parts in every control system — the air conditioner (thermostat → controller
+            → compressor → room) and our car (encoder → PID → H-bridge + motor → wheel speed).
+          </p>
+          <p class="body-md"><span class="hl-box">The loop</span>&nbsp; setpoint → error → controller → actuator → process → sensor → back to the start.</p>
+        </div>
+        <figure class="figure">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMjIwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9ImJhcnIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjciIG1hcmtlckhlaWdodD0iNyIgb3JpZW50PSJhdXRvIj4KICAgICAgPHBhdGggZD0iTTAsMCBMMTAsNSBMMCwxMCB6IiBmaWxsPSIjNzg3MTZjIi8+CiAgICA8L21hcmtlcj4KICAgIDxtYXJrZXIgaWQ9Im9hcnIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjciIG1hcmtlckhlaWdodD0iNyIgb3JpZW50PSJhdXRvIj4KICAgICAgPHBhdGggZD0iTTAsMCBMMTAsNSBMMCwxMCB6IiBmaWxsPSIjZjU4MzMxIi8+CiAgICA8L21hcmtlcj4KICAgIDxtYXJrZXIgaWQ9ImJhcnJldiIgdmlld0JveD0iMCAwIDEwIDEwIiByZWZYPSIxIiByZWZZPSI1IiBtYXJrZXJXaWR0aD0iNyIgbWFya2VySGVpZ2h0PSI3IiBvcmllbnQ9ImF1dG8iPgogICAgICA8cGF0aCBkPSJNMTAsMCBMMCw1IEwxMCwxMCB6IiBmaWxsPSIjNWI1YmE4Ii8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9Ijg4MCIgaGVpZ2h0PSIyMjAiIGZpbGw9IiNmZmZmZmYiLz4KICA8dGV4dCB4PSIzNiIgeT0iMzYiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPkNMT1NFRC1MT09QIENPTlRST0wg4oCUIFRIRSBGRUVEQkFDSyBMT09QPC90ZXh0PgoKICA8IS0tIHNldHBvaW50IC0tPgogIDx0ZXh0IHg9IjQwIiB5PSIxMDUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPnNldHBvaW50PC90ZXh0PgogIDxsaW5lIHgxPSIxMTgiIHkxPSIxMDAiIHgyPSIxNTIiIHkyPSIxMDAiIHN0cm9rZT0iIzc4NzE2YyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG1hcmtlci1lbmQ9InVybCgjYmFycikiLz4KCiAgPCEtLSBzdW1taW5nIGp1bmN0aW9uIC0tPgogIDxjaXJjbGUgY3g9IjE4MCIgY3k9IjEwMCIgcj0iMjIiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHRleHQgeD0iMTgwIiB5PSIxMDYiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPs6jPC90ZXh0PgogIDx0ZXh0IHg9IjIxMiIgeT0iODYiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPuKIkjwvdGV4dD4KICA8dGV4dCB4PSIxNzIiIHk9Ijc0IiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj4rPC90ZXh0PgoKICA8bGluZSB4MT0iMjAyIiB5MT0iMTAwIiB4Mj0iMjQwIiB5Mj0iMTAwIiBzdHJva2U9IiM3ODcxNmMiIHN0cm9rZS13aWR0aD0iMS41IiBtYXJrZXItZW5kPSJ1cmwoI2JhcnIpIi8+CiAgPHRleHQgeD0iMjIyIiB5PSI5MCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzUyNTI1MiIgZm9udC1zdHlsZT0iaXRhbGljIj5lKHQpPC90ZXh0PgoKICA8IS0tIGNvbnRyb2xsZXIgLS0+CiAgPHJlY3QgeD0iMjQ0IiB5PSI3MiIgd2lkdGg9IjEzMCIgaGVpZ2h0PSI1NiIgZmlsbD0iIzFhMWMxYyIvPgogIDx0ZXh0IHg9IjMwOSIgeT0iOTgiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkNvbnRyb2xsZXI8L3RleHQ+CiAgPHRleHQgeD0iMzA5IiB5PSIxMTYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiNmNTgzMzEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlBJRDwvdGV4dD4KCiAgPGxpbmUgeDE9IjM3NCIgeTE9IjEwMCIgeDI9IjQxMiIgeTI9IjEwMCIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjEuNSIgbWFya2VyLWVuZD0idXJsKCNiYXJyKSIvPgogIDx0ZXh0IHg9IjM5MiIgeT0iOTAiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM1MjUyNTIiIGZvbnQtc3R5bGU9Iml0YWxpYyI+dSh0KTwvdGV4dD4KCiAgPCEtLSBhY3R1YXRvciAtLT4KICA8cmVjdCB4PSI0MTYiIHk9IjcyIiB3aWR0aD0iMTMwIiBoZWlnaHQ9IjU2IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkOGQ5ZDgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHRleHQgeD0iNDgxIiB5PSI5OCIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iIzFhMWMxYyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QWN0dWF0b3I8L3RleHQ+CiAgPHRleHQgeD0iNDgxIiB5PSIxMTYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkgtYnJpZGdlICsgbW90b3I8L3RleHQ+CgogIDxsaW5lIHgxPSI1NDYiIHkxPSIxMDAiIHgyPSI1ODQiIHkyPSIxMDAiIHN0cm9rZT0iIzc4NzE2YyIgc3Ryb2tlLXdpZHRoPSIxLjUiIG1hcmtlci1lbmQ9InVybCgjYmFycikiLz4KCiAgPCEtLSBwcm9jZXNzIC0tPgogIDxyZWN0IHg9IjU4OCIgeT0iNzIiIHdpZHRoPSIxMzAiIGhlaWdodD0iNTYiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iI2Q4ZDlkOCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8dGV4dCB4PSI2NTMiIHk9Ijk4IiBmb250LXNpemU9IjE0IiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjMWExYzFjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Qcm9jZXNzPC90ZXh0PgogIDx0ZXh0IHg9IjY1MyIgeT0iMTE2IiBmb250LXNpemU9IjExIiBmaWxsPSIjNzg3MTZjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj53aGVlbCBzcGVlZDwvdGV4dD4KCiAgPGxpbmUgeDE9IjcxOCIgeTE9IjEwMCIgeDI9Ijc2MCIgeTI9IjEwMCIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjEuNSIgbWFya2VyLWVuZD0idXJsKCNiYXJyKSIvPgogIDx0ZXh0IHg9Ijc2NCIgeT0iMTA1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj5zcGVlZDwvdGV4dD4KCiAgPCEtLSBmZWVkYmFjayBwYXRoIC0tPgogIDxsaW5lIHgxPSI3NDIiIHkxPSIxMDAiIHgyPSI3NDIiIHkyPSIxODAiIHN0cm9rZT0iIzViNWJhOCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9Ijc0MiIgeTE9IjE4MCIgeDI9IjE4MCIgeTI9IjE4MCIgc3Ryb2tlPSIjNWI1YmE4IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMTgwIiB5MT0iMTgwIiB4Mj0iMTgwIiB5Mj0iMTI0IiBzdHJva2U9IiM1YjViYTgiIHN0cm9rZS13aWR0aD0iMiIgbWFya2VyLWVuZD0idXJsKCNiYXJyZXYpIi8+CgogIDwhLS0gc2Vuc29yIC0tPgogIDxyZWN0IHg9IjM4OCIgeT0iMTU4IiB3aWR0aD0iMTQ2IiBoZWlnaHQ9IjQ0IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiM1YjViYTgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHRleHQgeD0iNDYxIiB5PSIxODUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiMxYTFjMWMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlNlbnNvciDigJQgZW5jb2RlcjwvdGV4dD4KICA8bGluZSB4MT0iNTM0IiB5MT0iMTgwIiB4Mj0iNzQyIiB5Mj0iMTgwIiBzdHJva2U9IiM1YjViYTgiIHN0cm9rZS13aWR0aD0iMCIvPgoKICA8dGV4dCB4PSIzNiIgeT0iMjA1IiBmb250LXNpemU9IjEyIiBmaWxsPSIjNTI1MjUyIj5Db21wYXJlIHNldHBvaW50IHdpdGggbWVhc3VyZWQgc3BlZWQg4oaSIGVycm9yIOKGkiB0aGUgY29udHJvbGxlciBjb3JyZWN0cyB0aGUgbW90b3IsIGV2ZXJ5IGZldyBtaWxsaXNlY29uZHMuPC90ZXh0Pgo8L3N2Zz4K" alt="Block diagram of the closed feedback loop with encoder sensor and PID controller">
+          <figcaption>The feedback loop on our car</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide soft" data-section="PID" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Concept · PID</p>
+          <h2 class="t-lg" style="margin-bottom:16px;">Three terms, one controller</h2>
+          <p class="body-md dim" style="margin-bottom:16px;">
+            Patented in 1936, still running over 90% of industrial control loops. The lectures explain it with a
+            <strong style="color:var(--ink)">leaking water tank</strong> — hold the level at A while it drains toward B:
+          </p>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="card" style="background:var(--canvas); padding:20px 24px;">
+              <h3 style="font-size:17px;">P — react to the present</h3>
+              <p style="font-size:14px;">Tap opens in proportion to the gap. With a leak, it settles below target — the steady-state error.</p>
+            </div>
+            <div class="card" style="background:var(--canvas); padding:20px 24px;">
+              <h3 style="font-size:17px;">I — remember the past</h3>
+              <p style="font-size:14px;">Error accumulates until the gap is gone. Cost: overshoot and slower settling.</p>
+            </div>
+            <div class="card" style="background:var(--canvas); padding:20px 24px;">
+              <h3 style="font-size:17px;">D — anticipate the future</h3>
+              <p style="font-size:14px;">Brakes when the level rises fast — smaller overshoot, faster settle.</p>
+            </div>
+          </div>
+        </div>
+        <figure class="figure">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzIwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8cmVjdCB3aWR0aD0iODgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHg9IjM2IiB5PSIzNiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZmlsbD0iIzViNWJhOCI+U1RFUCBSRVNQT05TRSDigJQgV0hBVCBFQUNIIFRFUk0gQUREUzwvdGV4dD4KCiAgPCEtLSBheGVzIC0tPgogIDxsaW5lIHgxPSI2MCIgeTE9IjI2MCIgeDI9Ijg0MCIgeTI9IjI2MCIgc3Ryb2tlPSIjZDhkOWQ4IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSI2MCIgeTE9IjI2MCIgeDI9IjYwIiB5Mj0iNTAiIHN0cm9rZT0iI2Q4ZDlkOCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8dGV4dCB4PSI2MCIgeT0iNDIiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiPnNwZWVkIC8gbGV2ZWw8L3RleHQ+CiAgPHRleHQgeD0iODQwIiB5PSIyODAiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiIHRleHQtYW5jaG9yPSJlbmQiPnRpbWU8L3RleHQ+CgogIDwhLS0gdGFyZ2V0IGxpbmUgLS0+CiAgPGxpbmUgeDE9IjYwIiB5MT0iMTIwIiB4Mj0iODQwIiB5Mj0iMTIwIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtZGFzaGFycmF5PSI4IDUiLz4KICA8dGV4dCB4PSI4MzYiIHk9IjExMiIgZm9udC1zaXplPSIxMSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyIgdGV4dC1hbmNob3I9ImVuZCI+dGFyZ2V0PC90ZXh0PgoKICA8IS0tIFA6IHN0ZWFkeS1zdGF0ZSBlcnJvciAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSI2MCwyNTggMTEwLDIxMCAxNTAsMTg2IDE5MCwxNzIgMjQwLDE2NCAzMDAsMTYwIDM2MCwxNTggNDIwLDE1NyA0ODAsMTU3IDU0MCwxNTcgNjAwLDE1NyA2NjAsMTU3IDcyMCwxNTcgNzgwLDE1NyA4NDAsMTU3IiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMi41Ii8+CgogIDwhLS0gUEk6IHJlYWNoZXMgdGFyZ2V0IGJ1dCBvdmVyc2hvb3RzIC0tPgogIDxwb2x5bGluZSBwb2ludHM9IjYwLDI1OCAxMDAsMTk2IDEzMCwxNTggMTU1LDEyMCAxNzAsODYgMTg1LDY2IDIwMCw4MCAyMjAsMTA0IDI0MCwxMjAgMjYwLDEzNiAyODAsMTI0IDMwMCwxMTQgMzIwLDEyMiAzNDAsMTE2IDM2MCwxMjQgMzgwLDExOCA0MDAsMTIxIDQyMCwxMTkgNDQwLDEyMCA0NjAsMTE5IDQ4MCwxMjAgNTAwLDEyMCA1MjAsMTIwIDU0MCwxMjAgNTYwLDEyMCA1ODAsMTIwIDYwMCwxMjAgNjIwLDEyMCA2NDAsMTIwIDY2MCwxMjAgNjgwLDEyMCA3MDAsMTIwIDcyMCwxMjAgNzQwLDEyMCA3NjAsMTIwIDc4MCwxMjAgODAwLDEyMCA4NDAsMTIwIiBmaWxsPSJub25lIiBzdHJva2U9IiM3ODcxNmMiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtZGFzaGFycmF5PSI3IDQiLz4KCiAgPCEtLSBQSUQ6IGZhc3QsIHNtYWxsIG92ZXJzaG9vdCAtLT4KICA8cG9seWxpbmUgcG9pbnRzPSI2MCwyNTggOTUsMTgwIDEyNSwxMzYgMTUwLDExMCAxNzAsOTggMTg1LDEwNCAyMDUsMTIyIDIyNSwxMTggMjUwLDEyMiAyNzUsMTE5IDMwMCwxMjEgMzMwLDEyMCAzNjAsMTIwIDM5MCwxMjAgNDIwLDEyMCA0NTAsMTIwIDQ4MCwxMjAgNTEwLDEyMCA1NDAsMTIwIDU3MCwxMjAgNjAwLDEyMCA2MzAsMTIwIDY2MCwxMjAgNjkwLDEyMCA3MjAsMTIwIDc1MCwxMjAgNzgwLDEyMCA4MTAsMTIwIDg0MCwxMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIzIi8+CgogIDwhLS0gYW5ub3RhdGlvbnMgLS0+CiAgPGxpbmUgeDE9IjcwMCIgeTE9IjEyMCIgeDI9IjcwMCIgeTI9IjE1NyIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDx0ZXh0IHg9IjcwNiIgeT0iMTQyIiBmb250LXNpemU9IjExIiBmaWxsPSIjMWExYzFjIj5zdGVhZHktc3RhdGUgZXJyb3IgKFAgb25seSk8L3RleHQ+CiAgPHRleHQgeD0iMTg4IiB5PSI1OCIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzc4NzE2YyI+b3ZlcnNob290IChQSSk8L3RleHQ+CiAgPHRleHQgeD0iMTUwIiB5PSI5NiIgZm9udC1zaXplPSIxMSIgZmlsbD0iI2Y1ODMzMSI+UElEOiBxdWljayBzZXR0bGU8L3RleHQ+CgogIDwhLS0gbGVnZW5kIC0tPgogIDxsaW5lIHgxPSI2MCIgeTE9IjI5OCIgeDI9Ijg4IiB5Mj0iMjk4IiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iOTYiIHk9IjMwMiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzFhMWMxYyI+UDwvdGV4dD4KICA8bGluZSB4MT0iMTMwIiB5MT0iMjk4IiB4Mj0iMTU4IiB5Mj0iMjk4IiBzdHJva2U9IiM3ODcxNmMiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtZGFzaGFycmF5PSI3IDQiLz4KICA8dGV4dCB4PSIxNjYiIHk9IjMwMiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzFhMWMxYyI+UEk8L3RleHQ+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjI5OCIgeDI9IjIyOCIgeTI9IjI5OCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSIyMzYiIHk9IjMwMiIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzFhMWMxYyI+UElEPC90ZXh0Pgo8L3N2Zz4K" alt="Step response curves showing steady-state error with P, overshoot with PI, and quick settling with PID">
+          <figcaption>P vs. PI vs. PID step response</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="PID" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Concept · the loop in code</p>
+          <h2 class="t-lg" style="margin-bottom:16px;">PID, every 10 milliseconds</h2>
+          <div class="code" style="font-size:13.5px;">float Kp = 1.0, Ki = 0.05, Kd = 1.0;
+float integral = 0, lastError = 0;
+
+void controlLoop(float target) {
+  float measured = readSpeed();              <span class="cm">// encoder, m/s</span>
+  float error    = target - measured;
+
+  integral += error * dt;                    <span class="cm">// I: accumulate</span>
+  float deriv = (error - lastError) / dt;    <span class="cm">// D: rate of change</span>
+  lastError  = error;
+
+  float u = Kp*error + Ki*integral + Kd*deriv;
+  motorWrite(constrain(u, 0, MAX_PWM));      <span class="cm">// actuator</span>
+}</div>
+        </div>
+        <div>
+          <p class="lbl-dark" style="margin-bottom:16px;">Watch for, in order</p>
+          <ul class="tick body-md dim">
+            <li><strong style="color:var(--ink)">P only</strong> — speed settles <em>below</em> target: friction is the leak, the gap is the steady-state error</li>
+            <li><strong style="color:var(--ink)">Add I</strong> — gap closes, overshoot appears</li>
+            <li><strong style="color:var(--ink)">Add D</strong> — overshoot shrinks, settle time drops</li>
+          </ul>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Task 3</span>&nbsp; do exactly this on the car, one term at a time, printing measured speed all the while.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide soft" data-section="Task 3 · PID" aria-roledescription="slide">
+      <div class="rail">
+        <p class="lbl-purple" style="margin-bottom:12px;">Task 3 · Tuning</p>
+        <h2 class="t-lg" style="margin-bottom:24px;">The trial-and-error recipe</h2>
+        <div class="row" style="align-items:flex-start;">
+          <table class="spec" style="flex:1.2;">
+            <tr><th>Step</th><th>Constant</th><th>Start</th><th>Adjust by</th><th>Goal</th></tr>
+            <tr><td class="n">1</td><td class="k">Kp (Ki = Kd = 0)</td><td class="n">1.0</td><td class="n">±0.5, then ±0.1</td><td>response nearly stable</td></tr>
+            <tr><td class="n">2</td><td class="k">Ki</td><td class="n">0.05</td><td class="n">±0.01, then ±0.005</td><td>steady state matches target</td></tr>
+            <tr><td class="n">3</td><td class="k">Kd</td><td class="n">1.0</td><td class="n">±0.5, then ±0.1</td><td>oscillation reduced</td></tr>
+          </table>
+          <div style="flex:1;">
+            <div class="card">
+              <p class="step-num">Rules</p>
+              <h3>One constant at a time</h3>
+              <p>Change two at once and you learn nothing about either. Log every setting with what you saw — the log is your tuning evidence.</p>
+            </div>
+            <div class="card" style="background:var(--canvas); border:1px solid var(--hairline); margin-top:16px;">
+              <p class="step-num">Checkpoint</p>
+              <h3>Same speed, both wheels</h3>
+              <p>With your tuned constants, both wheels hold the same target — plus a log of at least three tested settings.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide white" data-section="Task 4 · Milestone" aria-roledescription="slide">
+      <div class="rail row">
+        <div>
+          <p class="lbl-purple" style="margin-bottom:12px;">Task 4 · Milestone</p>
+          <h2 class="t-lg" style="margin-bottom:20px;">The perfectly straight line</h2>
+          <ul class="tick body-md dim">
+            <li>Both wheels under PID, same target speed</li>
+            <li>Run <strong style="color:var(--ink)">2 metres</strong> from a fixed line — three times</li>
+            <li>Measure lateral deviation at the 2 m mark, each run</li>
+          </ul>
+          <table class="spec" style="margin-top:16px;">
+            <tr><th>Run</th><th>Open loop (Task 1)</th><th>PID (Task 4)</th></tr>
+            <tr><td class="n">1</td><td>your earlier drift</td><td>cm</td></tr>
+            <tr><td class="n">2</td><td></td><td>cm</td></tr>
+            <tr><td class="n">3</td><td></td><td>cm</td></tr>
+          </table>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Success</span>&nbsp; deviation under 5 cm, reproducible across three runs.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div class="card">
+            <p class="step-num">Same car, same motors</p>
+            <h3>What changed is the feedback</h3>
+            <p>The loop corrects every difference between the wheels dozens of times per second — the drift from Task 1 can't accumulate.</p>
+          </div>
+          <div class="card" style="background:var(--canvas); border:1px solid var(--hairline);">
+            <p class="step-num">This is Part 1's milestone</p>
+            <h3>Everything builds on it</h3>
+            <p>Line tracking, vision steering, the final project — they all send speed commands into the loop you built today.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide black" data-section="Wrap-up" aria-roledescription="slide">
+      <div class="rail">
+        <p class="cap" style="color:var(--accent-orange); margin-bottom:16px;">Checkpoint 02 · Wrap-up</p>
+        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Show three straight runs.</h2>
+        <div class="grid-3" style="margin-top:40px;">
+          <div class="card">
+            <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable</p>
+            <h3 style="color:var(--on-primary);">Straight-line demo + table</h3>
+            <p>Three PID runs under 5 cm deviation, with your tuning log.</p>
+          </div>
+          <div class="card">
+            <p class="step-num" style="color:rgba(255,255,255,.55);">You learned</p>
+            <h3 style="color:var(--on-primary);">Actuate and measure</h3>
+            <p>PWM for speed, H-bridge for direction, encoders for truth.</p>
+          </div>
+          <div class="card">
+            <p class="step-num" style="color:rgba(255,255,255,.55);">You learned</p>
+            <h3 style="color:var(--on-primary);">Feedback fixes drift</h3>
+            <p>P, I, D each earn their place — and tuning is a method, not luck.</p>
+          </div>
+        </div>
+        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">AIoScout · adapted from HKUST ISDN 2601 lectures · full guide: Lab1_Motor_Motion_StudentGuide.md · End of Lab 1</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bar bottom">
+    <div class="counter"><span id="cur">01</span> <span class="of">/ <span id="total">16</span></span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="sec-label" id="secLabel">Intro</div>
+    <div class="nav-btns">
+      <button id="prevBtn" aria-label="Previous slide" title="Previous (←)">‹</button>
+      <button id="nextBtn" aria-label="Next slide" title="Next (→ or Space)">›</button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var cur = document.getElementById('cur');
+  var total = document.getElementById('total');
+  var fill = document.getElementById('fill');
+  var secLabel = document.getElementById('secLabel');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var index = 0;
+  total.textContent = String(slides.length).padStart(2, '0');
+  function show(i, push) {
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, n) { s.classList.toggle('active', n === index); });
+    cur.textContent = String(index + 1).padStart(2, '0');
+    fill.style.width = (slides.length < 2 ? 100 : (index / (slides.length - 1)) * 100) + '%';
+    secLabel.textContent = slides[index].getAttribute('data-section') || '';
+    if (push && location.hash !== '#' + (index + 1)) { history.replaceState(null, '', '#' + (index + 1)); }
+    var active = slides[index];
+    if (active) active.scrollTop = 0;
+  }
+  function next() { show(index + 1, true); }
+  function prev() { show(index - 1, true); }
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  document.querySelectorAll('[data-go="next"]').forEach(function (b) { b.addEventListener('click', next); });
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': case 'Enter': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); show(0, true); break;
+      case 'End': e.preventDefault(); show(slides.length - 1, true); break;
+    }
+  });
+  var x0 = null;
+  document.addEventListener('pointerdown', function (e) {
+    if (e.target.closest('button, a')) { x0 = null; return; }
+    x0 = e.clientX;
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (x0 === null) return;
+    var dx = e.clientX - x0;
+    if (Math.abs(dx) > 48) { dx < 0 ? next() : prev(); }
+    x0 = null;
+  });
+  window.addEventListener('hashchange', function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n >= 1 && n <= slides.length) show(n - 1, false);
+  });
+  var initial = parseInt(location.hash.slice(1), 10);
+  show((initial >= 1 && initial <= slides.length) ? initial - 1 : 0, false);
+})();
+</script>
+</body>
+</html>

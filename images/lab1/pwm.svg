@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" font-family="Inter, Arial, sans-serif">
+  <rect width="880" height="300" fill="#ffffff"/>
+  <text x="36" y="40" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">PULSE-WIDTH MODULATION (PWM)</text>
+
+  <!-- 25% -->
+  <g stroke="#1a1c1c" stroke-width="2.5" fill="none">
+    <path d="M120,80 v-35 h27 v35 h81 v-35 h27 v35 h81 v-35 h27 v35 h81 v-35 h27 v35 h81"/>
+  </g>
+  <text x="36" y="85" font-size="13" font-weight="600" fill="#1a1c1c">25%</text>
+  <text x="500" y="85" font-size="13" fill="#525252">on 1 ms, off 3 ms — slow</text>
+
+  <!-- 50% -->
+  <g stroke="#1a1c1c" stroke-width="2.5" fill="none">
+    <path d="M120,170 v-35 h54 v35 h54 v-35 h54 v35 h54 v-35 h54 v35 h54 v-35 h54 v35 h54 v-35 h54 v35 h54"/>
+  </g>
+  <text x="36" y="175" font-size="13" font-weight="600" fill="#1a1c1c">50%</text>
+  <text x="500" y="175" font-size="13" fill="#525252">on 2 ms, off 2 ms — medium</text>
+
+  <!-- 75% -->
+  <g stroke="#1a1c1c" stroke-width="2.5" fill="none">
+    <path d="M120,260 v-35 h81 v35 h27 v-35 h81 v35 h27 v-35 h81 v35 h27 v-35 h81 v35 h27 v-35 h81 v35 h27"/>
+  </g>
+  <text x="36" y="265" font-size="13" font-weight="600" fill="#1a1c1c">75%</text>
+  <text x="500" y="265" font-size="13" fill="#525252">on 3 ms, off 1 ms — fast</text>
+
+  <!-- period annotation -->
+  <line x1="120" y1="295" x2="228" y2="295" stroke="#78716c" stroke-width="1.5"/>
+  <line x1="120" y1="288" x2="120" y2="302" stroke="#78716c" stroke-width="1.5"/>
+  <line x1="228" y1="288" x2="228" y2="302" stroke="#78716c" stroke-width="1.5"/>
+  <text x="174" y="285" font-size="11" fill="#78716c" text-anchor="middle">one period (e.g. 4 ms)</text>
+</svg>

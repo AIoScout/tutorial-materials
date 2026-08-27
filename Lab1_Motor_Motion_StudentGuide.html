@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 1 · Motor &amp; Motion — Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .nav { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 64px; gap:24px; flex-wrap:wrap; }
+  @media (max-width:768px) { .nav-inner { padding:0 24px; } }
+  @media (max-width:640px) { .nav-label { display:none; } }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; }
+  .wordmark span { color:var(--accent-orange); }
+  .nav-right { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .nav-index { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+  .nav-label { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article { max-width:880px; margin:48px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(32px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+  .article h1 { font-size:clamp(26px,4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.03em; margin-bottom:24px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:56px; padding-top:28px; border-top:1px solid var(--hairline); }
+  .article h3 { color:var(--accent-purple); font-size:14.5px; font-weight:700; letter-spacing:0.72px; margin-top:40px; }
+  .article h4 { font-size:17px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:16px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:16px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:16px 0 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:8px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
+  .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
+  .article blockquote p { margin-top:8px; }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
+  .article img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:12px; margin:24px auto; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+  .wrap-list { overflow-x:auto; margin-top:20px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:12px 16px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:15px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .cph { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:40px 0 8px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  .katex-display { overflow-x:auto; overflow-y:hidden; padding:8px 0; }
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
+  .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
+  .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <div class="nav-right">
+      <a class="nav-index" href="index.html">&larr; Index</a>
+      <span class="nav-label">Lab 1 · Student Guide</span>
+    </div>
+  </div>
+</div>
+<article class="article">
+<h1>Lab 1 — Motor &amp; Motion: Making Movement Reliable <em>(Student Guide)</em></h1>
+<blockquote>
+<p>Adapted from AIoScout curriculum material and HKUST ISDN 2601 lecture notes (Robot Sensing; PID Controller) for secondary school students.</p>
+<p><strong>Lab focus</strong> — drive the motors, measure motion with encoders, and close the loop with PID control until the car holds a straight line on its own.</p>
+</blockquote>
+<hr />
+<h2>1. Welcome — What You Will Learn</h2>
+<p>This is the lab where the car first moves — and then learns to move <em>accurately</em>. By the end you can:</p>
+<ul>
+<li>Explain how a <strong>DC motor</strong> turns voltage into rotation, and how <strong>PWM</strong> sets the speed</li>
+<li>Use an <strong>H-bridge</strong> to control direction</li>
+<li>Read a wheel <strong>encoder</strong> and convert pulses into real distance and speed</li>
+<li>Explain <strong>open-loop</strong> vs <strong>closed-loop</strong> control, and why feedback matters</li>
+<li>Build and tune a <strong>PID controller</strong> that holds both wheels at the same speed</li>
+</ul>
+<p><strong>Key words you will learn:</strong> motor · PWM · duty cycle · H-bridge · encoder · quadrature · counts per revolution · feedback · error · P, I, D · steady-state error · overshoot · tuning</p>
+<hr />
+<h2>2. Background — From Voltage to Trustworthy Motion</h2>
+<h3>2.1 The DC Motor</h3>
+<p>A <strong>DC motor</strong> is simplicity itself: apply a DC voltage and it rotates; remove the voltage and it stops. Inside, current flowing through a coil in a magnetic field creates a force that spins the shaft. More voltage → faster spin. That's the whole principle — the tricky parts are <em>how fast</em> (speed control) and <em>which way</em> (direction control).</p>
+<h3>2.2 Speed Control by PWM</h3>
+<p>We can't give a motor "half a voltage" cleanly — but we can give it full voltage <strong>half the time</strong>. <strong>Pulse-Width Modulation (PWM)</strong> switches the motor on and off thousands of times per second; the fraction of time it stays on — the <strong>duty cycle</strong> — sets the average power, and therefore the speed:</p>
+<p><img alt="PWM duty cycle" src="images/lab1/pwm.svg" />
+<em>Same voltage, different ON-time: 25%, 50%, 75% duty → slow, medium, fast</em></p>
+<h3>2.3 Direction Control: the H-Bridge</h3>
+<p>To reverse a DC motor you must reverse the current through it. An <strong>H-bridge</strong> is four electronic switches arranged around the motor (drawn like the letter H):</p>
+<ul>
+<li>Close <strong>S1 + S4</strong> → current flows left-to-right → <strong>forward</strong></li>
+<li>Close <strong>S2 + S3</strong> → current flows right-to-left → <strong>reverse</strong></li>
+<li>All open → <strong>stop</strong> (or brake)</li>
+</ul>
+<p><img alt="H-bridge" src="images/lab1/hbridge.svg" />
+<em>Forward state drawn: S1 and S4 closed, current (orange) flows through the motor</em></p>
+<p>Combine the two ideas: the switch pair sets <strong>direction</strong>, PWM on the pair sets <strong>speed</strong>. This is exactly what the motor driver chip on the car does for you.</p>
+<h3>2.4 Measuring Motion: the Encoder</h3>
+<p>Motors are blind — they don't know how far they've turned. An <strong>encoder</strong> tells us. In the human-body analogy from the lectures, encoders are the robot's <strong>proprioception</strong>: the sense your muscles and joints use to know where your limbs are without looking.</p>
+<p>An <strong>optical encoder</strong> has three parts:</p>
+<ol>
+<li>A <strong>light source</strong> (an LED, its beam made parallel by a lens)</li>
+<li>An opaque <strong>code disk</strong> on the shaft with slots around its rim</li>
+<li>A <strong>photosensor</strong> (photodiode or phototransistor) that detects the light</li>
+</ol>
+<p>As the wheel turns, the disk chops the light beam into <strong>pulses</strong> — count the pulses and you know the rotation:</p>
+<p><img alt="Optical encoder and quadrature" src="images/lab1/encoder.svg" />
+<em>Left: LED, slotted disk, and sensor. Right: channels A and B offset by 90°</em></p>
+<p><strong>Quadrature.</strong> Good encoders output <em>two</em> signals, <strong>A and B</strong>, offset by a quarter cycle (90°). This gives two gifts:</p>
+<ul>
+<li><strong>Direction</strong> — if A rises before B, the wheel turns one way; if B rises first, the other way</li>
+<li><strong>4× the resolution</strong> — counting the rising <em>and</em> falling edges of both channels gives four counts per slot</li>
+</ul>
+<p><strong>Resolution.</strong> For a disk with N slots, one count is 360/N degrees. Counting both edges makes it 360/2N, and full quadrature makes it <strong>360/4N</strong>. Absolute encoders (which read position directly from a coded disk, e.g. in <strong>Gray code</strong>, where only one bit flips per step so misreads can't jump far) achieve 360/2ⁿ with n tracks — more accurate, but more expensive. Our car uses <strong>incremental quadrature encoders</strong>.</p>
+<p><strong>From counts to distance.</strong> The encoder gives counts; physics converts them:</p>
+<pre><code>revolutions = counts / CPR          (CPR = counts per revolution, after quadrature)
+distance    = revolutions × wheel circumference
+speed       = distance / elapsed time
+</code></pre>
+<p>Example: a 65 mm wheel (circumference ≈ 204 mm) with CPR = 360: 720 counts = 2 revolutions = <strong>408 mm</strong> travelled.</p>
+<h3>2.5 Open Loop vs. Closed Loop</h3>
+<p>Send the same PWM to both motors and the car will <strong>curve</strong>. Why? No two motors are identical — different friction, different windings — so "50% duty" never means the same speed twice. This is <strong>open-loop control</strong>: input → process → output, no measurement, no correction. It's walking with your eyes closed.</p>
+<p><strong>Closed-loop control</strong> adds feedback: measure the output, compare it with the target, and correct the difference. The lecture's cruise-control example: without feedback, the car slows on every uphill; with a speed sensor feeding back, the controller adds power the moment speed drops.</p>
+<p><img alt="Closed-loop control" src="images/lab1/control-loop.svg" />
+<em>The feedback loop: sensor (encoder) → error → controller (PID) → actuator (H-bridge + motor) → wheel speed</em></p>
+<p>Every control system has the same four parts — in the air conditioner, the process is room temperature and the actuator is the compressor; in our car, the process is wheel speed and the actuator is the H-bridge and motor.</p>
+<h3>2.6 PID: the Classic Controller</h3>
+<p>In 1936, Callender and Stevenson patented the combination that still runs over 90% of industrial controllers today: <strong>P</strong>roportional-<strong>I</strong>ntegral-<strong>D</strong>erivative. The controller output is:</p>
+<p>$$
+u(t) = K_p\left[\, e(t) + \frac{1}{T_i}\int_0^t e(\tau)\,d\tau + T_d \frac{de(t)}{dt} \,\right]
+$$</p>
+<p>where <strong>e(t)</strong> is the error (target − measured) and the three terms each play a role. The lectures explain them with a <strong>leaking water tank</strong> — you want the water at level A, but it keeps draining to level B:</p>
+<p><strong>P — Proportional: react to the present.</strong>
+The tap opens in proportion to how far the level is below target. Big difference → big correction. But with a <em>leak</em>, a proportional-only controller settles where its correction exactly balances the leak — <strong>below the target, forever</strong>. That residual gap is the <strong>steady-state error</strong>: with P alone, the water stays at 1 dm while the target is 2.</p>
+<p><strong>I — Integral: remember the past.</strong>
+The integral accumulates error over time. As long as the level is below target, the accumulated error grows, and the tap opens further — until the steady-state error is gone. The cost: the response now <strong>overshoots</strong> (the accumulated "momentum" pushes past the target) and settles more slowly.</p>
+<p><strong>D — Derivative: anticipate the future.</strong>
+The derivative reacts to how <em>fast</em> the error is changing — it brakes the correction when the level rises quickly, cutting the <strong>overshoot</strong> and shortening the settle time. In cruise control: on an uphill the speed derivative is negative → add power <em>early</em>; on a downhill it's positive → brake <em>early</em>.</p>
+<p><img alt="Step response of P, PI, PID" src="images/lab1/pid-curves.svg" />
+<em>What each term adds: P leaves a steady-state error; I removes it at the cost of overshoot; D calms the response</em></p>
+<p><strong>The control loop in pseudocode</strong> (run every few milliseconds):</p>
+<pre><code class="language-text">take a new measurement            (encoder speed)
+error     = target − measured
+integral  = integral + error × dt          (sum of all past errors)
+derivative = (error − lastError) / dt      (how fast it's changing)
+output    = Kp×error + Ki×integral + Kd×derivative
+lastError = error
+drive the motor with output
+</code></pre>
+<hr />
+<h2>3. Task 1 — First Motion (Open Loop)</h2>
+<p><strong>Step 1.</strong> Set up the car as in previous labs (battery, board settings, port).</p>
+<p><strong>Step 2.</strong> Open <code>Task_1.ino</code> and find the motor commands — set both wheels to the same PWM value (e.g. 1000) and upload.</p>
+<p><strong>Step 3.</strong> Place the car on the floor (or hold it over the table with wheels free) and let it run 2 metres. Mark where it ends.</p>
+<p><strong>Step 4.</strong> Repeat three times from the same start line.</p>
+<p><strong>Observation to record:</strong> with identical commands, does the car run straight? How far from the straight line does it drift? Where does it end up each run — the same place?</p>
+<div class="cph">Check Point</div>
+<p>Show the TA / instructor: the car moving under open loop, and your three drift measurements. Explain why identical commands don't give identical motion.</p>
+<hr />
+<h2>4. Task 2 — Reading the Encoders</h2>
+<p><strong>Step 1.</strong> Open <code>Task_2.ino</code>. The encoder channel A pins are wired to interrupt-capable GPIOs; the skeleton attaches an <strong>interrupt service routine</strong> that counts pulses:</p>
+<pre><code class="language-cpp">volatile long countL = 0, countR = 0;
+
+void IRAM_ATTR isrEncoderLeft()  { countL++; }   // +1 per edge, channel A
+void IRAM_ATTR isrEncoderRight() { countR++; }
+
+void setup() {
+  Serial.begin(115200);
+  attachInterrupt(digitalPinToInterrupt(ENC_L_A), isrEncoderLeft,  RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_R_A), isrEncoderRight, RISING);
+}
+</code></pre>
+<p><strong>Step 2.</strong> Upload, open the Serial Monitor, and spin the wheels by hand — watch the counts climb.</p>
+<p><strong>Step 3.</strong> Push the car exactly <strong>1 metre</strong> along a tape measure in a straight line. Record the counts for each wheel.</p>
+<p><strong>Step 4.</strong> Compute your conversion factor — counts per metre:</p>
+<pre><code>counts_per_metre = counts / 1.00 m
+</code></pre>
+<p>and check it against theory: <code>counts_per_metre = CPR / wheel_circumference</code>. (Your instructor gives you the CPR and wheel diameter for the car.)</p>
+<p><strong>Step 5.</strong> Add speed measurement: every <code>dt = 100 ms</code>, read the counts, compute how far the wheel travelled, and print speed in m/s:</p>
+<pre><code class="language-cpp">float distance = (countL - lastCountL) / (float)CPR * WHEEL_CIRC;  // metres this interval
+float speed    = distance / dt;                                    // m/s
+</code></pre>
+<div class="cph">Check Point</div>
+<p>Show the TA: hand-spun counts, your measured counts-per-metre vs. the theoretical value, and live speed readouts while pushing the car.</p>
+<hr />
+<h2>5. Task 3 — Closing the Loop: P, I, D</h2>
+<p>Now the centrepiece. <code>Task_3.ino</code> runs a control loop every 10 ms: read both encoders, compute each wheel's speed, compare with the target, and write the PWM.</p>
+<p><strong>Step 1 — P only.</strong> Set <code>Ki = 0</code>, <code>Kd = 0</code>, <code>Kp = 1.0</code>. Command a target speed to both wheels.</p>
+<pre><code class="language-cpp">float Kp = 1.0, Ki = 0.0, Kd = 0.0;
+
+void controlLoop(float target) {
+  float measured = readSpeedLeft();            // m/s, from Task 2
+  float error    = target - measured;
+  integral      += error * dt;
+  float deriv    = (error - lastError) / dt;
+  float u        = Kp*error + Ki*integral + Kd*deriv;
+  lastError      = error;
+  motorLeftWrite(constrain(u, 0, MAX_PWM));    // clamp to valid PWM range
+}
+</code></pre>
+<p>Record what happens: does the wheel reach the target speed? Watch the printed speed settle <strong>below</strong> the target — the leaking-tank story in your motor: friction and load are the leak. That gap is the <strong>steady-state error</strong>.</p>
+<p><strong>Step 2 — Add I.</strong> Set <code>Ki = 0.05</code>. Watch the steady-state error shrink to zero — then notice the overshoot as it approaches.</p>
+<p><strong>Step 3 — Add D.</strong> Set <code>Kd = 1.0</code>. Watch the overshoot shrink and the speed settle faster.</p>
+<p><strong>Step 4 — Tune it</strong> (the lecture's trial-and-error recipe):</p>
+<ol>
+<li>Disable I and D; adjust <strong>P</strong> until the response is nearly stable — start at 1.0, adjust by ±0.5, fine-tune by ±0.1</li>
+<li>Enable <strong>I</strong> until the steady state matches the setpoint — start at 0.05, adjust by ±0.01, fine-tune by ±0.005</li>
+<li>Enable <strong>D</strong> until oscillation is reduced to your satisfaction — start at 1.0, adjust by ±0.5, fine-tune by ±0.1</li>
+</ol>
+<p>Change <strong>one constant at a time</strong>, and write down each setting with what you observed — that log is your tuning evidence.</p>
+<div class="cph">Check Point</div>
+<p>Show the TA: the same target speed on both wheels with your tuned constants — and your tuning log with at least three tested settings.</p>
+<hr />
+<h2>6. Task 4 — The Straight-Line Test (Milestone)</h2>
+<p><strong>Step 1.</strong> With your tuned PID controlling both wheels to the same target speed, place the car on a 2-metre start line.</p>
+<p><strong>Step 2.</strong> Run it — three times.</p>
+<p><strong>Step 3.</strong> Measure the lateral deviation from the straight line at the 2 m mark for each run.</p>
+<p><strong>Success criteria:</strong> deviation under <strong>5 cm</strong>, reproducible across three runs.</p>
+<p>Compare with your Task 1 measurements: same car, same motors — but now the feedback loop corrects every difference between the wheels, dozens of times per second.</p>
+<div class="cph">Check Point</div>
+<p>Show the TA: three straight-line runs and your deviation table. This is the Part 1 milestone — <em>The Perfectly Straight Line</em>.</p>
+<hr />
+<h2>7. Appendix</h2>
+<h3>7.1 Why the car turns: differential drive</h3>
+<p>Two driven wheels, one castor. The car's speed and turn rate come straight from the wheel speeds:</p>
+<pre><code>v = (vL + vR) / 2          (forward speed)
+ω = (vR − vL) / W          (turn rate; W = distance between wheels)
+</code></pre>
+<p>Equal speeds → straight. A small difference → a gentle arc. Opposite speeds → pivot on the spot. PID holding <code>vL = vR</code> is what makes "straight" happen.</p>
+<h3>7.2 Encoder quirks worth knowing</h3>
+<ul>
+<li><strong>Missed counts:</strong> if the interrupt fires faster than the MCU can service it, counts are lost — one reason to keep control loops lean</li>
+<li><strong>Gray code:</strong> absolute encoder disks use Gray code so that only one bit changes per step — a misread then moves the position by one step, not to a wildly wrong angle (the binary-code problem from the lecture)</li>
+<li><strong>Real errors:</strong> quantization, disk eccentricity, printing tolerances, vibration — why your measured counts-per-metre and the theoretical value differ slightly</li>
+</ul>
+<h3>7.3 Troubleshooting</h3>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One wheel never moves</td>
+<td>Motor connector or H-bridge wiring — swap left/right connectors to isolate</td>
+</tr>
+<tr>
+<td>Counts don't change</td>
+<td>Encoder power or signal pin; check attachInterrupt used an interrupt-capable pin</td>
+</tr>
+<tr>
+<td>Counts jitter while still</td>
+<td>Ambient light or loose sensor — shade the disk; check wiring</td>
+</tr>
+<tr>
+<td>Speed oscillates wildly</td>
+<td>Kp too high — halve it, then re-tune in order P → I → D</td>
+</tr>
+<tr>
+<td>Never reaches target</td>
+<td>Ki too small, or the target speed exceeds what the motor can deliver at full PWM</td>
+</tr>
+</tbody>
+</table></div>
+</article>
+<footer>
+  <div class="foot-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <span class="foot-note">Adapted from HKUST ISDN 2601 lecture material · Lab 1 · Student Guide</span>
+  </div>
+</footer>
+</body>
+</html>

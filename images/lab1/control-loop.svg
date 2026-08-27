@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 220" font-family="Inter, Arial, sans-serif">
+  <defs>
+    <marker id="barr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#78716c"/>
+    </marker>
+    <marker id="oarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f58331"/>
+    </marker>
+    <marker id="barrev" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M10,0 L0,5 L10,10 z" fill="#5b5ba8"/>
+    </marker>
+  </defs>
+  <rect width="880" height="220" fill="#ffffff"/>
+  <text x="36" y="36" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">CLOSED-LOOP CONTROL — THE FEEDBACK LOOP</text>
+
+  <!-- setpoint -->
+  <text x="40" y="105" font-size="13" font-weight="700" fill="#1a1c1c">setpoint</text>
+  <line x1="118" y1="100" x2="152" y2="100" stroke="#78716c" stroke-width="1.5" marker-end="url(#barr)"/>
+
+  <!-- summing junction -->
+  <circle cx="180" cy="100" r="22" fill="#ffffff" stroke="#1a1c1c" stroke-width="2"/>
+  <text x="180" y="106" font-size="16" font-weight="700" fill="#1a1c1c" text-anchor="middle">Σ</text>
+  <text x="212" y="86" font-size="12" font-weight="700" fill="#1a1c1c">−</text>
+  <text x="172" y="74" font-size="12" font-weight="700" fill="#1a1c1c">+</text>
+
+  <line x1="202" y1="100" x2="240" y2="100" stroke="#78716c" stroke-width="1.5" marker-end="url(#barr)"/>
+  <text x="222" y="90" font-size="12" fill="#525252" font-style="italic">e(t)</text>
+
+  <!-- controller -->
+  <rect x="244" y="72" width="130" height="56" fill="#1a1c1c"/>
+  <text x="309" y="98" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">Controller</text>
+  <text x="309" y="116" font-size="11" fill="#f58331" text-anchor="middle">PID</text>
+
+  <line x1="374" y1="100" x2="412" y2="100" stroke="#78716c" stroke-width="1.5" marker-end="url(#barr)"/>
+  <text x="392" y="90" font-size="12" fill="#525252" font-style="italic">u(t)</text>
+
+  <!-- actuator -->
+  <rect x="416" y="72" width="130" height="56" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+  <text x="481" y="98" font-size="14" font-weight="600" fill="#1a1c1c" text-anchor="middle">Actuator</text>
+  <text x="481" y="116" font-size="11" fill="#78716c" text-anchor="middle">H-bridge + motor</text>
+
+  <line x1="546" y1="100" x2="584" y2="100" stroke="#78716c" stroke-width="1.5" marker-end="url(#barr)"/>
+
+  <!-- process -->
+  <rect x="588" y="72" width="130" height="56" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+  <text x="653" y="98" font-size="14" font-weight="600" fill="#1a1c1c" text-anchor="middle">Process</text>
+  <text x="653" y="116" font-size="11" fill="#78716c" text-anchor="middle">wheel speed</text>
+
+  <line x1="718" y1="100" x2="760" y2="100" stroke="#78716c" stroke-width="1.5" marker-end="url(#barr)"/>
+  <text x="764" y="105" font-size="13" font-weight="700" fill="#1a1c1c">speed</text>
+
+  <!-- feedback path -->
+  <line x1="742" y1="100" x2="742" y2="180" stroke="#5b5ba8" stroke-width="2"/>
+  <line x1="742" y1="180" x2="180" y2="180" stroke="#5b5ba8" stroke-width="2"/>
+  <line x1="180" y1="180" x2="180" y2="124" stroke="#5b5ba8" stroke-width="2" marker-end="url(#barrev)"/>
+
+  <!-- sensor -->
+  <rect x="388" y="158" width="146" height="44" fill="#ffffff" stroke="#5b5ba8" stroke-width="1.5"/>
+  <text x="461" y="185" font-size="14" font-weight="600" fill="#1a1c1c" text-anchor="middle">Sensor — encoder</text>
+  <line x1="534" y1="180" x2="742" y2="180" stroke="#5b5ba8" stroke-width="0"/>
+
+  <text x="36" y="205" font-size="12" fill="#525252">Compare setpoint with measured speed → error → the controller corrects the motor, every few milliseconds.</text>
+</svg>

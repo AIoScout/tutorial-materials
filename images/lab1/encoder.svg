@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="Inter, Arial, sans-serif">
+  <rect width="880" height="320" fill="#ffffff"/>
+  <text x="36" y="40" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">OPTICAL ENCODER — DISK</text>
+  <text x="470" y="40" font-size="12" font-weight="700" letter-spacing="1.5" fill="#5b5ba8">QUADRATURE OUTPUT — CHANNELS A &amp; B</text>
+
+  <!-- encoder disk: circle with slots -->
+  <circle cx="190" cy="180" r="105" fill="#ffffff" stroke="#1a1c1c" stroke-width="3"/>
+  <!-- slots (white gaps in dark ring): draw as thick short arcs around the ring -->
+  <g stroke="#1a1c1c" stroke-width="3">
+    <!-- ring segments: draw ring as many arcs; simpler: outer circle + inner circle + radial slot lines -->
+  </g>
+  <circle cx="190" cy="180" r="78" fill="#ffffff" stroke="#d8d9d8" stroke-width="1.5"/>
+  <!-- hub -->
+  <circle cx="190" cy="180" r="26" fill="#1a1c1c"/>
+  <!-- slot marks between r=78 and r=105: 12 slots -->
+  <g stroke="#ffffff" stroke-width="14">
+    <line x1="190" y1="75" x2="190" y2="102"/>
+    <line x1="268" y1="102" x2="249" y2="121"/>
+    <line x1="295" y1="180" x2="268" y2="180"/>
+    <line x1="268" y1="258" x2="249" y2="239"/>
+    <line x1="190" y1="285" x2="190" y2="258"/>
+    <line x1="112" y1="258" x2="131" y2="239"/>
+    <line x1="85" y1="180" x2="112" y2="180"/>
+    <line x1="112" y1="102" x2="131" y2="121"/>
+  </g>
+  <!-- LED + photodetector straddling the ring -->
+  <rect x="130" y="52" width="26" height="16" fill="#5b5ba8"/>
+  <text x="70" y="64" font-size="12" font-weight="700" fill="#5b5ba8">LED</text>
+  <rect x="130" y="292" width="26" height="16" fill="#5b5ba8"/>
+  <text x="56" y="304" font-size="12" font-weight="700" fill="#5b5ba8">sensor</text>
+  <line x1="143" y1="68" x2="143" y2="76" stroke="#f58331" stroke-width="2.5"/>
+  <line x1="143" y1="76" x2="143" y2="284" stroke="#f58331" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="143" y1="284" x2="143" y2="292" stroke="#f58331" stroke-width="2.5"/>
+  <text x="190" y="320" font-size="12" fill="#78716c" text-anchor="middle">light passes through a slot → pulse</text>
+
+  <!-- channel A -->
+  <text x="470" y="80" font-size="13" font-weight="700" fill="#1a1c1c">A</text>
+  <g stroke="#1a1c1c" stroke-width="2.5" fill="none">
+    <path d="M500,120 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30"/>
+  </g>
+  <!-- channel B offset by half a step (90°) -->
+  <text x="470" y="200" font-size="13" font-weight="700" fill="#f58331">B</text>
+  <g stroke="#f58331" stroke-width="2.5" fill="none">
+    <path d="M500,245 v-30 h15 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30 v30 h15"/>
+  </g>
+  <!-- explanation -->
+  <text x="500" y="285" font-size="12" fill="#78716c">two channels, offset by 90°</text>
+  <text x="500" y="305" font-size="12" fill="#525252">→ direction from which rises first, 4× resolution from both edges</text>
+</svg>
