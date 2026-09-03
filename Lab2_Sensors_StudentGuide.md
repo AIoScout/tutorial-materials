@@ -1,4 +1,4 @@
-# Lab 2 — Sensors: Teaching a Robot to "See" and "Feel" *(Student Guide)*
+# Lab 2 — Sensors: Giving a Robot the Ability to "See" and "Feel" *(Student Guide)*
 
 > Adapted from HKUST ISDN 2602 (Spring 2025) Laboratory 2 for secondary school students.
 >
@@ -6,83 +6,83 @@
 
 ---
 
-## 1. Welcome — What You Will Learn
+## 1. Overview and Learning Outcomes
 
-In this lab you will work with a **small robotic car**. By the end you will be able to:
+This laboratory works with a **small robotic car**. By the end you will be able to:
 
-- 🧠 Understand what a **microcontroller (ESP32)** is — the "brain" of the car
-- 💻 Use the **Arduino IDE** to write and upload code to the car
-- 📏 Measure distance with an **ultrasonic sensor** (like a bat!)
-- 🌀 Read motion with an **Inertial Measurement Unit (IMU)**
-- 🧹 Clean up noisy sensor data with **filters**
+- Explain what a **microcontroller (ESP32)** is — the "brain" of the car
+- Use the **Arduino IDE** to write and upload code to the car
+- Measure distance with an **ultrasonic sensor**
+- Read motion with an **Inertial Measurement Unit (IMU)**
+- Reduce noise in sensor data with **filters**
 
-**Key words you will learn:** microcontroller · sensor · ultrasonic · echo · accelerometer · gyroscope · noise · filter · sensor fusion
+**Key words:** microcontroller · sensor · ultrasonic · echo · accelerometer · gyroscope · noise · filter · sensor fusion
 
 ---
 
-## 2. Background — Everything You Need to Know First
+## 2. Background
 
-### 2.1 Meet Your Robot Car
+### 2.1 The Robotic Car
 
-Here is the car you will use. It has wheels, motors, sensors, and one important chip in the middle — the microcontroller.
+The car used in this laboratory has wheels, motors, sensors, and one central component: the microcontroller.
 
 ![Composition of the robotic car](images/lab2/p01_00.jpg)
 *The composition of the robotic car*
 
-And here is the box of materials for Tasks 1 and 2 (ultrasonic sensor, IMU board, cables, and the car chassis):
+The materials for Tasks 1 and 2 (ultrasonic sensor, IMU board, cables, and the car chassis):
 
 ![Material for Tasks 1 and 2](images/lab2/p02_01.jpg)
 *Materials for Tasks 1 & 2*
 
-### 2.2 What Is a Microcontroller? (The "Brain")
+### 2.2 What Is a Microcontroller?
 
-A **microcontroller** is a tiny, complete computer on a single chip. It is much weaker than your laptop, but it is:
+A **microcontroller** is a small, complete computer on a single chip. It is far less powerful than a laptop, but it is:
 
-- **Cheap** and **small** — it fits on your palm
-- **Great at reading sensors and controlling motors**
-- **Very power-efficient** — it can run on a small battery
+- **Inexpensive** and **small** — it fits on a palm
+- **Well suited to reading sensors and controlling motors**
+- **Highly power-efficient** — it can run on a small battery
 
-Our car uses the **ESP32-S3**, made by Espressif. Despite being smaller than a coin, it has:
+This car uses the **ESP32-S3**, made by Espressif. Although smaller than a coin, it provides:
 
-- A processor running at 240 MHz (fast enough to run your code thousands of times per second)
-- **Wi-Fi** and **Bluetooth** built in (we will use Wi-Fi in a later lab!)
-- Many **GPIO pins** — the metal legs of the chip that can read signals from sensors or send signals to motors
+- A processor running at 240 MHz (fast enough to run code thousands of times per second)
+- Built-in **Wi-Fi** and **Bluetooth** (Wi-Fi is used in a later lab)
+- Many **GPIO pins** — the metal legs of the chip, which can read signals from sensors or send signals to motors
 
-Think of the ESP32 as the brain, the sensors as the eyes and ears, and the motors as the muscles.
+In this analogy, the ESP32 is the brain, the sensors are the eyes and ears, and the motors are the muscles.
 
 ### 2.3 What Is the Arduino IDE?
 
-**IDE** stands for *Integrated Development Environment* — the app where you write code. The **Arduino IDE** lets you:
+**IDE** stands for *Integrated Development Environment* — the application in which code is written. The **Arduino IDE** supports three steps:
 
-1. Write a **sketch** (that's what Arduino programs are called) in the C++ language
-2. Check it for errors (called **compile**)
+1. Write a **sketch** (the Arduino term for a program) in the C++ language
+2. Check it for errors (**compile**)
 3. **Upload** it to the ESP32 through a USB cable
 
 Every Arduino sketch has two essential parts:
 
 ```cpp
 void setup() {
-  // Runs ONCE when the board powers up — good for initial settings
+  // Runs ONCE when the board powers up — used for initial settings
 }
 
 void loop() {
-  // Runs FOREVER, over and over, like a spinning record — good for reading sensors
+  // Runs FOREVER, repeatedly — used for reading sensors
 }
 ```
 
 ### 2.4 What Is a Sensor?
 
-A **sensor** converts something from the real world (distance, motion, light, temperature...) into an electrical signal the microcontroller can read. Important truth about sensors:
+A **sensor** converts a physical quantity from the real world (distance, motion, light, temperature...) into an electrical signal the microcontroller can read. An important property of sensors:
 
-> ⚠️ **No sensor is perfect.** Real sensor data is always a bit "shaky" — we call the random shakiness **noise**. In this lab you will learn a professional trick (filtering) to clean it up.
+> **No sensor is perfect.** Real sensor data always contains random variation, called **noise**. This laboratory introduces **filtering**, the standard technique for reducing it.
 
-You will use two sensors today: the **ultrasonic sensor** (measures distance) and the **IMU** (measures motion).
+Two sensors are used in this lab: the **ultrasonic sensor** (distance) and the **IMU** (motion).
 
 ---
 
-## 3. Setting Up the Arduino IDE (Do This Before Any Task!)
+## 3. Setting Up the Arduino IDE
 
-The ESP32-S3 board on the car is **not** in Arduino's default board library, so we must configure the settings carefully. If you skip this, the serial port and the flash memory may not work properly. Follow these steps exactly:
+The ESP32-S3 board on the car is **not** in Arduino's default board library, so the settings must be configured carefully. Otherwise, the serial port and the flash memory may not work correctly. Follow these steps exactly:
 
 **Step 1.** Open the Arduino IDE. Go to `Tools → Board → esp32` and choose **"ESP32S3 Dev Module"**.
 
@@ -113,41 +113,41 @@ The ESP32-S3 board on the car is **not** in Arduino's default board library, so 
 
 **Step 3.** Connect the car with the USB cable. Under `Tools → Port`, select the port that appears.
 
-✅ **Quick check:** if you can see a port appear after plugging in the USB cable, your settings are very likely correct.
+**Verification:** if a port appears after the USB cable is connected, the settings are very likely correct.
 
 ---
 
 ## 4. Task 1 — Ultrasonic Sensor: Measuring Distance with Sound
 
-### 4.1 Background: How Bats Find Their Way
+### 4.1 Background: Echolocation
 
-Bats can't see well, so they **shout** very high-pitched sounds and **listen for the echo** that bounces back from obstacles. If the echo comes back quickly, the obstacle is close. If it comes back slowly, the obstacle is far.
+Bats navigate by emitting high-pitched sounds and listening for the echo reflected from obstacles: a quickly returning echo indicates a nearby obstacle; a slowly returning echo indicates a distant one.
 
-Our sensor, the **HC-SR04 ultrasonic sensor**, does exactly the same thing:
+The **HC-SR04 ultrasonic sensor** operates on the same principle:
 
 ![Work principle of the ultrasonic sensor](images/lab2/p03_03.jpg)
 *How the ultrasonic sensor works: send a sound pulse, wait for the echo*
 
-Here is the full workflow:
+The complete workflow:
 
-1. **Transmission** — the sensor's transmitter emits ultrasonic sound waves (above 20 kHz — too high-pitched for human ears to hear).
+1. **Transmission** — the sensor's transmitter emits ultrasonic sound waves (above 20 kHz — too high-pitched for human hearing).
 2. **Propagation** — the sound waves travel through the air toward the target object.
 3. **Reflection** — when the waves hit an object, they bounce back.
 4. **Reception** — the sensor's receiver detects the reflected waves (the *echo*).
-5. **Time measurement** — the sensor measures the time between sending the sound and hearing the echo.
+5. **Time measurement** — the sensor measures the time between sending the sound and receiving the echo.
 6. **Distance calculation** — using the speed of sound, the distance is:
 
 $$
 Distance=\frac{Speed\ of\ sound \times Time\ interval}{2}
 $$
 
-7. **Output** — the distance value is sent to the microcontroller, which can use it for obstacle avoidance, object detection, and so on.
+7. **Output** — the distance value is sent to the microcontroller, which can use it for obstacle avoidance, object detection, and similar purposes.
 
-**Why divide by 2?** 🤔 Because the sound travels to the object **and back again** — twice the distance! To get the one-way distance, we divide by 2.
+**Why divide by 2?** The sound travels to the object **and back** — twice the one-way distance. Dividing by 2 yields the distance to the object.
 
 **Speed of sound:** approximately **343 m/s** in air at room temperature.
 
-**Worked example:** suppose the echo comes back after 588 microseconds (µs).
+**Worked example:** suppose the echo returns after 588 microseconds (µs).
 Time = 588 µs = 0.000588 s → Distance = (343 × 0.000588) / 2 ≈ **0.1 m = 10 cm**.
 
 ### 4.2 Wiring — The PCB Pinout
@@ -160,13 +160,13 @@ The ultrasonic sensor is connected to the car's PCB (printed circuit board). Thi
 ### 4.3 Step-by-Step Instructions
 
 **Step 1 — Open the code.**
-Open the file `Task_1.ino` in the Arduino IDE (in the lab folder you downloaded).
+Open the file `Task_1.ino` in the Arduino IDE (in the downloaded lab folder).
 
 **Step 2 — Check the pin definitions.** They should match the pinout above:
 
 ```cpp
 #define trigPin 39   // GPIO pin that SENDS the ultrasonic pulse
-#define echoPin 38   // GPIO pin that WAITS for the echo to come back
+#define echoPin 38   // GPIO pin that WAITS for the echo to return
 ```
 
 **Step 3 — Define the speed of sound** (in m/s):
@@ -181,18 +181,18 @@ Open the file `Task_1.ino` in the Arduino IDE (in the lab folder you downloaded)
 distance = (duration * SOUND_SPEED) / 2;   // duration in seconds → distance in metres
 ```
 
-Remember: divide by 2 because the sound travels there **and back**.
+Note: divide by 2 because the sound travels to the object **and back**.
 
 **Step 5 — Upload.** Click the **Upload** button (→ arrow) in the Arduino IDE and wait for "Upload complete".
 
-**Step 6 — Open the Serial Monitor.** Click the magnifying-glass button (top right) and set the speed (baud rate) to **115200**. You should see distance values printing once per second:
+**Step 6 — Open the Serial Monitor.** Click the magnifying-glass button (top right) and set the speed (baud rate) to **115200**. Distance values should print once per second:
 
 ![Serial monitor showing measured distance](images/lab2/p04_05.png)
 *Expected result: the Serial Monitor printing distance values*
 
-**Step 7 — Test the accuracy.** Point the sensor at a wall or a box and compare the printed value with a ruler measurement. Are they close?
+**Step 7 — Test the accuracy.** Point the sensor at a wall or a box and compare the printed value with a ruler measurement.
 
-**Step 8 — Record your measurements.** Find three objects (or three distances) to measure, and write the values in the table:
+**Step 8 — Record your measurements.** Choose three objects (or three distances) to measure, and enter the values in the table:
 
 | #  | The object you measured | Value |
 | -- | ----------------------- | ----- |
@@ -200,24 +200,24 @@ Remember: divide by 2 because the sound travels there **and back**.
 | 2  |                         |       |
 | 3  |                         |       |
 
-### 🏁 Check Point
+### Check Point
 
-Commit your code to the GitHub Classroom repository, and **show your result to the TA / instructor**.
+Commit the code to the GitHub Classroom repository, and **show the result to the TA / instructor**.
 
 ### 4.4 Appendix — The Full Example Code, Explained Line by Line
 
-Here is the complete example program. Read the comments to understand every line:
+The complete example program, with comments explaining each line:
 
 ```cpp
 #define trigPin 16          // trigger pin (example pin numbers)
 #define echoPin 15          // echo pin
 #define SOUND_SPEED 340     // speed of sound (m/s)
 
-long duration;   // will store the time the sound wave takes to travel to the obstacle and back (µs)
-float distance;  // will store the calculated distance (m)
+long duration;   // stores the time the sound wave takes to travel to the obstacle and back (µs)
+float distance;  // stores the calculated distance (m)
 
 void setup() {
-  Serial.begin(115200);         // start talking to the computer at 115200 baud
+  Serial.begin(115200);         // start serial communication at 115200 baud
   pinMode(trigPin, OUTPUT);     // trigger pin sends signals → OUTPUT
   pinMode(echoPin, INPUT);      // echo pin receives signals → INPUT
   Serial.println("Ultrasonic Sensor is set");
@@ -229,7 +229,7 @@ void loop() {
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);         // clear any previous signal
   digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);        // keep the pin HIGH for 10 µs — this is the "shout"
+  delayMicroseconds(10);        // keep the pin HIGH for 10 µs — the "shout"
   digitalWrite(trigPin, LOW);   // end the pulse
 
   // --- Listen for the echo ---
@@ -247,30 +247,30 @@ void loop() {
 
 ---
 
-## 5. Task 2 — IMU and 3D Visualization: Feeling Motion
+## 5. Task 2 — IMU and 3D Visualization: Measuring Motion
 
 ### 5.1 Background: What Is Inside an IMU?
 
-An **IMU (Inertial Measurement Unit)** is the sensor that lets a phone know which way is up, a drone stay level, and a games controller sense your swing. It is really **two (or three) sensors in one chip**:
+An **IMU (Inertial Measurement Unit)** is the sensor that reports a phone's orientation, keeps a drone level, and senses the motion of a game controller. It combines **two (or three) sensors in one chip**:
 
-- **Accelerometer** — measures *linear acceleration* `a` in m/s². Even when sitting still, it senses the pull of **gravity** (≈ 9.81 m/s², pointing toward the centre of the Earth). That's how it knows which way is "down".
-- **Gyroscope** — measures *angular velocity* `ω` (how fast you are rotating) in degrees/sec.
-- **Magnetometer** (optional) — measures magnetic field strength in µT or Gauss, like a digital compass.
+- **Accelerometer** — measures *linear acceleration* `a` in m/s². Even at rest, it senses the pull of **gravity** (≈ 9.81 m/s², pointing toward the centre of the Earth); this is how it determines the direction of "down".
+- **Gyroscope** — measures *angular velocity* `ω` (the rate of rotation) in degrees/sec.
+- **Magnetometer** (optional) — measures magnetic field strength in µT or Gauss, functioning as a digital compass.
 
 ![IMU orientation axes](images/lab2/p05_06.jpg)
 *To track orientation, we need to know the car's rotation around the X, Y and Z axes*
 
 ### 5.2 Background: How Do We Get Orientation (Angles)?
 
-We want the car's **roll** (tilting left/right), **pitch** (tilting forward/back) and **yaw** (turning left/right). Each sensor alone can give us an estimate:
+The car's **roll** (tilting left/right), **pitch** (tilting forward/back) and **yaw** (turning left/right) are required. Each sensor alone can provide an estimate:
 
-**Method 1 — Integrate the gyroscope.** If you know how fast you are rotating and for how long, you can add it up (integrate) to get the angle:
+**Method 1 — Integrate the gyroscope.** Knowing how fast and for how long the device rotates, the angle follows by integration:
 
 $$
 \theta(t)=\theta_{0}+\int_{0}^{t} \omega(\tau)\, d\tau
 $$
 
-**Method 2 — Use the accelerometer and gravity.** When the device is still (or moving smoothly), the accelerometer mostly measures gravity. By looking at how gravity splits across the X, Y, Z axes, we can compute the tilt angles:
+**Method 2 — Use the accelerometer and gravity.** When the device is still (or moving smoothly), the accelerometer measures mainly gravity. From how gravity splits across the X, Y, Z axes, the tilt angles follow:
 
 $$
 Roll=\phi=\arctan\!\left(\frac{a_z}{a_y}\right)
@@ -280,26 +280,26 @@ $$
 Pitch=\theta=\arctan\!\left(-\frac{a_x}{\sqrt{a_y^{2}+a_z^{2}}}\right)
 $$
 
-### 5.3 Background: Each Sensor Has a Weakness
+### 5.3 Background: Sensor Limitations
 
 | Sensor        | Strengths                  | Weakness                     |
 | ------------- | -------------------------- | ---------------------------- |
 | Gyroscope     | Fast, smooth, no noise     | **Drifts** over time         |
 | Accelerometer | Stable long-term, no drift | **Noisy**, affected by motion |
 
-**Gyroscope drift:** integrating is like adding up small errors again and again — after a minute, the angle slowly "wanders" away from the truth even when the car is standing still.
+**Gyroscope drift:** integration accumulates small errors — after a minute, the estimated angle drifts away from the true angle even when the car is stationary.
 
-**Accelerometer noise:** every bump and vibration shakes the reading, but averaged over a long time it points at the true "down".
+**Accelerometer noise:** every bump and vibration disturbs the reading, but averaged over a long period it indicates the true direction of gravity.
 
-### 5.4 Background: Filters — Making Two Weak Sensors into One Strong One
+### 5.4 Background: Filters — Combining Two Limited Sensors into One Reliable Estimate
 
 **A. Low-Pass Filter (smoothing)**
 
 - **Purpose:** removes high-frequency noise from the accelerometer data.
-- **Why it works:** gravity is a *constant* (low-frequency) signal, while noise vibrates *fast* (high-frequency). A low-pass filter keeps the slow part and throws away the fast part — like averaging your quiz scores to see the real trend.
-- **Limitation:** filter too much and you introduce lag — the value reacts slowly to real changes.
+- **Why it works:** gravity is a *constant* (low-frequency) signal, while noise vibrates *fast* (high-frequency). A low-pass filter keeps the slow part and discards the fast part — like averaging repeated measurements to reveal the underlying trend.
+- **Limitation:** filtering too aggressively introduces lag — the value reacts slowly to real changes.
 
-**How it works, with numbers:** each step, blend the new reading with the previous filtered value:
+**How it works, with numbers:** at each step, the new reading is blended with the previous filtered value:
 
 $$
 filtered = \alpha \times new\_reading + (1-\alpha) \times filtered_{old}
@@ -310,23 +310,23 @@ $$
 **B. Complementary Filter (sensor fusion)**
 
 - **Purpose:** combine the *strengths* of both sensors — this is called **sensor fusion**.
-- The **gyroscope** handles short-term, fast changes (it's smooth and quick).
-- The **accelerometer** handles long-term correction (it doesn't drift, so it pulls the estimate back to the truth).
+- The **gyroscope** handles short-term, fast changes (it is smooth and quick).
+- The **accelerometer** handles long-term correction (it does not drift, so it pulls the estimate back toward the truth).
 
 $$
 angle = \alpha \times (\text{gyro estimate}) + (1-\alpha) \times (\text{accelerometer estimate})
 $$
 
-Our car's IMU chip is the **ICM-42688-P** (a 6-axis MEMS sensor = accelerometer + gyroscope):
+The car's IMU chip is the **ICM-42688-P** (a 6-axis MEMS sensor = accelerometer + gyroscope):
 
 ![ICM-42688-P and its XYZ axes](images/lab2/p06_07.jpg)
 *The ICM-42688-P chip and its X/Y/Z axis orientation*
 
 ### 5.5 The Skeleton Code
 
-The lab provides `Task_2.ino` with most of the work done. Below are the important pieces (also shown in the original manual's screenshots).
+The lab provides `Task_2.ino` with most of the implementation supplied. The important pieces follow (also shown in the original manual's screenshots).
 
-**Initialization of the ICM-42688-P over I2C** — I2C is a simple 2-wire language that chips use to talk to each other:
+**Initialization of the ICM-42688-P over I2C** — I2C is a two-wire protocol that chips use to communicate:
 
 ```cpp
 // I2C IMU instance
@@ -394,7 +394,7 @@ yaw   = gyro_yaw;   // no accelerometer correction for yaw (gravity gives no yaw
 ![Filter function (continued)](images/lab2/p08_12.png)
 *The filter code as it appears in the original manual*
 
-**Display mode switches** — these two lines are what you will switch on/off during the experiment:
+**Display mode switches** — these two lines are switched on/off during the experiment:
 
 ```cpp
 bool Filter = true;          // true = enable the filters
@@ -412,37 +412,37 @@ bool SerialPlotGrapgh = false; // true = also print data for the Serial Plotter
 
 **Step 3.** Upload the sketch to the board.
 
-**Step 4.** Open the **Chrome** browser and visit **https://imu.isdn2602.site**. Click **"Open Port"** and choose the port connected to the development board. You should see the sensor values and a 3D object labelled "ISDN 2602":
+**Step 4.** Open the **Chrome** browser and visit **https://imu.isdn2602.site**. Click **"Open Port"** and choose the port connected to the development board. The sensor values and a 3D object labelled "ISDN 2602" should appear:
 
 ![IMU web visualization app](images/lab2/p09_14.png)
 *The web app showing the live IMU values*
 
 ![The mapped 3D object](images/lab2/p09_15.jpg)
-*The mapped object moves as you move the car*
+*The mapped object moves as the car moves*
 
-**Step 5.** Pick up the car, move it and rotate it. Watch how the values change — and how the 3D object copies your movement. You'll notice the movement is **jumpy** (that's the noise!).
+**Step 5.** Pick up the car, move it, and rotate it. Observe how the values change and how the 3D object follows the movement. The motion appears **jumpy** — this is the noise.
 
-**Step 6.** Change the code to activate **only the Low-Pass Filter**. Upload again and observe — the movement should be smoother but may lag a little.
+**Step 6.** Change the code to activate **only the Low-Pass Filter**. Upload again and observe: the movement should be smoother, possibly with a slight lag.
 
-**Step 7.** Activate **both** the Low-Pass Filter and the Complementary Filter. Observe the result — smooth **and** stable.
+**Step 7.** Activate **both** the Low-Pass Filter and the Complementary Filter. Observe the result: smooth **and** stable.
 
 **Step 8.** Enable the Serial Plot (`SerialPlotGrapgh = true`) and open the Arduino **Serial Plotter** (`Tools → Serial Plotter`) to see the data drawn as live curves. Repeat Steps 6 and 7 and compare the curves.
 
-### 🏁 Check Point
+### Check Point
 
-Commit your code to the GitHub Classroom repository, and **show your result to the TA / instructor**.
+Commit the code to the GitHub Classroom repository, and **show the result to the TA / instructor**.
 
 ---
 
 ## 6. Appendix — Extra Explanations from the Manual
 
-### 6.1 What do `pulseIn`, `digitalWrite` and `pinMode` actually do?
+### 6.1 Reference: `pulseIn`, `digitalWrite` and `pinMode`
 
 | Function | What it does |
 | -------- | ------------ |
-| `pinMode(pin, OUTPUT/INPUT)` | Tells the ESP32 whether a pin will send or receive electricity |
+| `pinMode(pin, OUTPUT/INPUT)` | Configures the ESP32 pin to send or receive electricity |
 | `digitalWrite(pin, HIGH/LOW)` | Sets a pin to 3.3 V (HIGH) or 0 V (LOW) |
-| `pulseIn(pin, HIGH)` | Times how long the pin stays HIGH — this is our echo time |
+| `pulseIn(pin, HIGH)` | Times how long the pin stays HIGH — the echo time |
 | `delay(ms)` / `delayMicroseconds(µs)` | Pauses the program for some milliseconds / microseconds |
 | `Serial.print()` | Sends text to the computer via the Serial Monitor |
 

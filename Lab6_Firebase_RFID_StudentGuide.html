@@ -76,66 +76,67 @@
   </div>
 </div>
 <article class="article">
-<h1>Lab 6 — Firebase &amp; RFID: Connecting Your Car to the Cloud <em>(Student Guide)</em></h1>
+<h1>Lab 6 — Firebase &amp; RFID: Connecting the Car to the Cloud <em>(Student Guide)</em></h1>
 <blockquote>
 <p>Adapted from HKUST ISDN 2602 (Fall 2025) Laboratory 6 for secondary school students.</p>
 <p><strong>Original course info</strong> — GitHub Classroom: https://classroom.github.com/a/NqRJUakP</p>
 </blockquote>
 <hr />
-<h2>1. Welcome — What You Will Learn</h2>
-<p>Today your robot car gets two superpowers: it can <strong>talk to the cloud</strong> and it can <strong>identify objects</strong> by touchless scanning. By the end you will:</p>
+<h2>1. Overview and Learning Outcomes</h2>
+<p>This laboratory adds two capabilities to the robot car: communication with the cloud and touchless identification of objects. By the end you will be able to:</p>
 <ul>
-<li> Understand what a <strong>cloud database</strong> is and why it lets devices talk to each other</li>
-<li> Set up your own free <strong>Firebase</strong> project (Google's app platform)</li>
-<li> Read and write data between the <strong>ESP32</strong> and Firebase in <strong>real time</strong></li>
-<li> Use an <strong>RFID reader</strong> to identify RFID tags — the same technology as Hong Kong's <strong>Octopus card</strong>!</li>
+<li>Explain what a <strong>cloud database</strong> is and how it lets devices exchange data</li>
+<li>Set up a free <strong>Firebase</strong> project (Google's application platform)</li>
+<li>Read and write data between the <strong>ESP32</strong> and Firebase in <strong>real time</strong></li>
+<li>Use an <strong>RFID reader</strong> to identify RFID tags — the same technology used by Hong Kong's <strong>Octopus card</strong></li>
 </ul>
-<p><strong>Key words you will learn:</strong> cloud · database · real-time · Firebase · JSON · API key · authentication · UID · RFID · tag · reader</p>
+<p><strong>Key words:</strong> cloud · database · real-time · Firebase · JSON · API key · authentication · UID · RFID · tag · reader</p>
 <hr />
 <h2>2. Background — The Cloud, Firebase, and RFID</h2>
 <h3>2.1 What Is "the Cloud"?</h3>
-<p>"The cloud" sounds mysterious, but it just means: <strong>powerful computers in data centres that store data and run services for you, connected through the internet</strong>. When you save a photo so it appears on all your devices, or when two people edit the same document at once — that's the cloud at work.</p>
-<p>Why does a robot car need it? Imagine the final project: an <strong>app or website</strong> decides the car's mission (start point, end point, whether the exam has started...), and the <strong>car</strong> must receive that information instantly. If both the app and the car talk to <strong>one shared database in the cloud</strong>, changing a value on the app instantly appears on the car — no direct connection needed. It's like a shared Google Doc: you edit here, your classmate sees it there, instantly.</p>
+<p>The cloud refers to <strong>powerful computers in data centres that store data and run services, connected through the internet</strong>. When a saved photo appears on all of a user's devices, or when two people edit the same document simultaneously, the cloud is at work.</p>
+<p>A robot car uses it as follows. In the final project, an <strong>application or website</strong> determines the car's mission (start point, end point, whether the examination has started), and the <strong>car</strong> must receive that information immediately. When both the application and the car communicate with <strong>one shared database in the cloud</strong>, a value changed in the application appears on the car at once, with no direct connection — the same mechanism by which two people edit a shared online document simultaneously.</p>
 <h3>2.2 What Is Firebase?</h3>
-<p><strong>Firebase</strong> is Google's platform for building apps. It provides a whole toolbox — real-time database, user login (authentication), hosting, and more. In this lab we use the <strong>Realtime Database</strong>:</p>
+<p><strong>Firebase</strong> is Google's platform for building applications. It provides a set of services — a real-time database, authentication, hosting, and more. This lab uses the <strong>Realtime Database</strong>:</p>
 <ul>
-<li>It is a <strong>NoSQL</strong> database that stores data as one big <strong>JSON tree</strong> (see §2.3)</li>
-<li><strong>Real-time sync:</strong> the moment one client changes the data, every other connected client is updated — perfect for our car ↔ app link</li>
-<li><strong>Free</strong> for small projects like this one</li>
+<li>It is a <strong>NoSQL</strong> database that stores all data as one large <strong>JSON tree</strong> (see §2.3)</li>
+<li><strong>Real-time synchronization:</strong> the moment one client changes the data, every other connected client is updated — well suited to the car ↔ application link</li>
+<li><strong>Free</strong> for small projects such as this one</li>
 </ul>
-<p>Why Firebase is popular for personal IoT projects: simplified setup (no server to build), real-time sync, built-in authentication, serverless (Google runs the servers for you), and it works across platforms.</p>
+<p>Firebase is popular for personal IoT projects because of its simplified setup (no server to build), real-time synchronization, built-in authentication, serverless operation (Google runs the servers), and cross-platform support.</p>
 <p><img alt="How ESP32 communicates with the Firebase Realtime Database" src="images/lab6/p01_00.png" />
-<img alt="ESP32 and Firebase architecture" src="images/lab6/p01_01.png" />
-<em>How the ESP32 talks to Firebase's Realtime Database (source: https://randomnerdtutorials.com/esp32-firebase-realtime-database/)</em></p>
-<h3>2.3 A 60-Second JSON Lesson</h3>
-<p><strong>JSON</strong> (JavaScript Object Notation) is the standard "language" for data on the internet — a simple way to write labelled information, like an ID card:</p>
+</p>
+<p><img alt="ESP32 and Firebase architecture" src="images/lab6/p01_01.png" />
+<em>How the ESP32 talks to Firebase's Realtime Database (source: https://randomnerdtutorials.com/esp32-firebase-realtime-database/)</em>
+</p>
+<h3>2.3 A Brief Introduction to JSON</h3>
+<p><strong>JSON</strong> (JavaScript Object Notation) is the standard data format of the internet — a simple way to write labelled information, similar to an identity card:</p>
 <pre><code class="language-json">{
-  &quot;name&quot;: &quot;Smart Car&quot;,
-  &quot;task_id&quot;: 7,
-  &quot;is_started&quot;: false
-}
-</code></pre>
-<p>Curly braces hold a <strong>object</strong>; each line is a <code>"key": value</code> pair. Values can be text (in quotes), numbers, true/false, or even nested objects. Firebase stores your whole database as one JSON tree — you'll import one in Task 1.</p>
-<h3>2.4 API Keys, Users, and UIDs — Your Car's ID Papers</h3>
-<p>To keep random strangers out of your database, Firebase uses <strong>authentication</strong> — proving who you are. Today you will collect three "ID papers" (save them somewhere safe, you'll type them into your code!):</p>
+  "name": "Smart Car",
+  "task_id": 7,
+  "is_started": false
+}</code></pre>
+<p>Curly braces hold an <strong>object</strong>; each line is a <code>"key": value</code> pair. Values can be text (in quotes), numbers, true/false, or nested objects. Firebase stores the whole database as one JSON tree — one is imported in Task 1.</p>
+<h3>2.4 API Keys, Users, and UIDs</h3>
+<p>To keep unauthorized clients out of the database, Firebase uses <strong>authentication</strong> — verifying the identity of each client. This lab requires three credentials (store them securely; they are entered into the code):</p>
 <ul>
-<li><strong>Web API Key</strong> — like the address + master key of your Firebase project</li>
-<li><strong>Database URL</strong> — the exact internet address of your database (<code>https://…firebasedatabase.app</code>)</li>
-<li><strong>User UID</strong> — a random ID string Firebase gives each user account (each student's data is stored under their own UID, so nobody overwrites anyone else)</li>
+<li><strong>Web API Key</strong> — identifies the Firebase project and authorizes access</li>
+<li><strong>Database URL</strong> — the internet address of the database (<code>https://…firebasedatabase.app</code>)</li>
+<li><strong>User UID</strong> — a random ID string Firebase assigns to each user account (each student's data is stored under their own UID, so no one overwrites anyone else)</li>
 </ul>
 <h3>2.5 What Is RFID?</h3>
-<p><strong>Radio-Frequency Identification (RFID)</strong> lets a small <strong>reader</strong> identify a <strong>tag</strong> using radio waves — no contact, no battery in the tag needed for <em>passive</em> tags (the reader's radio field briefly powers the tag, the tag answers with its stored ID). You use RFID all the time:</p>
+<p><strong>Radio-Frequency Identification (RFID)</strong> lets a small <strong>reader</strong> identify a <strong>tag</strong> using radio waves — with no contact, and with no battery in the tag for <em>passive</em> tags (the reader's radio field briefly powers the tag, and the tag replies with its stored ID). Common applications:</p>
 <ul>
-<li> The <strong>Octopus card</strong> (and other contactless payment cards)</li>
-<li> Library book tags</li>
-<li> School / office access cards</li>
+<li>The <strong>Octopus card</strong> and other contactless payment cards</li>
+<li>Library book tags</li>
+<li>School and office access cards</li>
 </ul>
-<p>An RFID system has two parts: <strong>tags</strong> (store a unique ID) and a <strong>reader</strong> (sends radio signals; a nearby tag transmits its stored information back).</p>
-<p>In the final project, <strong>RFID tags are placed along the road</strong>, and a <strong>RFID reader at the bottom of the car</strong> scans them as the car drives over. By reading a tag, the car knows exactly <strong>where it is</strong> — like how tapping your Octopus card tells the system which station you entered.</p>
+<p>An RFID system has two parts: <strong>tags</strong> (each stores a unique ID) and a <strong>reader</strong> (sends radio signals; a nearby tag transmits its stored information back).</p>
+<p>In the final project, <strong>RFID tags are placed along the road</strong>, and an <strong>RFID reader at the bottom of the car</strong> scans them as the car drives over. By reading a tag, the car knows its exact <strong>location</strong> — in the same way that tapping an Octopus card identifies the entry station.</p>
 <hr />
-<h2>3. Prelab — Setting Up Your Firebase (Do This First!)</h2>
+<h2>3. Prelab — Setting Up the Firebase Project</h2>
 <blockquote>
-<p> <strong>Tip:</strong> do the prelab on your own laptop with Chrome. You will create a Firebase project and collect your three "ID papers". Nothing needs the car yet.</p>
+<p>Complete the prelab on a laptop with the Chrome browser. A Firebase project is created and the three credentials are collected; the car is not required.</p>
 </blockquote>
 <h3>Step 1 — Install the Arduino Libraries</h3>
 <p>Two libraries must be installed with the <strong>correct versions</strong>:</p>
@@ -143,155 +144,180 @@
 <li><strong>FirebaseClient</strong> ≥ <strong>2.2</strong></li>
 <li><strong>ArduinoJson</strong> ≥ <strong>7.4</strong></li>
 </ul>
-<p>How: in the Arduino IDE open <code>Sketch → Include Library → Manage Libraries…</code>, search for each name, pick the version, click <strong>Install</strong>.</p>
+<p>In the Arduino IDE, open <code>Sketch → Include Library → Manage Libraries…</code>, search for each name, select the version, and click <strong>Install</strong>.</p>
 <p><img alt="Installing the Arduino libraries with correct versions" src="images/lab6/p03_02.png" />
-<em>Install FirebaseClient (≥ 2.2) and ArduinoJson (≥ 7.4)</em></p>
+<em>Install FirebaseClient (≥ 2.2) and ArduinoJson (≥ 7.4)</em>
+</p>
 <h3>Step 2 — Create a Firebase Account and Project</h3>
-<p><strong>1.</strong> Visit <strong>https://firebase.google.com</strong> and sign in with your own Google account:</p>
+<p><strong>1.</strong> Visit <strong>https://firebase.google.com</strong> and sign in with a Google account:</p>
 <p><img alt="The Firebase homepage" src="images/lab6/p04_03.jpg" />
-<em>Sign in at firebase.google.com</em></p>
-<p><strong>2.</strong> Click <strong>Get Started</strong>, then press <strong>Add Project</strong> to create your project, and give it a name:</p>
+<em>Sign in at firebase.google.com</em>
+</p>
+<p><strong>2.</strong> Click <strong>Get Started</strong>, then press <strong>Add Project</strong> to create the project, and give it a name:</p>
 <p><img alt="Adding a new project" src="images/lab6/p04_04.jpg" />
-<em>Create your project and set a name</em></p>
-<p><strong>3.</strong> You may choose <strong>not</strong> to enable Google Gemini and <strong>not</strong> to enable Google Analytics — just click <strong>Continue</strong>:</p>
+<em>Create the project and set a name</em>
+</p>
+<p><strong>3.</strong> It is acceptable to leave Google Gemini and Google Analytics disabled — click <strong>Continue</strong>:</p>
 <p><img alt="Project creation options" src="images/lab6/p04_05.jpg" />
-<em>Disabling Gemini / Analytics is fine for this lab</em></p>
-<p><strong>4.</strong> Wait for the project to be ready — you'll land on the <strong>project overview</strong> page:</p>
+<em>Disabling Gemini / Analytics is fine for this lab</em>
+</p>
+<p><strong>4.</strong> Wait for the project to be ready — the <strong>project overview</strong> page opens:</p>
 <p><img alt="The project overview page" src="images/lab6/p05_06.png" />
-<em>The project overview page</em></p>
+<em>The project overview page</em>
+</p>
 <p><strong>5.</strong> Under <strong>Product categories → Build</strong>, enable <strong>Authentication</strong> and <strong>Realtime Database</strong>. After selecting them one by one, they appear under <strong>Project shortcuts</strong>:</p>
 <p><img alt="Enabling products under Build" src="images/lab6/p05_07.jpg" />
-<img alt="Authentication and Realtime Database enabled" src="images/lab6/p05_08.png" />
-<img alt="Products shown under Project shortcuts" src="images/lab6/p05_09.jpg" />
-<em>Enable Authentication and Realtime Database under Build</em></p>
+</p>
+<p><img alt="Authentication and Realtime Database enabled" src="images/lab6/p05_08.png" />
+</p>
+<p><img alt="Products shown under Project shortcuts" src="images/lab6/p05_09.jpg" />
+<em>Enable Authentication and Realtime Database under Build</em>
+</p>
 <h3>Step 3 — Set Up the Realtime Database</h3>
 <p><strong>1.</strong> Click the <strong>Realtime Database</strong> shortcut, then <strong>Create Database</strong>:</p>
 <p><img alt="Creating the Realtime Database" src="images/lab6/p06_10.jpg" />
-<em>Realtime Database → Create Database</em></p>
+<em>Realtime Database → Create Database</em>
+</p>
 <p><strong>2.</strong> Set the configuration:</p>
 <ul>
 <li><strong>Location:</strong> keep the default <strong>United States (us-central1)</strong></li>
 <li><strong>Security rules:</strong> choose <strong>Start in test mode</strong> (for now)</li>
 </ul>
 <p><img alt="Choosing the database location" src="images/lab6/p06_11.jpg" />
-<img alt="Test mode security rules" src="images/lab6/p06_12.png" />
-<em>Location: us-central1 · Security rules: test mode</em></p>
-<p><strong>3.</strong> Your database is created! Click the <strong>link icon</strong> to copy your <strong>database URL</strong>:</p>
+</p>
+<p><img alt="Test mode security rules" src="images/lab6/p06_12.png" />
+<em>Location: us-central1 · Security rules: test mode</em>
+</p>
+<p><strong>3.</strong> The database is created. Click the <strong>link icon</strong> to copy the <strong>database URL</strong>:</p>
 <p><img alt="Copying the database URL" src="images/lab6/p07_13.png" />
-<em>Copy your database URL with the link icon</em></p>
+<em>Copy the database URL with the link icon</em>
+</p>
 <blockquote>
-<p> <strong>Save it:</strong> your <strong>Database URL</strong> (you'll paste it into the code at TODO 1).</p>
+<p><strong>Record the Database URL</strong> — it is pasted into the code at TODO 1.</p>
 </blockquote>
-<h3>Step 4 — Get Your Project API Key</h3>
+<h3>Step 4 — Get the Project API Key</h3>
 <p>The ESP32 needs the <strong>API Key</strong> to prove to Firebase which project it belongs to.</p>
-<p><strong>1.</strong> Click the <strong>gear icon</strong>  next to <em>Project Overview</em>, then <strong>Project settings</strong>:</p>
+<p><strong>1.</strong> Click the <strong>gear icon</strong> next to <em>Project Overview</em>, then <strong>Project settings</strong>:</p>
 <p><img alt="Project settings via the gear icon" src="images/lab6/p08_14.png" />
-<em>Gear icon → Project settings</em></p>
-<p><strong>2.</strong> Find and copy your <strong>Web API Key</strong>:</p>
+<em>Gear icon → Project settings</em>
+</p>
+<p><strong>2.</strong> Find and copy the <strong>Web API Key</strong>:</p>
 <p><img alt="The Web API Key in project settings" src="images/lab6/p08_15.png" />
-<em>Copy the Web API key</em></p>
-<p><strong>3.</strong> <em>(If you don't see it there)</em> visit <strong>https://console.cloud.google.com/apis/</strong>, sign in again if needed, select your Firebase project, open the <strong>Credentials</strong> tab, and click <strong>Show key</strong>:</p>
+<em>Copy the Web API key</em>
+</p>
+<p><strong>3.</strong> <em>(If it is not shown there)</em> visit <strong>https://console.cloud.google.com/apis/</strong>, sign in again if needed, select the Firebase project, open the <strong>Credentials</strong> tab, and click <strong>Show key</strong>:</p>
 <p><img alt="The Credentials tab in Google Cloud console" src="images/lab6/p09_16.png" />
-<img alt="Showing the API key" src="images/lab6/p09_17.png" />
-<em>Alternative route: Google Cloud console → Credentials → Show key</em></p>
+</p>
+<p><img alt="Showing the API key" src="images/lab6/p09_17.png" />
+<em>Alternative route: Google Cloud console → Credentials → Show key</em>
+</p>
 <blockquote>
-<p> <strong>Save it:</strong> your <strong>Web API Key</strong> (also TODO 1).</p>
+<p><strong>Record the Web API Key</strong> — also TODO 1.</p>
 </blockquote>
 <h3>Step 5 — Set Up Authentication</h3>
 <p><strong>1.</strong> Go to <strong>Authentication</strong> and click <strong>Get started</strong>. In the <strong>Sign-in method</strong> tab, choose <strong>Email/Password</strong>:</p>
 <p><img alt="Choosing the Email/Password sign-in method" src="images/lab6/p10_18.png" />
-<em>Authentication → Get started → Email/Password</em></p>
+<em>Authentication → Get started → Email/Password</em>
+</p>
 <p><strong>2.</strong> Toggle <strong>Email/Password ON</strong> and press <strong>Save</strong>:</p>
 <p><img alt="Enabling Email/Password" src="images/lab6/p10_19.jpg" />
-<em>Toggle on Email/Password and save</em></p>
-<p><strong>3.</strong> In the <strong>Users</strong> tab, click <strong>Add user</strong> and enter an email + password. A simple password is fine — but <strong>remember it</strong>: you will type it into your Arduino code! After adding, your <strong>User UID</strong> is shown:</p>
+<em>Toggle on Email/Password and save</em>
+</p>
+<p><strong>3.</strong> In the <strong>Users</strong> tab, click <strong>Add user</strong> and enter an email + password. A simple password is acceptable, but it must be remembered — it is entered into the Arduino code. After adding, the <strong>User UID</strong> is shown:</p>
 <p><img alt="Adding a user" src="images/lab6/p11_20.png" />
-<em>Users → Add user (email + password)</em></p>
+<em>Users → Add user (email + password)</em>
+</p>
 <p><img alt="The User UID" src="images/lab6/p11_21.jpg" />
-<em>After adding the user, note the User UID</em></p>
-<p><strong>4.</strong> Also toggle on the <strong>Anonymous</strong> sign-in method — it makes it convenient for the smart car to access the data:</p>
+<em>After adding the user, note the User UID</em>
+</p>
+<p><strong>4.</strong> Also toggle on the <strong>Anonymous</strong> sign-in method — it lets the smart car access the data conveniently:</p>
 <p><img alt="Enabling Anonymous sign-in" src="images/lab6/p12_22.png" />
-<em>Enable the Anonymous sign-in method too</em></p>
-<div class="cph">Pre-Lab Complete! Your Checklist</div>
-<p>Up to this point you should have these three things ready (paste them into a note file):</p>
+<em>Enable the Anonymous sign-in method too</em>
+</p>
+<div class="cph">Check Point — Pre-lab Complete</div>
+<p>At this point the following three items should be recorded (for example, pasted into a note file):</p>
 <ul>
-<li> <strong>Firebase Project Web API Key</strong></li>
-<li> <strong>Realtime Database URL</strong></li>
-<li> <strong>User ID (UID)</strong></li>
+<li><strong>Firebase Project Web API Key</strong></li>
+<li><strong>Realtime Database URL</strong></li>
+<li><strong>User ID (UID)</strong></li>
 </ul>
 <hr />
 <h2>4. Lab Tasks</h2>
 <h3>Task 1 — Reading Data from Firebase Using the ESP32</h3>
-<p>In the final project, your smart car receives information from Firebase — the start and end points, the task ID, the exam status (has the demo started or not?) — and makes real-time decisions based on it. In this task you practise reading.</p>
+<p>In the final project, the smart car receives information from Firebase — the start and end points, the task ID, the examination status — and makes real-time decisions based on it. This task practises reading.</p>
 <p><strong>Step 1.</strong> Open the file <strong><code>sample.json</code></strong> and replace <code>&lt;YOUR_UID&gt;</code> with your actual UID:</p>
 <p><img alt="Editing sample.json with your UID" src="images/lab6/p13_24.png" />
-<em>Replace <code>&lt;YOUR_UID&gt;</code> with your real UID in sample.json</em></p>
-<p>This JSON format is similar to the final project's format, where each student's individual data is stored <strong>under their own UID</strong> to avoid conflicts and overwriting.</p>
+<em>Replace <code>&lt;YOUR_UID&gt;</code> with the real UID in sample.json</em>
+</p>
+<p>This JSON format resembles the final project's format, in which each student's data is stored <strong>under their own UID</strong> to avoid conflicts and overwriting.</p>
 <p><strong>Step 2.</strong> Go to the <strong>Firebase Realtime Database console</strong>, click the <strong>⋮ (three dots)</strong> at the top right corner, and select <strong>Import JSON</strong> to upload <code>sample.json</code>:</p>
 <p><img alt="Importing JSON into the database" src="images/lab6/p13_23.jpg" />
-<em>Three dots → Import JSON</em></p>
-<p><strong>Step 3.</strong> Add your credentials to the code at <strong><code>// TODO 1</code></strong>:</p>
-<pre><code class="language-cpp">#define API_KEY &quot;&quot;       // ← paste your Web API Key here
-#define DATABASE_URL &quot;&quot;  // ← paste your Database URL here
-</code></pre>
+<em>Three dots → Import JSON</em>
+</p>
+<p><strong>Step 3.</strong> Add the credentials to the code at <strong><code>// TODO 1</code></strong>:</p>
+<pre><code class="language-cpp">#define API_KEY ""       // ← paste the Web API Key here
+#define DATABASE_URL ""  // ← paste the Database URL here</code></pre>
 <p><img alt="TODO 1 in the code" src="images/lab6/p13_25.png" />
-<em>Fill in API_KEY and DATABASE_URL at TODO 1</em></p>
-<p><strong>Step 4.</strong> Add your UID at <strong><code>// TODO 2</code></strong>:</p>
-<pre><code class="language-cpp">String UID = &quot;&quot;;         // ← paste your User UID here
-</code></pre>
+<em>Fill in API_KEY and DATABASE_URL at TODO 1</em>
+</p>
+<p><strong>Step 4.</strong> Add the UID at <strong><code>// TODO 2</code></strong>:</p>
+<pre><code class="language-cpp">String UID = "";         // ← paste the User UID here</code></pre>
 <p><img alt="TODO 2 in the code" src="images/lab6/p13_26.png" />
-<em>Fill in the UID at TODO 2</em></p>
+<em>Fill in the UID at TODO 2</em>
+</p>
 <p><strong>Step 5.</strong> Enable the <strong>"Firebase Read Task"</strong> in <code>setup()</code>, exactly as shown:</p>
 <p><img alt="Enabling the Firebase Read Task" src="images/lab6/p14_27.png" />
-<em>Enable the Firebase Read Task</em></p>
-<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, &quot;Firebase Main Task&quot;, 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
+<em>Enable the Firebase Read Task</em>
+</p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, "Firebase Main Task", 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
 
 // TODO 3: enable the read task
-xTaskCreatePinnedToCore(firebaseReadTask, &quot;Firebase.Read.Task&quot;, 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
+xTaskCreatePinnedToCore(firebaseReadTask, "Firebase.Read.Task", 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
 
-//xTaskCreatePinnedToCore(firebaseWriteTask, &quot;Firebase Write Task&quot;, 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
-//xTaskCreatePinnedToCore(RFIDTagReaderTask, &quot;RFID.Tag-Reader.Task&quot;, 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
-vTaskDelay(10);
-</code></pre>
-<p><em>(Notice this uses the FreeRTOS <code>xTaskCreatePinnedToCore</code> you learned in Lab 5 — one task talks to Firebase while others run the car! The two commented-out lines are for Task 2.)</em></p>
-<p><strong>Step 6.</strong> <strong>Flash the code</strong> and watch the Serial Monitor: the exam-state values from your database should print out. Try <strong>manually editing a value in the Firebase web console</strong> (e.g. set <code>time_remain</code> to 100) — and watch the change appear on your car within a second or two. That's <strong>real-time sync</strong> in action!</p>
+//xTaskCreatePinnedToCore(firebaseWriteTask, "Firebase Write Task", 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
+//xTaskCreatePinnedToCore(RFIDTagReaderTask, "RFID.Tag-Reader.Task", 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
+vTaskDelay(10);</code></pre>
+<p><em>(This reuses the FreeRTOS <code>xTaskCreatePinnedToCore</code> pattern from Lab 5: one task communicates with Firebase while others operate the car. The two commented-out lines are used in Task 2.)</em></p>
+<p><strong>Step 6.</strong> <strong>Flash the code</strong> and watch the Serial Monitor: the examination-state values from the database should print. Then <strong>manually edit a value in the Firebase web console</strong> (for example, set <code>time_remain</code> to 100) and observe the change appear on the car within one to two seconds — <strong>real-time synchronization</strong>.</p>
 <div class="cph">Check Point</div>
-<p><strong>Show the serial print result of your received data to the TA / instructor.</strong></p>
+<p><strong>Show the serial print result of the received data to the TA / instructor.</strong></p>
 <hr />
 <h3>Task 2 — Reading RFID and Writing Data to Firebase</h3>
-<p>Now the flow reverses: the car <strong>reads an RFID tag</strong> and <strong>writes</strong> the result <strong>up</strong> to Firebase.</p>
-<p><em>(Recall §2.5: an RFID reader sends radio signals; a nearby tag replies with its stored ID. In the final project, tags along the road let the car know its current location.)</em></p>
+<p>In this task the flow is reversed: the car <strong>reads an RFID tag</strong> and <strong>writes</strong> the result <strong>up</strong> to Firebase.</p>
+<p><em>(Recall §2.5: an RFID reader sends radio signals; a nearby tag replies with its stored ID. In the final project, tags along the road tell the car its current location.)</em></p>
 <p><strong>Step 1.</strong> In the code at <strong>TODO 3</strong>, comment out the read task and enable the <strong>"Firebase Write Task"</strong> and the <strong>"RFID Reader Task"</strong> instead:</p>
 <p><img alt="Enabling the Firebase Write and RFID Reader tasks" src="images/lab6/p15_28.png" />
-<img alt="Task setup code from the manual" src="images/lab6/p15_29.jpg" />
-<em>Enable the Firebase Write Task and RFID Reader Task at TODO 3 (screenshots from the manual)</em></p>
-<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, &quot;Firebase Main Task&quot;, 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
+</p>
+<p><img alt="Task setup code from the manual" src="images/lab6/p15_29.jpg" />
+<em>Enable the Firebase Write Task and RFID Reader Task at TODO 3 (screenshots from the manual)</em>
+</p>
+<pre><code class="language-cpp">xTaskCreatePinnedToCore(firebaseMainTask, "Firebase Main Task", 8192, NULL, 3, &amp;firebaseMainTaskHandle, 0);
 
-//xTaskCreatePinnedToCore(firebaseReadTask, &quot;Firebase.Read.Task&quot;, 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
+//xTaskCreatePinnedToCore(firebaseReadTask, "Firebase.Read.Task", 8192, NULL, 2, &amp;firebaseReadTaskHandle, 1);
 
-xTaskCreatePinnedToCore(firebaseWriteTask, &quot;Firebase Write Task&quot;, 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
-xTaskCreatePinnedToCore(RFIDTagReaderTask, &quot;RFID.Tag-Reader.Task&quot;, 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
-vTaskDelay(10);
-</code></pre>
-<p><strong>Step 2.</strong> Place an <strong>RFID tag</strong> under the RFID reader at the <strong>bottom of the car</strong> (like tapping an Octopus card on the reader, upside-down!). Watch two things:</p>
+xTaskCreatePinnedToCore(firebaseWriteTask, "Firebase Write Task", 8192, NULL, 1, &amp;firebaseWriteTaskHandle, 1);
+xTaskCreatePinnedToCore(RFIDTagReaderTask, "RFID.Tag-Reader.Task", 2048, NULL, 2, &amp;RFIDTagReaderTaskHandle, 1);
+vTaskDelay(10);</code></pre>
+<p><strong>Step 2.</strong> Place an <strong>RFID tag</strong> under the RFID reader at the <strong>bottom of the car</strong> (equivalent to tapping an Octopus card on a reader, inverted). Observe two things:</p>
 <ol>
 <li>The <strong>Serial Monitor</strong> prints the tag's value</li>
-<li>The tag value appears in the <strong>Firebase console</strong> — the car uploaded it to the cloud by itself!</li>
+<li>The tag value appears in the <strong>Firebase console</strong> — the car has uploaded it to the cloud by itself</li>
 </ol>
-<p>Expected serial output looks like:</p>
+<p>Expected serial output:</p>
 <pre><code>RFID Initialized
 Connecting to WiFi...
 ---Initializing---
 Connected to WiFi network with IP Address: 192.168.110.159
 RFID Tag: c3a75214
-RFID_tag: &quot;c3a75214&quot;
-</code></pre>
+RFID_tag: "c3a75214"</code></pre>
 <p><img alt="Scanning an RFID tag with the car" src="images/lab6/p16_30.png" />
-<em>Scanning an RFID tag under the car's reader</em></p>
+<em>Scanning an RFID tag under the car's reader</em>
+</p>
 <p><img alt="The tag data appearing in the Firebase console" src="images/lab6/p16_31.png" />
-<em>The tag value appearing in the Firebase console</em></p>
+<em>The tag value appearing in the Firebase console</em>
+</p>
 <div class="cph">Check Point</div>
-<p><strong>Show your RFID scanning serial output and the Firebase console result to the TA / instructor.</strong></p>
+<p><strong>Show the RFID scanning serial output and the Firebase console result to the TA / instructor.</strong></p>
 <hr />
 <p><em>— End of Lab 6 —</em></p>
 </article>

@@ -6,24 +6,24 @@
 
 ---
 
-## 1. Welcome — What You Will Learn
+## 1. Overview and Learning Outcomes
 
-How does Google Maps always find the fastest route? In this lab you will learn and **build** the answer:
+Every navigation application solves the same underlying problem — computing the cheapest route on a weighted graph. This laboratory covers both the theory and its implementation:
 
-- 🗺️ Understand **graphs**, **weighted graphs** — the mathematics behind every map and navigation app
-- 🧮 Learn **Dijkstra's algorithm** — the classic method for finding the shortest path
-- 💻 Simulate the algorithm in **MATLAB**
-- 🚗 Program a real robotic car to **follow a line** and **make decisions at a crossroad** using **FreeRTOS** multitasking
+- Explain **graphs** and **weighted graphs** — the mathematics behind every map and navigation application
+- Apply **Dijkstra's algorithm** — the classic method for finding the shortest path
+- Simulate the algorithm in **MATLAB**
+- Program a robotic car to **follow a line** and **make decisions at a crossroad** using **FreeRTOS** multitasking
 
-**Key words you will learn:** graph · node · edge · weight · shortest path · Dijkstra's algorithm · matrix · multitasking · RTOS · task · IR sensor · truth table
+**Key words:** graph · node · edge · weight · shortest path · Dijkstra's algorithm · matrix · multitasking · RTOS · task · IR sensor · truth table
 
 ---
 
 ## 2. Background — Graphs and Dijkstra's Algorithm
 
-### 2.1 Graphs Are Everywhere
+### 2.1 Graphs
 
-In mathematics, a **graph** is not a bar chart — it is a set of **nodes** (dots) connected by **edges** (lines). You already use graphs every day:
+In mathematics, a **graph** is not a bar chart: it is a set of **nodes** (dots) connected by **edges** (lines). Graphs appear in many everyday systems:
 
 - The **MTR map**: stations are nodes, train lines are edges
 - A **road map**: intersections are nodes, roads are edges
@@ -31,21 +31,21 @@ In mathematics, a **graph** is not a bar chart — it is a set of **nodes** (dot
 
 A **weighted graph** adds a number (a *weight*, or *cost*) to every edge — for example, the travel **time** between two stations, the **distance** between two intersections, or the **toll** on a road. Weights are usually positive numbers.
 
-### 2.2 The Problem: Shortest Path
+### 2.2 The Shortest-Path Problem
 
-Given a weighted graph, a start node and an end node, what is the cheapest route? This is exactly what your phone's map app solves every time you ask for directions.
+Given a weighted graph, a start node and an end node, the problem is to find the cheapest route — the same problem a map application solves for every journey.
 
-### 2.3 Dijkstra's Algorithm — The Classic Solution
+### 2.3 Dijkstra's Algorithm
 
-Dijkstra's algorithm (invented by computer scientist Edsger Dijkstra in 1956, now used in network routing and pathfinding everywhere) finds the shortest path from a start node to every other node. The idea in three steps:
+Dijkstra's algorithm (invented by computer scientist Edsger Dijkstra in 1956, and now used throughout network routing and pathfinding) finds the shortest path from a start node to every other node. The idea in three steps:
 
-1. **Initialization:** Start at the source node. Set its distance to **0**, and every other node's distance to **infinity (∞)** — meaning "we don't know a route there yet".
-2. **Exploration:** Visit the unvisited node with the *smallest known distance*. Look at its neighbours: if going through this node gives a shorter route, **update** the neighbour's distance.
-3. **Repeat:** Keep picking the nearest unvisited node and updating distances, until all nodes are visited (or until you reach your target).
+1. **Initialization:** start at the source node. Set its distance to **0**, and every other node's distance to **infinity (∞)** — indicating that no route to it is known yet.
+2. **Exploration:** visit the unvisited node with the *smallest known distance*. Examine its neighbours: if going through this node gives a shorter route, **update** the neighbour's distance.
+3. **Repeat:** keep selecting the nearest unvisited node and updating distances, until all nodes are visited (or until the target is reached).
 
-### 2.4 Worked Example — Watch Dijkstra Think!
+### 2.4 Worked Example
 
-Here is a small graph (try drawing it on paper):
+A small graph (reproducing it on paper is recommended):
 
 ```
         3            4
@@ -64,15 +64,15 @@ Edges: A–B = 3, A–C = 10, B–C = 4, B–D = 8, C–D = 2. **Find the shorte
 | ---- | -------- | ------------- | ---------------------------- |
 | 1 | — (initial) | — | (0, ∞, ∞, ∞) |
 | 2 | **A** (dist 0) | A→B: 0+3=3 ✔ · A→C: 0+10=10 ✔ | (0, 3, 10, ∞) |
-| 3 | **B** (smallest = 3) | B→C: 3+4=7 < 10 ✔ update! · B→D: 3+8=11 ✔ | (0, 3, 7, 11) |
-| 4 | **C** (smallest = 7) | C→D: 7+2=9 < 11 ✔ update! | (0, 3, 7, 9) |
-| 5 | **D** (smallest = 9) | done! | (0, 3, 7, 9) |
+| 3 | **B** (smallest = 3) | B→C: 3+4=7 < 10 ✔ update · B→D: 3+8=11 ✔ | (0, 3, 7, 11) |
+| 4 | **C** (smallest = 7) | C→D: 7+2=9 < 11 ✔ update | (0, 3, 7, 9) |
+| 5 | **D** (smallest = 9) | target reached | (0, 3, 7, 9) |
 
-Now **backtrack** from D: D was last updated from **C**, C from **B**, B from **A**. So the shortest path is **A → B → C → D** with total cost **9** — shorter than the direct-looking A–B–D (11) and A–C (10)! That's the magic of Dijkstra: it discovers that a "detour" through more nodes can actually be cheaper.
+Now **backtrack** from D: D was last updated from **C**, C from **B**, B from **A**. The shortest path is therefore **A → B → C → D** with total cost **9** — shorter than A–B–D (11) and A–C (10). This is the key property of Dijkstra's algorithm: it discovers that a route through more intermediate nodes can be cheaper than the direct alternatives.
 
 ### 2.5 What Is MATLAB?
 
-**MATLAB** is a programming environment loved by engineers. Its superpower is working with **matrices** (rectangular tables of numbers) — and a graph's weights can be stored perfectly in a matrix, as you'll see in Part I.
+**MATLAB** is a programming environment used widely in engineering. Its strength is computation with **matrices** (rectangular tables of numbers) — and a graph's weights can be stored directly in a matrix, as Part I demonstrates.
 
 ---
 
@@ -80,7 +80,7 @@ Now **backtrack** from D: D was last updated from **C**, C from **B**, B from **
 
 ### Task 1 — Find the Shortest Path by Dijkstra's Algorithm
 
-In this task we use this weighted graph:
+This task uses the following weighted graph:
 
 ![Example of a weighted graph](images/lab5/p02_00.png)
 *Example of a weighted graph (from the lab manual)*
@@ -93,7 +93,7 @@ In this task we use this weighted graph:
 - `Graph(i,j) = 0` when `i = j` (the cost from a node to itself is zero)
 - `Graph(i,j) = inf` when nodes `i` and `j` are **not** connected
 
-So for a 4-node graph it looks like this:
+For a 4-node graph:
 
 ```matlab
 Graph = [ 0    3   10  inf ;
@@ -108,15 +108,15 @@ Graph = [ 0    3   10  inf ;
 [path, cost] = fun_dijkstra(Graph, source, dest)
 ```
 
-The provided code finds the shortest path from **node 1 to node 3** as `(1 > 4 > 5 > 3)` with **cost = 4**. Read the result and make sure you understand it.
+The provided code finds the shortest path from **node 1 to node 3** as `(1 > 4 > 5 > 3)` with **cost = 4**. Read the result and confirm that it is understood.
 
-#### ✅ Check Point 1
+### Check Point 1
 
-Modify the code to find the shortest path from **node 1 to node 6** and note the cost. Write your answer in the answer sheet, and **show your result to the TA / instructor**.
+Modify the code to find the shortest path from **node 1 to node 6** and note the cost. Write the answer in the answer sheet, and **show the result to the TA / instructor**.
 
 ### Task 2 — Create the Graph (Hong Kong Traffic Map)
 
-Now build a real one! This map shows the traffic situation of Hong Kong:
+This task uses a map of Hong Kong traffic conditions:
 
 ![Traffic situation of Hong Kong](images/lab5/p03_01.png)
 *Traffic situation of Hong Kong — the red integers are the traffic costs between connected districts*
@@ -133,40 +133,40 @@ The districts are numbered as nodes:
 | 6    | Sha Tin       | 13   | Airport       |
 | 7    | Sai Kung      |      |               |
 
-**Step 1.** Look at the map: every **red integer** between two connected districts is the traffic cost for that edge.
+**Step 1.** Read the map: every **red integer** between two connected districts is the traffic cost for that edge.
 
 **Step 2.** Open `Task2.m` in the MATLAB editor.
 
-**Step 3.** Create the 13 × 13 weighted matrix. Tips:
+**Step 3.** Create the 13 × 13 weighted matrix. Notes:
 
 - Fill the diagonal with 0
-- Put the red number in `Graph(i,j)` **and** `Graph(j,i)` (roads go both ways!)
+- Put the red number in `Graph(i,j)` **and** `Graph(j,i)` (the roads are bidirectional)
 - Put `inf` everywhere the map shows no direct connection
 
-#### ✅ Check Point 2
+### Check Point 2
 
-1. Show the array you created to represent the weighted graph.
+1. Show the array created to represent the weighted graph.
 2. Find the shortest path from **Yuen Long (node 3) to Eastern (node 12)** and its cost.
 
-Fill in the answers, commit the revised code to GitHub, and **show your result to the TA / instructor**.
+Fill in the answers, commit the revised code to GitHub, and **show the result to the TA / instructor**.
 
 ---
 
 ## 4. Part II — Running Dijkstra on a Real Car
 
-### Task 3 (Pre) — Meet the Robotic Car
+### Task 3 (Pre) — The Robotic Car
 
-This is the same car you will use for the final project:
+This is the same car used for the final project:
 
 ![Composition of the robotic car](images/lab5/p04_02.jpg)
 *Composition of the robotic car*
 
-**Hardware:** ESP32-S3 brain, IR sensors underneath (for line tracking), ultrasonic sensor, IMU, encoder motors, RFID reader, servo front wheel, and a 7.4 V Li-Po battery. In this lab we only use the **motor drivers** and the **IR sensors**.
+**Hardware:** ESP32-S3 microcontroller, IR sensors underneath (for line tracking), ultrasonic sensor, IMU, encoder motors, RFID reader, servo front wheel, and a 7.4 V Li-Po battery. This lab uses only the **motor drivers** and the **IR sensors**.
 
 ![Materials for Tasks 3 & 4](images/lab5/p05_03.jpg)
 *Materials for Tasks 3 & 4*
 
-**Code files** you will open in the Arduino IDE:
+**Code files** to open in the Arduino IDE:
 
 - `IRSensors.cpp` / `IRSensors.hpp`
 - `Lab06.ino` *(main sketch — the manual keeps this name)*
@@ -177,7 +177,7 @@ This is the same car you will use for the final project:
 ![The lab code folder](images/lab5/p08_08.png)
 *The code folder contents*
 
-> ⚠️ **IMPORTANT: DO NOT change the code UNLESS the manual tells you to** — especially **`Pinout.cpp`**. The pinout file maps every wire to the right pin number; change it and nothing will work!
+> **Important:** do not modify the code unless the manual instructs it — in particular **`Pinout.hpp`**. The pinout file maps every wire to its pin number; any change prevents the car from working.
 
 The Arduino IDE board settings are the same as Lab 2 (board = **ESP32S3 Dev Module**; use the same Tools settings table from Lab 2):
 
@@ -201,7 +201,7 @@ The Arduino IDE board settings are the same as Lab 2 (board = **ESP32S3 Dev Modu
 ![Closing the battery cover](images/lab5/p06_06.jpg)
 *Closing the battery cover*
 
-**Step 4.** Plug the battery's power plug (**XT30 connector** — it only fits one way, never force it) into the socket on the car. The **battery voltage indicator** will light up:
+**Step 4.** Plug the battery's power plug (**XT30 connector** — it fits only one way; never force it) into the socket on the car. The **battery voltage indicator** lights up:
 
 ![Plugging in the XT30 power plug](images/lab5/p07_07.jpg)
 *Plug the XT30 power plug — the voltage level indicator lights up*
@@ -215,7 +215,7 @@ The Arduino IDE board settings are the same as Lab 2 (board = **ESP32S3 Dev Modu
 ![Blinking LED of the car](images/lab5/p09_10.jpg)
 *The blinking LED of the car*
 
-#### ✅ Check Point
+### Check Point
 
 1. Check that all the wires are properly connected.
 2. Plug the Li-Po battery into the power plug.
@@ -223,19 +223,19 @@ The Arduino IDE board settings are the same as Lab 2 (board = **ESP32S3 Dev Modu
 4. Upload the testing code.
 5. Check whether the LED on the chassis is blinking.
 
-**Show your result to the TA / instructor.**
+**Show the result to the TA / instructor.**
 
 ---
 
 ### Task 2 — Multitasking for ESP32 (FreeRTOS)
 
-*(The manual numbers this section "Task 2" even though it comes after Task 3 (Pre) — that's fine, keep reading!)*
+*(The original manual numbers this section "Task 2" although it follows Task 3 (Pre); the numbering is retained for reference.)*
 
-#### Background: Why Multitask?
+#### Background: The Need for Multitasking
 
-So far our programs used a **"superloop"**: code runs top-to-bottom, forever, one thing at a time. For simple programs that's fine. But imagine the car is trying to reconnect to Wi-Fi **and** follow a line **and** read sensors — if the Wi-Fi code gets stuck waiting, **everything else stops too**. That's like refusing to start your homework until the washing machine finishes — even though the machine runs by itself!
+So far the programs have used a **"superloop"**: code runs top-to-bottom, forever, one thing at a time. For simple programs this is sufficient. Consider, however, a car that must reconnect to Wi-Fi, follow a line, and read sensors at the same time: if the Wi-Fi code blocks while waiting, **every other activity stops as well**.
 
-The solution: a **multitasking system**, where the chip switches between jobs so fast it looks simultaneous. We will use **FreeRTOS** — a free, open-source **Real-Time Operating System (RTOS)** that is already built into the ESP32. It is designed for the ESP32's **dual-core** processor (two "workers" that can run two tasks truly at the same time), with task priorities, precise timing, and tiny memory use.
+The solution is a **multitasking system**, in which the chip switches between jobs fast enough to appear simultaneous. This lab uses **FreeRTOS** — a free, open-source **Real-Time Operating System (RTOS)** already built into the ESP32. It is designed for the ESP32's **dual-core** processor (two cores that can execute two tasks concurrently), with task priorities, precise timing, and minimal memory use.
 
 #### The Code
 
@@ -251,7 +251,7 @@ The solution: a **multitasking system**, where the chip switches between jobs so
 ![FreeRTOS libraries in the skeleton code](images/lab5/p10_11.png)
 *The skeleton code with FreeRTOS enabled*
 
-**Step 2 — Write a task function.** In FreeRTOS, instead of putting everything in `loop()`, you write separate **tasks**. To create one, a `StackType`, `TaskTCB` and `TaskHandle` are initialized, then the task function looks like this LED blink example:
+**Step 2 — Write a task function.** In FreeRTOS, instead of placing everything in `loop()`, separate **tasks** are written. To create one, a `StackType`, `TaskTCB` and `TaskHandle` are initialized, then the task function takes this form (LED blink example):
 
 ```cpp
 void Blink(void *pvPara) {
@@ -274,9 +274,9 @@ Every task function follows the template `void TaskName(void *pvPara)` and has t
 1. **The Setup part** — runs only once (e.g. `pinMode`)
 2. **The Running part** — a `while(true)` loop that never ends
 
-> ⚠️ **IMPORTANT — two rules the manual stresses:**
-> 1. `void *pvPara` **must** be there, even if you never use it.
-> 2. Inside the `while` loop you must call **`vTaskDelay()`**, not Arduino's `delay()`. (In fact `delay()` secretly calls `vTaskDelay()` — but use `vTaskDelay()` directly.) **Without a `vTaskDelay()`, your task will never actually run on the MCU!** The delay is FreeRTOS's chance to hand the CPU to other tasks.
+> **Important — two rules:**
+> 1. `void *pvPara` **must** be present, even when unused.
+> 2. Inside the `while` loop, call **`vTaskDelay()`**, not Arduino's `delay()`. (`delay()` internally calls `vTaskDelay()` — use `vTaskDelay()` directly.) **Without a `vTaskDelay()`, the task will never actually run on the MCU.** The delay is the point at which FreeRTOS passes the CPU to other tasks.
 
 **Step 3 — Create the task and "pin" it to a CPU core**, inside `void setup()`:
 
@@ -295,13 +295,13 @@ xTaskCreatePinnedToCore(
 ![Creating the task and pinning it to a core](images/lab5/p11_14.png)
 *Creating the task and pinning it to a core (screenshot from the manual)*
 
-**Step 4 — Also create the Movement task** (bigger stack, because movement code needs more memory):
+**Step 4 — Also create the Movement task** (a larger stack, because the movement code needs more memory):
 
 ```cpp
 xTaskCreatePinnedToCore(
   MovementTask,
   "Movement",
-  12000,               // much bigger stack than the Blink task!
+  12000,               // larger stack than the Blink task
   NULL,
   1,
   &MovementTaskHandle,
@@ -314,31 +314,31 @@ xTaskCreatePinnedToCore(
 ![Task setup code from the manual](images/lab5/p11_17.png)
 *Including the Movement Task (screenshots from the manual)*
 
-#### ✅ Check Point — Test the Movement
+### Check Point — Test the Movement
 
-Upload and test. The default behaviour of the car is:
+Upload and test. The default behaviour of the car:
 
 - All IR sensors on a **white tile** → move **forward**
 - All IR sensors off the ground (white background) → **stop**
 - Otherwise → **turn right** (left wheel clockwise, right wheel anti-clockwise)
 
-**Show your result to the TA / instructor.**
+**Show the result to the TA / instructor.**
 
 ---
 
 ### Task 4 — Basic Line Tracking
 
-This is the track your car must follow:
+This is the track the car must follow:
 
 ![The line tracking map](images/lab5/p12_18.jpg)
 *The line tracking map*
 
-#### Background: How Do IR Line Sensors Work?
+#### Background: IR Line Sensors
 
-Under the car are **three IR (infrared) sensors** — left, middle, right. Each one shines infrared light at the floor and measures how much bounces back:
+Under the car are **three IR (infrared) sensors** — left, middle, right. Each shines infrared light at the floor and measures how much is reflected:
 
 - A **black** surface **absorbs** infrared → little reflection → output = **1 (HIGH)**
-- A **white** surface **reflects** infrared → lots of reflection → output = **0 (LOW)**
+- A **white** surface **reflects** infrared → much reflection → output = **0 (LOW)**
 
 The sensor positions and names (defined in `IRSensors.hpp`):
 
@@ -353,7 +353,7 @@ enum RobotState : uint8_t {
   Left_Middle_ON_Track, // left + middle see the line
   ALL_ON_Track,         // all three see the line
   Right_ON_Track,       // only the right sensor sees the line
-  Left_Right_ON_Track,  // left + right (a crossroad!)
+  Left_Right_ON_Track,  // left + right (crossroad)
   Middle_Right_ON_Track,// middle + right
   Left_ON_Track,        // only the left sensor sees the line
   All_OFF_Track         // no sensor sees the line
@@ -365,13 +365,13 @@ enum RobotState : uint8_t {
 
 #### The Tracking Logic
 
-The basic idea is simple:
+The basic idea:
 
-- If the **middle** sensor is on the dark line → keep going **forward**
+- If the **middle** sensor is on the dark line → continue **forward**
 - If the **left** sensor is on the dark line → the car has drifted right → **turn left**
 - If the **right** sensor is on the dark line → the car has drifted left → **turn right**
 
-Plan it with a **truth table** — a table that says "for these inputs, do this action". The first row is filled in as an example; complete the rest yourself (one row is given per sensor state — think about what each combination means!):
+Plan the behaviour with a **truth table** — a table that specifies an action for every combination of inputs. The first row is completed as an example; complete the remaining rows, considering what each combination of sensor states indicates (one row is provided per sensor state):
 
 | Left (IR_L) | Middle (IR_M) | Right (IR_R) | State | Action |
 | ----------- | ------------- | ------------ | ----- | ------ |
@@ -384,9 +384,9 @@ Plan it with a **truth table** — a table that says "for these inputs, do this 
 | 1 | 1 | 0 | Left + middle | *your answer* |
 | 1 | 1 | 1 | All on track | *your answer* |
 
-#### The Code You Need to Complete
+#### The Code to Complete
 
-In `void MovementTask(void* pvPara)` in the `.ino` file, the sensor state is read into `IRSensors::IRData.state`, then a `switch` statement decides what to do. **Your job is to fill in the missing cases:**
+In `void MovementTask(void* pvPara)` in the `.ino` file, the sensor state is read into `IRSensors::IRData.state`, then a `switch` statement decides the action. **Complete the missing cases:**
 
 ```cpp
 void MovementTask(void* pPara) {
@@ -443,36 +443,36 @@ void Stop();          // stop
 ![The Movement API in Movement.hpp](images/lab5/p16_23.png)
 *The movement API in `Movement.hpp`*
 
-To actually drive, both wheels need their **speeds set**, followed by the actuation call:
+To drive the car, set the speed of both wheels, then call the actuation function:
 
 ![Setting wheel speeds and actuating](images/lab5/p16_24.jpg)
 *Setting the speeds of both wheels, then actuating*
 
-> 📖 For the full API manual visit: **https://project.isdn2602.site**
+> For the full API manual visit: **https://project.isdn2602.site**
 
 #### Procedure
 
-1. Put the car at the **starting line** of the track.
+1. Place the car at the **starting line** of the track.
 2. Power on the car.
 3. After 1–2 seconds, the car starts to move.
 4. It should follow the track and **stop at the end line**.
 
-**Finish the truth table, then change the movement functions and wheel speeds carefully** until the car follows the whole track.
+**Complete the truth table, then adjust the movement functions and wheel speeds carefully** until the car follows the whole track.
 
-#### ✅ Check Point
+### Check Point
 
-Change the movement functions inside the switch-case so the car tracks the line, and **show your result to the TA / instructor**.
+Change the movement functions inside the switch-case so the car tracks the line, and **show the result to the TA / instructor**.
 
 ---
 
 ### Task 5 — Line Tracking with Decision Making
 
-Now the track has a **crossroad** — your car must make a decision:
+This track contains a **crossroad** at which the car must make a decision:
 
 ![The Task 5 track with a crossroad](images/lab5/p17_25.jpg)
 *The Task 5 map — note the crossroad*
 
-In this task the car needs to make a decision at the crossroad, based on the line-tracking logic you built in Task 4.
+In this task the car decides at the crossroad, building on the line-tracking logic from Task 4.
 
 **Procedure:**
 
@@ -481,11 +481,11 @@ In this task the car needs to make a decision at the crossroad, based on the lin
 3. When the car arrives at the crossroad, **turn right** and follow the left track.
 4. Stop the car at the end line.
 
-💡 *Hint: at a crossroad, all sensors see the line at once — that's the `ALL_ON_Track` or `Left_Right_ON_Track` state. Instead of stopping, count a short delay and then rotate...*
+> **Hint:** at a crossroad, all sensors see the line at once — the `ALL_ON_Track` or `Left_Right_ON_Track` state. Instead of stopping, count a short delay and then rotate.
 
-#### ✅ Check Point
+### Check Point
 
-Modify the logic and conditions of the helper function to finish this task, and **show your result to the TA / instructor**.
+Modify the logic and conditions of the helper function to complete this task, and **show the result to the TA / instructor**.
 
 ---
 
@@ -550,7 +550,7 @@ for i = 1:numel(from)
         if issparse(transition)
             index = and(index, full(transpose(transition(k, :) > 0)));
         end
-        if any(index)                    % found improvements!
+        if any(index)                    % found improvements
             loss(index) = distance(index);    % update best distances
             parent(index) = k;                % remember we came through k
             queue = cat(1, queue(2:end, :), find(index));  % add improved nodes to queue
@@ -573,7 +573,7 @@ for i = 1:numel(from)
             path{i, j}(k) = n;              % record node
             n = parent(n);                  % hop to its parent
         end
-        if eq(m, n)                         % we successfully walked back to m
+        if eq(m, n)                         % successfully walked back to m
             path{i, j}(k) = n;
             path{i, j} = path{i, j}(k:end); % trim the leading zeros
         else

@@ -123,10 +123,10 @@
     <section class="slide soft" data-section="Intro" aria-roledescription="slide">
       <div class="rail">
         <p class="lbl-purple" style="margin-bottom:24px;">AIoScout Lab Series · Motor &amp; Motion</p>
-        <h1 class="t-hero" style="max-width:16ch;">From blind motion to controlled motion.</h1>
+        <h1 class="t-hero" style="max-width:16ch;">From open-loop motion to controlled motion.</h1>
         <p class="body-lg dim" style="max-width:62ch; margin-top:24px;">
-          Today the car moves for the first time: drive the motors with <strong style="color:var(--ink)">PWM</strong>,
-          measure every rotation with <strong style="color:var(--ink)">encoders</strong>, and close the loop with a
+          In this lab the car moves for the first time: the motors are driven with <strong style="color:var(--ink)">PWM</strong>,
+          every rotation is measured with <strong style="color:var(--ink)">encoders</strong>, and the loop is closed with a
           <strong style="color:var(--ink)">PID controller</strong> until it holds a straight line by itself.
         </p>
         <div style="display:flex; align-items:center; gap:32px; margin-top:40px;">
@@ -139,8 +139,8 @@
 
     <section class="slide white" data-section="Intro" aria-roledescription="slide">
       <div class="rail">
-        <p class="lbl-dark" style="margin-bottom:12px;">Today's mission</p>
-        <h2 class="t-lg" style="margin-bottom:32px;">By the end, you can…</h2>
+        <p class="lbl-dark" style="margin-bottom:12px;">Learning outcomes</p>
+        <h2 class="t-lg" style="margin-bottom:32px;">After completing this lab, you will be able to:</h2>
         <div class="grid-4">
           <div class="card">
             <p class="step-num">01 · Drive</p>
@@ -155,12 +155,12 @@
           <div class="card">
             <p class="step-num">03 · Close the loop</p>
             <h3>Add feedback</h3>
-            <p>See why open loop drifts and how measurement corrects it.</p>
+            <p>Understand why open-loop control drifts and how measurement corrects it.</p>
           </div>
           <div class="card">
             <p class="step-num">04 · Tune</p>
             <h3>Build a PID</h3>
-            <p>Go from P to PI to PID and tune it until the car runs straight.</p>
+            <p>Progress from P to PI to PID and tune the controller until the car runs straight.</p>
           </div>
         </div>
         <p class="cap quiet" style="margin-top:32px;">Keywords — motor · PWM · duty cycle · H-bridge · encoder · quadrature · error · steady-state error · overshoot · tuning</p>
@@ -173,12 +173,12 @@
           <p class="lbl-purple" style="margin-bottom:12px;">Background · the motor</p>
           <h2 class="t-lg" style="margin-bottom:20px;">Voltage in, rotation out</h2>
           <p class="body-lg dim" style="margin-bottom:20px;">
-            A <strong style="color:var(--ink)">DC motor</strong> is the simplest actuator there is: apply a voltage,
-            it spins; remove it, it stops. More voltage, faster spin.
+            A <strong style="color:var(--ink)">DC motor</strong> is the simplest actuator: when a voltage is applied, it spins;
+            when the voltage is removed, it stops. More voltage produces faster rotation.
           </p>
           <ul class="tick body-md dim">
-            <li>But we can't cleanly give a motor "half a voltage"…</li>
-            <li>…so we give it full voltage <strong style="color:var(--ink)">half the time</strong></li>
+            <li>A motor cannot be supplied with a clean "half a voltage" directly</li>
+            <li>Instead, full voltage is applied <strong style="color:var(--ink)">half the time</strong></li>
             <li>The switching is <strong style="color:var(--ink)">PWM</strong> — thousands of on/off cycles per second</li>
             <li>The ON fraction — the <span class="hl-orange" style="font-weight:700;">duty cycle</span> — sets the average power, and the speed</li>
           </ul>
@@ -204,7 +204,7 @@
             <li><strong style="color:var(--ink)">S2 + S3 closed</strong> → current reversed → backward</li>
             <li>All open → stop</li>
           </ul>
-          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Combined</span>&nbsp; the switch pair sets direction; PWM on the pair sets speed. The driver chip on the car does this for you.</p>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Combined</span>&nbsp; the switch pair sets direction; PWM on the pair sets speed. The driver chip on the car performs this switching automatically.</p>
         </div>
         <figure class="figure">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzgwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9ImlhcnIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjciIG1hcmtlckhlaWdodD0iNyIgb3JpZW50PSJhdXRvIj4KICAgICAgPHBhdGggZD0iTTAsMCBMMTAsNSBMMCwxMCB6IiBmaWxsPSIjZjU4MzMxIi8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9Ijg4MCIgaGVpZ2h0PSIzODAiIGZpbGw9IiNmZmZmZmYiLz4KICA8dGV4dCB4PSIzNiIgeT0iNDAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPlRIRSBILUJSSURHRSDigJQgRElSRUNUSU9OIENPTlRST0w8L3RleHQ+CgogIDwhLS0gcmFpbHMgLS0+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjgwIiB4Mj0iNjIwIiB5Mj0iODAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI2NDAiIHk9Ijg1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj4rViAoYmF0dGVyeSk8L3RleHQ+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjMwMCIgeDI9IjYyMCIgeTI9IjMwMCIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDx0ZXh0IHg9IjY0MCIgeT0iMzA1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNzg3MTZjIj5HTkQ8L3RleHQ+CgogIDwhLS0gc3dpdGNoZXM6IFMxIFMyICh0b3ApLCBTMyBTNCAoYm90dG9tKSwgY2xvc2VkIHBhaXJzIGRyYXduIGFzIHNvbGlkIGxpbmUsIG9wZW4gYXMgZ2FwIC0tPgogIDwhLS0gUzEgdG9wLWxlZnQ6IENMT1NFRCAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iODAiIHgyPSIyMDAiIHkyPSIxMjUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTI1IiB4Mj0iMjAwIiB5Mj0iMTgwIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDx0ZXh0IHg9IjE2MCIgeT0iMTYwIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj5TMTwvdGV4dD4KICA8dGV4dCB4PSIxMzgiIHk9IjE1OCIgZm9udC1zaXplPSIxMSIgZmlsbD0iI2Y1ODMzMSI+Y2xvc2VkPC90ZXh0PgogIDwhLS0gUzIgdG9wLXJpZ2h0OiBPUEVOIC0tPgogIDxsaW5lIHgxPSI1NjAiIHkxPSI4MCIgeDI9IjU2MCIgeTI9IjEzMCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxNzUiIHgyPSI1NjAiIHkyPSIxOTUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjE2MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzI8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIxNzYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiPm9wZW48L3RleHQ+CiAgPCEtLSBTMyBib3R0b20tbGVmdDogT1BFTiAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iMjY1IiB4Mj0iMjAwIiB5Mj0iMzAwIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iMTYwIiB5PSIyODUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPlMzPC90ZXh0PgogIDx0ZXh0IHg9IjEzOCIgeT0iMjgzIiBmb250LXNpemU9IjExIiBmaWxsPSIjNzg3MTZjIj5vcGVuPC90ZXh0PgogIDwhLS0gUzQgYm90dG9tLXJpZ2h0OiBDTE9TRUQgLS0+CiAgPGxpbmUgeDE9IjU2MCIgeTE9IjI0MCIgeDI9IjU2MCIgeTI9IjMwMCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjI4MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzQ8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIyOTYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiNmNTgzMzEiPmNsb3NlZDwvdGV4dD4KCiAgPCEtLSBtb3RvciBicmlkZ2UgLS0+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjE5MCIgeDI9IjMzMCIgeTI9IjE5MCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIxOTAiIHgyPSI1NjAiIHkyPSIxOTAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8Y2lyY2xlIGN4PSIzODAiIGN5PSIxOTAiIHI9IjUwIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjM4MCIgeT0iMTk4IiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0PgogIDx0ZXh0IHg9IjM4MCIgeT0iMTMyIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNzg3MTZjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5tb3RvcjwvdGV4dD4KCiAgPCEtLSBjdXJyZW50IHBhdGggKG9yYW5nZSkgLS0+CiAgPHBhdGggZD0iTTIwMCw4NCBMMjAwLDEyMCBNMjAwLDE4MiBMMjAwLDE4OCBMMzMyLDE4OCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KICA8bGluZSB4MT0iNDI4IiB5MT0iMTkyIiB4Mj0iNTU2IiB5Mj0iMTkyIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iMyIgbWFya2VyLWVuZD0idXJsKCNpYXJyKSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxOTYiIHgyPSI1NjAiIHkyPSIyMzYiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI2lhcnIpIi8+CiAgPHRleHQgeD0iMzgwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmNTgzMzEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmN1cnJlbnQgZmxvd3MgbGVmdCDihpIgcmlnaHQgOiBGT1JXQVJEPC90ZXh0PgoKICA8IS0tIHN0YXRlcyBzdW1tYXJ5IC0tPgogIDxnIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1MjUyNTIiPgogICAgPHRleHQgeD0iMzYiIHk9IjM0NSI+Rm9yd2FyZDogUzEgKyBTNCBjbG9zZWQgKGFzIGRyYXduKSAgIMK3ICAgUmV2ZXJzZTogUzIgKyBTMyBjbG9zZWQgICDCtyAgIEJyYWtlL3N0b3A6IGFsbCBvcGVuPC90ZXh0PgogICAgPHRleHQgeD0iMzYiIHk9IjM2OCI+U3BlZWQ6IFBXTSBzd2l0Y2hlcyBTMS9TNCAob3IgUzIvUzMpIG9uIGFuZCBvZmYgdGhvdXNhbmRzIG9mIHRpbWVzIHBlciBzZWNvbmQg4oCUIGR1dHkgY3ljbGUgc2V0cyBzcGVlZCwgc3dpdGNoIHBhaXIgc2V0cyBkaXJlY3Rpb24uPC90ZXh0PgogIDwvZz4KPC9zdmc+Cg==" alt="H-bridge circuit with S1 and S4 closed and current flowing through the motor">
@@ -217,13 +217,13 @@
       <div class="rail">
         <p style="font-size:clamp(72px,10vw,140px); font-weight:800; letter-spacing:-0.05em; line-height:1; color:transparent; -webkit-text-stroke:1.5px var(--mute);">01</p>
         <p class="lbl-purple">Task 1 · First motion</p>
-        <h2 class="t-lg">Blind driving — open loop</h2>
+        <h2 class="t-lg">Open-loop driving — command without measurement</h2>
         <div class="meta-strip">
           <span class="chip">Same PWM, both wheels</span>
           <span class="chip">Three runs</span>
           <span class="chip">Measure the drift</span>
         </div>
-        <p class="body-lg dim" style="max-width:56ch;">No measurement, no correction — just command and hope. Watch what the car does with identical commands.</p>
+        <p class="body-lg dim" style="max-width:56ch;">There is no measurement and no correction: the command is issued and the outcome is left uncontrolled. Observe what the car does under identical commands.</p>
       </div>
     </section>
 
@@ -233,23 +233,23 @@
           <p class="lbl-purple" style="margin-bottom:12px;">Task 1 · The experiment</p>
           <h2 class="t-lg" style="margin-bottom:20px;">Identical commands, different motion</h2>
           <ul class="tick body-md dim">
-            <li>Open <strong style="color:var(--ink)">Task_1.ino</strong>, set both wheels to the same PWM (e.g. 1000)</li>
-            <li>Run the car 2 metres from a fixed start line — mark where it ends</li>
-            <li>Repeat <strong style="color:var(--ink)">three times</strong>, same start, same command</li>
-            <li>Record: how far from straight? Same endpoint every run?</li>
+            <li>Open <strong style="color:var(--ink)">Task_1.ino</strong> and set both wheels to the same PWM value (e.g. 1000)</li>
+            <li>Run the car 2 metres from a fixed start line and mark where it stops</li>
+            <li>Repeat <strong style="color:var(--ink)">three times</strong>, from the same start line, with the same command</li>
+            <li>Record how far the car deviates from straight, and whether the endpoint is the same on every run</li>
           </ul>
-          <p class="body-lg" style="margin-top:20px;"><span class="hl-box">Why?</span>&nbsp; no two motors are identical — different friction, different windings. "50% duty" never means the same speed twice.</p>
+          <p class="body-lg" style="margin-top:20px;"><span class="hl-box">Why?</span>&nbsp; no two motors are identical: friction differs and windings differ. A "50% duty" command never produces the same speed twice.</p>
         </div>
         <div style="display:flex; flex-direction:column; gap:16px;">
           <div class="card">
-            <p class="step-num">What you'll see</p>
+            <p class="step-num">Expected result</p>
             <h3>A curve, and three different curves</h3>
             <p>The car drifts to one side, and each run drifts differently. Open loop cannot hold a line.</p>
           </div>
           <div class="card" style="background:var(--canvas); border:1px solid var(--hairline);">
             <p class="step-num">Analogy</p>
-            <h3>Walking with your eyes closed</h3>
-            <p>You might aim straight, but without sensing, small differences accumulate into a big miss.</p>
+            <h3>Walking with closed eyes</h3>
+            <p>The aim may be perfectly straight, but without sensing, small differences accumulate into a large miss.</p>
           </div>
         </div>
       </div>
@@ -258,20 +258,20 @@
     <section class="slide black" data-section="Task 1 · Open loop" aria-roledescription="slide">
       <div class="rail">
         <p class="cap" style="color:var(--accent-orange); margin-bottom:16px;">Checkpoint 01 · Open loop</p>
-        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Show the drift — and explain it.</h2>
+        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Demonstrate the drift and explain it.</h2>
         <div class="grid-2" style="margin-top:40px; max-width:900px;">
           <div class="card">
             <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable A</p>
             <h3 style="color:var(--on-primary);">Three drift measurements</h3>
-            <p>Your table of endpoints for three identical-command runs.</p>
+            <p>A table of endpoints for three runs under identical commands.</p>
           </div>
           <div class="card">
             <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable B</p>
             <h3 style="color:var(--on-primary);">One-sentence diagnosis</h3>
-            <p>Why identical commands don't give identical motion.</p>
+            <p>Why identical commands do not produce identical motion.</p>
           </div>
         </div>
-        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">Keep the drift numbers — you'll compare them with the PID runs at the end of the lab</p>
+        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">Keep the drift numbers — you will compare them with the PID runs at the end of the lab</p>
       </div>
     </section>
 
@@ -279,13 +279,13 @@
       <div class="rail">
         <p style="font-size:clamp(72px,10vw,140px); font-weight:800; letter-spacing:-0.05em; line-height:1; color:transparent; -webkit-text-stroke:1.5px var(--mute);">02</p>
         <p class="lbl-purple">Task 2 · Reading the encoders</p>
-        <h2 class="t-lg">The car learns to feel its wheels</h2>
+        <h2 class="t-lg">Measuring wheel rotation</h2>
         <div class="meta-strip">
           <span class="chip">Slotted disk + light</span>
           <span class="chip">Counts → distance</span>
           <span class="chip">Counts → speed</span>
         </div>
-        <p class="body-lg dim" style="max-width:56ch;">In the body analogy, encoders are proprioception — the sense that tells your muscles where your limbs are without looking.</p>
+        <p class="body-lg dim" style="max-width:56ch;">In the body analogy, encoders are proprioception — the sense that tells the body where its limbs are without vision.</p>
       </div>
     </section>
 
@@ -293,14 +293,14 @@
       <div class="rail row">
         <div>
           <p class="lbl-purple" style="margin-bottom:12px;">Task 2 · How it works</p>
-          <h2 class="t-lg" style="margin-bottom:20px;">A disk that chops light into pulses</h2>
+          <h2 class="t-lg" style="margin-bottom:20px;">A disk that interrupts a light beam</h2>
           <ul class="tick body-md dim">
             <li>An <strong style="color:var(--ink)">LED</strong> shines through a slotted <strong style="color:var(--ink)">code disk</strong> on the wheel shaft</li>
             <li>A <strong style="color:var(--ink)">photosensor</strong> sees light — slot — or dark — spoke</li>
-            <li>Each slot that passes = one <strong style="color:var(--ink)">pulse</strong>; count pulses, know the rotation</li>
+            <li>Each slot that passes produces one <strong style="color:var(--ink)">pulse</strong>; counting pulses gives the rotation</li>
             <li>Two channels <strong style="color:var(--ink)">A and B</strong>, offset by 90° — <strong style="color:var(--ink)">quadrature</strong></li>
           </ul>
-          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Quadrature gifts</span>&nbsp; direction (which channel rises first) and 4× resolution (count every edge of both channels).</p>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Quadrature provides</span>&nbsp; direction (which channel rises first) and 4× resolution (counting every edge of both channels).</p>
         </div>
         <figure class="figure">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzIwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8cmVjdCB3aWR0aD0iODgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHg9IjM2IiB5PSI0MCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZmlsbD0iIzViNWJhOCI+T1BUSUNBTCBFTkNPREVSIOKAlCBESVNLPC90ZXh0PgogIDx0ZXh0IHg9IjQ3MCIgeT0iNDAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPlFVQURSQVRVUkUgT1VUUFVUIOKAlCBDSEFOTkVMUyBBICZhbXA7IEI8L3RleHQ+CgogIDwhLS0gZW5jb2RlciBkaXNrOiBjaXJjbGUgd2l0aCBzbG90cyAtLT4KICA8Y2lyY2xlIGN4PSIxOTAiIGN5PSIxODAiIHI9IjEwNSIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8IS0tIHNsb3RzICh3aGl0ZSBnYXBzIGluIGRhcmsgcmluZyk6IGRyYXcgYXMgdGhpY2sgc2hvcnQgYXJjcyBhcm91bmQgdGhlIHJpbmcgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjMiPgogICAgPCEtLSByaW5nIHNlZ21lbnRzOiBkcmF3IHJpbmcgYXMgbWFueSBhcmNzOyBzaW1wbGVyOiBvdXRlciBjaXJjbGUgKyBpbm5lciBjaXJjbGUgKyByYWRpYWwgc2xvdCBsaW5lcyAtLT4KICA8L2c+CiAgPGNpcmNsZSBjeD0iMTkwIiBjeT0iMTgwIiByPSI3OCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjZDhkOWQ4IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwhLS0gaHViIC0tPgogIDxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMjYiIGZpbGw9IiMxYTFjMWMiLz4KICA8IS0tIHNsb3QgbWFya3MgYmV0d2VlbiByPTc4IGFuZCByPTEwNTogMTIgc2xvdHMgLS0+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE0Ij4KICAgIDxsaW5lIHgxPSIxOTAiIHkxPSI3NSIgeDI9IjE5MCIgeTI9IjEwMiIvPgogICAgPGxpbmUgeDE9IjI2OCIgeTE9IjEwMiIgeDI9IjI0OSIgeTI9IjEyMSIvPgogICAgPGxpbmUgeDE9IjI5NSIgeTE9IjE4MCIgeDI9IjI2OCIgeTI9IjE4MCIvPgogICAgPGxpbmUgeDE9IjI2OCIgeTE9IjI1OCIgeDI9IjI0OSIgeTI9IjIzOSIvPgogICAgPGxpbmUgeDE9IjE5MCIgeTE9IjI4NSIgeDI9IjE5MCIgeTI9IjI1OCIvPgogICAgPGxpbmUgeDE9IjExMiIgeTE9IjI1OCIgeDI9IjEzMSIgeTI9IjIzOSIvPgogICAgPGxpbmUgeDE9Ijg1IiB5MT0iMTgwIiB4Mj0iMTEyIiB5Mj0iMTgwIi8+CiAgICA8bGluZSB4MT0iMTEyIiB5MT0iMTAyIiB4Mj0iMTMxIiB5Mj0iMTIxIi8+CiAgPC9nPgogIDwhLS0gTEVEICsgcGhvdG9kZXRlY3RvciBzdHJhZGRsaW5nIHRoZSByaW5nIC0tPgogIDxyZWN0IHg9IjEzMCIgeT0iNTIiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgZmlsbD0iIzViNWJhOCIvPgogIDx0ZXh0IHg9IjcwIiB5PSI2NCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViNWJhOCI+TEVEPC90ZXh0PgogIDxyZWN0IHg9IjEzMCIgeT0iMjkyIiB3aWR0aD0iMjYiIGhlaWdodD0iMTYiIGZpbGw9IiM1YjViYTgiLz4KICA8dGV4dCB4PSI1NiIgeT0iMzA0IiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNWI1YmE4Ij5zZW5zb3I8L3RleHQ+CiAgPGxpbmUgeDE9IjE0MyIgeTE9IjY4IiB4Mj0iMTQzIiB5Mj0iNzYiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMTQzIiB5MT0iNzYiIHgyPSIxNDMiIHkyPSIyODQiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtZGFzaGFycmF5PSI0IDQiLz4KICA8bGluZSB4MT0iMTQzIiB5MT0iMjg0IiB4Mj0iMTQzIiB5Mj0iMjkyIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iMTkwIiB5PSIzMjAiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM3ODcxNmMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmxpZ2h0IHBhc3NlcyB0aHJvdWdoIGEgc2xvdCDihpIgcHVsc2U8L3RleHQ+CgogIDwhLS0gY2hhbm5lbCBBIC0tPgogIDx0ZXh0IHg9IjQ3MCIgeT0iODAiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPkE8L3RleHQ+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNNTAwLDEyMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCIvPgogIDwvZz4KICA8IS0tIGNoYW5uZWwgQiBvZmZzZXQgYnkgaGFsZiBhIHN0ZXAgKDkwwrApIC0tPgogIDx0ZXh0IHg9IjQ3MCIgeT0iMjAwIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZjU4MzMxIj5CPC90ZXh0PgogIDxnIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiPgogICAgPHBhdGggZD0iTTUwMCwyNDUgdi0zMCBoMTUgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMzAgdi0zMCBoMzAgdjMwIGgzMCB2LTMwIGgzMCB2MzAgaDMwIHYtMzAgaDMwIHYzMCBoMTUiLz4KICA8L2c+CiAgPCEtLSBleHBsYW5hdGlvbiAtLT4KICA8dGV4dCB4PSI1MDAiIHk9IjI4NSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzc4NzE2YyI+dHdvIGNoYW5uZWxzLCBvZmZzZXQgYnkgOTDCsDwvdGV4dD4KICA8dGV4dCB4PSI1MDAiIHk9IjMwNSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzUyNTI1MiI+4oaSIGRpcmVjdGlvbiBmcm9tIHdoaWNoIHJpc2VzIGZpcnN0LCA0w5cgcmVzb2x1dGlvbiBmcm9tIGJvdGggZWRnZXM8L3RleHQ+Cjwvc3ZnPgo=" alt="Encoder disk with LED and sensor, and quadrature channels A and B offset by 90 degrees">
@@ -325,11 +325,11 @@ speed      = distance / time
         <div>
           <p class="lbl-dark" style="margin-bottom:16px;">Your measurements</p>
           <table class="spec">
-            <tr><th>Step</th><th>Do</th></tr>
-            <tr><td class="n">1</td><td>Spin wheels by hand — watch counts climb on Serial Monitor</td></tr>
-            <tr><td class="n">2</td><td>Push the car exactly 1 m — record counts per wheel</td></tr>
-            <tr><td class="n">3</td><td>Compute counts-per-metre; compare with CPR / circumference</td></tr>
-            <tr><td class="n">4</td><td>Add speed: every 100 ms, print (Δcounts → m/s)</td></tr>
+            <tr><th>Step</th><th>Action</th></tr>
+            <tr><td class="n">1</td><td>Spin the wheels by hand and watch the counts climb on the Serial Monitor</td></tr>
+            <tr><td class="n">2</td><td>Push the car exactly 1 m and record the counts per wheel</td></tr>
+            <tr><td class="n">3</td><td>Compute counts-per-metre and compare with CPR / circumference</td></tr>
+            <tr><td class="n">4</td><td>Add speed: every 100 ms, print the speed (Δcounts → m/s)</td></tr>
           </table>
           <p class="body-sm quiet" style="margin-top:16px;">Checkpoint: live speed readouts while pushing the car at a steady pace.</p>
         </div>
@@ -342,14 +342,14 @@ speed      = distance / time
           <p class="lbl-purple" style="margin-bottom:12px;">Concept · feedback</p>
           <h2 class="t-lg" style="margin-bottom:20px;">Closing the loop</h2>
           <p class="body-lg dim" style="margin-bottom:16px;">
-            <strong style="color:var(--ink)">Open loop</strong>: command → motion, no measurement. Drifts.
-            <strong style="color:var(--ink)">Closed loop</strong>: measure the output, compare with the target,
+            <strong style="color:var(--ink)">Open loop</strong>: command → motion, with no measurement; the result drifts.
+            <strong style="color:var(--ink)">Closed loop</strong>: measure the output, compare with the target, and
             <strong style="color:var(--ink)">correct the difference</strong> — every few milliseconds.
           </p>
           <p class="body-md dim" style="margin-bottom:16px;">
             Cruise control: without feedback the car slows on every hill; with speed feeding back, power is added the
-            instant speed drops. Same four parts in every control system — the air conditioner (thermostat → controller
-            → compressor → room) and our car (encoder → PID → H-bridge + motor → wheel speed).
+            instant speed drops. The same four parts appear in every control system — the air conditioner (thermostat → controller
+            → compressor → room) and this car (encoder → PID → H-bridge + motor → wheel speed).
           </p>
           <p class="body-md"><span class="hl-box">The loop</span>&nbsp; setpoint → error → controller → actuator → process → sensor → back to the start.</p>
         </div>
@@ -366,7 +366,7 @@ speed      = distance / time
           <p class="lbl-purple" style="margin-bottom:12px;">Concept · PID</p>
           <h2 class="t-lg" style="margin-bottom:16px;">Three terms, one controller</h2>
           <p class="body-md dim" style="margin-bottom:16px;">
-            Patented in 1936, still running over 90% of industrial control loops. The lectures explain it with a
+            Patented in 1936, it still runs in over 90% of industrial control loops. The lectures explain it with a
             <strong style="color:var(--ink)">leaking water tank</strong> — hold the level at A while it drains toward B:
           </p>
           <div style="display:flex; flex-direction:column; gap:12px;">
@@ -376,11 +376,11 @@ speed      = distance / time
             </div>
             <div class="card" style="background:var(--canvas); padding:20px 24px;">
               <h3 style="font-size:17px;">I — remember the past</h3>
-              <p style="font-size:14px;">Error accumulates until the gap is gone. Cost: overshoot and slower settling.</p>
+              <p style="font-size:14px;">Error accumulates until the gap is gone. The cost is overshoot and slower settling.</p>
             </div>
             <div class="card" style="background:var(--canvas); padding:20px 24px;">
               <h3 style="font-size:17px;">D — anticipate the future</h3>
-              <p style="font-size:14px;">Brakes when the level rises fast — smaller overshoot, faster settle.</p>
+              <p style="font-size:14px;">It brakes when the level rises quickly — smaller overshoot, faster settling.</p>
             </div>
           </div>
         </div>
@@ -412,13 +412,13 @@ void controlLoop(float target) {
 }</div>
         </div>
         <div>
-          <p class="lbl-dark" style="margin-bottom:16px;">Watch for, in order</p>
+          <p class="lbl-dark" style="margin-bottom:16px;">What to observe, in order</p>
           <ul class="tick body-md dim">
             <li><strong style="color:var(--ink)">P only</strong> — speed settles <em>below</em> target: friction is the leak, the gap is the steady-state error</li>
             <li><strong style="color:var(--ink)">Add I</strong> — gap closes, overshoot appears</li>
             <li><strong style="color:var(--ink)">Add D</strong> — overshoot shrinks, settle time drops</li>
           </ul>
-          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Task 3</span>&nbsp; do exactly this on the car, one term at a time, printing measured speed all the while.</p>
+          <p class="body-md" style="margin-top:16px;"><span class="hl-box">Task 3</span>&nbsp; applies exactly this procedure on the car, one term at a time, printing the measured speed throughout.</p>
         </div>
       </div>
     </section>
@@ -426,7 +426,7 @@ void controlLoop(float target) {
     <section class="slide soft" data-section="Task 3 · PID" aria-roledescription="slide">
       <div class="rail">
         <p class="lbl-purple" style="margin-bottom:12px;">Task 3 · Tuning</p>
-        <h2 class="t-lg" style="margin-bottom:24px;">The trial-and-error recipe</h2>
+        <h2 class="t-lg" style="margin-bottom:24px;">The trial-and-error tuning procedure</h2>
         <div class="row" style="align-items:flex-start;">
           <table class="spec" style="flex:1.2;">
             <tr><th>Step</th><th>Constant</th><th>Start</th><th>Adjust by</th><th>Goal</th></tr>
@@ -438,12 +438,12 @@ void controlLoop(float target) {
             <div class="card">
               <p class="step-num">Rules</p>
               <h3>One constant at a time</h3>
-              <p>Change two at once and you learn nothing about either. Log every setting with what you saw — the log is your tuning evidence.</p>
+              <p>Changing two at once gives no information about either. Log every setting together with the observed behavior — the log is the tuning evidence.</p>
             </div>
             <div class="card" style="background:var(--canvas); border:1px solid var(--hairline); margin-top:16px;">
               <p class="step-num">Checkpoint</p>
               <h3>Same speed, both wheels</h3>
-              <p>With your tuned constants, both wheels hold the same target — plus a log of at least three tested settings.</p>
+              <p>With the tuned constants, both wheels hold the same target speed; a log of at least three tested settings is also required.</p>
             </div>
           </div>
         </div>
@@ -458,7 +458,7 @@ void controlLoop(float target) {
           <ul class="tick body-md dim">
             <li>Both wheels under PID, same target speed</li>
             <li>Run <strong style="color:var(--ink)">2 metres</strong> from a fixed line — three times</li>
-            <li>Measure lateral deviation at the 2 m mark, each run</li>
+            <li>Measure the lateral deviation at the 2 m mark on each run</li>
           </ul>
           <table class="spec" style="margin-top:16px;">
             <tr><th>Run</th><th>Open loop (Task 1)</th><th>PID (Task 4)</th></tr>
@@ -472,12 +472,12 @@ void controlLoop(float target) {
           <div class="card">
             <p class="step-num">Same car, same motors</p>
             <h3>What changed is the feedback</h3>
-            <p>The loop corrects every difference between the wheels dozens of times per second — the drift from Task 1 can't accumulate.</p>
+            <p>The loop corrects every difference between the wheels dozens of times per second — the drift from Task 1 cannot accumulate.</p>
           </div>
           <div class="card" style="background:var(--canvas); border:1px solid var(--hairline);">
-            <p class="step-num">This is Part 1's milestone</p>
+            <p class="step-num">Part 1 milestone</p>
             <h3>Everything builds on it</h3>
-            <p>Line tracking, vision steering, the final project — they all send speed commands into the loop you built today.</p>
+            <p>Line tracking, vision steering, and the final project all send speed commands into the loop built in this lab.</p>
           </div>
         </div>
       </div>
@@ -486,22 +486,22 @@ void controlLoop(float target) {
     <section class="slide black" data-section="Wrap-up" aria-roledescription="slide">
       <div class="rail">
         <p class="cap" style="color:var(--accent-orange); margin-bottom:16px;">Checkpoint 02 · Wrap-up</p>
-        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Show three straight runs.</h2>
+        <h2 class="t-lg" style="color:var(--on-primary); max-width:24ch;">Demonstrate three straight runs.</h2>
         <div class="grid-3" style="margin-top:40px;">
           <div class="card">
             <p class="step-num" style="color:rgba(255,255,255,.55);">Deliverable</p>
-            <h3 style="color:var(--on-primary);">Straight-line demo + table</h3>
-            <p>Three PID runs under 5 cm deviation, with your tuning log.</p>
+            <h3 style="color:var(--on-primary);">Straight-line demonstration and table</h3>
+            <p>Three PID runs under 5 cm deviation, with the tuning log.</p>
           </div>
           <div class="card">
-            <p class="step-num" style="color:rgba(255,255,255,.55);">You learned</p>
+            <p class="step-num" style="color:rgba(255,255,255,.55);">Learning outcome</p>
             <h3 style="color:var(--on-primary);">Actuate and measure</h3>
-            <p>PWM for speed, H-bridge for direction, encoders for truth.</p>
+            <p>PWM for speed, the H-bridge for direction, encoders for measurement.</p>
           </div>
           <div class="card">
-            <p class="step-num" style="color:rgba(255,255,255,.55);">You learned</p>
+            <p class="step-num" style="color:rgba(255,255,255,.55);">Learning outcome</p>
             <h3 style="color:var(--on-primary);">Feedback fixes drift</h3>
-            <p>P, I, D each earn their place — and tuning is a method, not luck.</p>
+            <p>P, I, and D each serve a distinct purpose — and tuning is a systematic method rather than chance.</p>
           </div>
         </div>
         <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">AIoScout · adapted from HKUST ISDN 2601 lectures · full guide: Lab1_Motor_Motion_StudentGuide.md · End of Lab 1</p>

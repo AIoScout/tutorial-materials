@@ -79,51 +79,51 @@
 <h1>Lab 0 — Edge AI Vision: TensorFlow Lite Micro <em>(Student Guide)</em></h1>
 <blockquote>
 <p>Adapted from the AIoScout TF Lite Training Manual (2026) for secondary school students.</p>
-<p><strong>Lab focus</strong> — collect images, train an image-classification neural network (no coding needed), and run it live on the ESP32-P4 microcontroller.</p>
+<p><strong>Lab focus</strong> — collect images, train an image-classification neural network (no programming required), and run it live on the ESP32-P4 microcontroller.</p>
 </blockquote>
 <hr />
-<h2>1. Welcome — What You Will Learn</h2>
-<p>In this lab you will give your robot car the ability to <strong>recognize what it sees</strong>. By the end you can:</p>
+<h2>1. Overview and Learning Outcomes</h2>
+<p>This laboratory equips the robot car with visual recognition. By the end you can:</p>
 <ul>
 <li>Set up the <strong>ESP32-P4</strong> development board with the Arduino IDE</li>
 <li><strong>Collect and preprocess</strong> image samples from a camera</li>
-<li><strong>Train</strong> a convolutional neural network (CNN) with the <strong>TFLiteTraining</strong> app — without writing training code</li>
-<li>Understand <strong>hyperparameters</strong> and how they change training results</li>
+<li><strong>Train</strong> a convolutional neural network (CNN) with the <strong>TFLiteTraining</strong> application, without writing training code</li>
+<li>Explain <strong>hyperparameters</strong> and their effect on training results</li>
 <li><strong>Export</strong> a quantized model and <strong>deploy</strong> it to the microcontroller for real-time inference</li>
 </ul>
-<p><strong>Key words you will learn:</strong> machine learning · training · sample · CNN · hyperparameter · overfitting · quantization · inference · edge AI</p>
+<p><strong>Key words:</strong> machine learning · training · sample · CNN · hyperparameter · overfitting · quantization · inference · edge AI</p>
 <hr />
 <h2>2. Background — Machine Learning on a Chip</h2>
-<h3>2.1 Rules vs. Learning</h3>
-<p>Normal programs follow rules a human wrote: <em>if the pixel is dark, do X</em>. But how would you write rules to recognize "a stop sign" in an image? Nobody can write those rules by hand. <strong>Machine learning</strong> flips the process: instead of writing rules, you show the computer many <strong>labeled examples</strong> (images + their correct answers) and let it <strong>learn</strong> the rules by itself. This is called <strong>training</strong>.</p>
+<h3>2.1 Rules versus learning</h3>
+<p>A conventional program follows rules written by a programmer: <em>if the pixel is dark, do X.</em> Such rules cannot describe how to recognize a stop sign in an image — no one can write them by hand. <strong>Machine learning</strong> inverts this arrangement: instead of receiving rules, the computer receives many <strong>labeled examples</strong> (images with the correct answer attached) and derives the rules itself. This process is called <strong>training</strong>.</p>
 <h3>2.2 What Is a CNN?</h3>
-<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural network for images. You can think of it as a stack of small <strong>feature detectors</strong>: early layers detect simple patterns (edges, blobs), later layers combine them into complex ones (shapes, objects). The final layer outputs a <strong>confidence</strong> for each class — e.g., "sign: 92%, wall: 5%, floor: 3%".</p>
+<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural-network architecture for images. It can be understood as a stack of small <strong>feature detectors</strong>: early layers detect simple patterns (edges, blobs), later layers combine them into complex ones (shapes, objects). The final layer outputs a <strong>confidence</strong> for each class — for example, "sign: 92%, wall: 5%, floor: 3%".</p>
 <h3>2.3 What Is TensorFlow Lite Micro?</h3>
 <p><strong>TensorFlow Lite Micro</strong> (now called <strong>LiteRT for Microcontrollers</strong>) is a version of Google's ML runtime designed for microcontrollers — chips with only kilobytes of memory:</p>
 <ul>
 <li>The core runtime fits in <strong>16 KB</strong> of memory</li>
-<li>No operating system, no standard C/C++ libraries, no dynamic memory allocation needed</li>
+<li>No operating system, no standard C/C++ libraries, and no dynamic memory allocation are required</li>
 <li>Models are <strong>quantized</strong> to <strong>int8</strong> (each number stored as 1 byte instead of 4) so they are small and fast enough for a microcontroller</li>
 </ul>
-<p>Running AI directly on the chip (instead of sending images to a server) is called <strong>edge AI</strong> — it means fast response, no network needed, and privacy.</p>
-<h3>2.4 Meet the ESP32-P4</h3>
-<p>The <strong>ESP32-P4</strong> is a high-performance system-on-a-chip (SoC) from Espressif, made for exactly this kind of work:</p>
+<p>Running AI directly on the chip, instead of sending images to a server, is called <strong>edge AI</strong>. It provides fast response, requires no network, and preserves privacy.</p>
+<h3>2.4 The ESP32-P4 Development Board</h3>
+<p>The <strong>ESP32-P4</strong> is a high-performance system-on-a-chip (SoC) from Espressif, designed for exactly this kind of work:</p>
 <ul>
-<li><strong>Dual-core</strong> processor with plenty of speed for real-time inference</li>
-<li>Rich peripheral interfaces and <strong>camera support</strong> (e.g., the IMX219 camera module)</li>
+<li><strong>Dual-core</strong> processor with sufficient speed for real-time inference</li>
+<li>Rich peripheral interfaces and <strong>camera support</strong> (for example the IMX219 camera module)</li>
 <li>Captures images, processes them on-device, and runs TensorFlow Lite models in real time</li>
 </ul>
-<p>It programs with the familiar <strong>Arduino IDE</strong> — the same environment you used in earlier labs.</p>
-<h3>2.5 The TFLiteTraining App</h3>
-<p><strong>TFLiteTraining</strong> is a desktop application for training lightweight image classifiers — inspired by Google's Teachable Machine. With it you can:</p>
+<p>It is programmed with the <strong>Arduino IDE</strong> — the same environment used in the earlier labs.</p>
+<h3>2.5 The TFLiteTraining Application</h3>
+<p><strong>TFLiteTraining</strong> is a desktop application for training lightweight image classifiers, inspired by Google's Teachable Machine. It supports the complete workflow:</p>
 <ol>
-<li><strong>Collect</strong> labeled image samples — from a <strong>webcam</strong>, <strong>uploaded files</strong>, or a <strong>serial camera</strong> (our ESP32-P4!)</li>
-<li><strong>Preprocess</strong> them (crop, filter noise) — no code</li>
+<li><strong>Collect</strong> labeled image samples — from a <strong>webcam</strong>, <strong>uploaded files</strong>, or a <strong>serial camera</strong> (the ESP32-P4)</li>
+<li><strong>Preprocess</strong> them (crop, filter noise) — no code required</li>
 <li><strong>Train</strong> a CNN by adjusting hyperparameters</li>
-<li><strong>Preview</strong> how the model performs live</li>
+<li><strong>Preview</strong> the model's live performance</li>
 <li><strong>Export</strong> a fully quantized <strong>int8 TensorFlow Lite model</strong> plus the C/C++ files, ready to deploy to the microcontroller</li>
 </ol>
-<p>The full workflow of this lab: <strong>Collect → Preprocess → Train → Preview → Export → Deploy</strong>.</p>
+<p>The workflow of this lab: <strong>Collect → Preprocess → Train → Preview → Export → Deploy</strong>.</p>
 <hr />
 <h2>3. Task 1 — Set Up Arduino IDE and the ESP32-P4</h2>
 <h3>Step-by-step</h3>
@@ -134,44 +134,52 @@
 <li><strong>Windows:</strong> <em>File → Preferences → Settings → Additional Boards Manager URLs</em></li>
 </ul>
 <p><img alt="Windows Arduino settings" src="images/cv/image1.png" />
-<em>Windows: Preferences dialog</em></p>
+<em>Windows: Preferences dialog</em>
+</p>
 <p><img alt="Mac Arduino settings" src="images/cv/image3.png" />
-<em>macOS: Settings dialog</em></p>
+<em>macOS: Settings dialog</em>
+</p>
 <p><strong>Step 3.</strong> Add the ESP32 board index URL and click <strong>OK</strong>:</p>
-<pre><code>https://dl.espressif.com/dl/package_esp32_index.json
-</code></pre>
+<pre><code>https://dl.espressif.com/dl/package_esp32_index.json</code></pre>
 <p><img alt="Adding the board manager URL" src="images/cv/image4.png" />
-<em>Paste the URL into "Additional Boards Manager URLs"</em></p>
+<em>Paste the URL into "Additional Boards Manager URLs"</em>
+</p>
 <p><strong>Step 4.</strong> Go to <em>Tools → Board → Board Manager</em>, search <strong>esp32</strong>, install <strong>"esp32 by Espressif Systems"</strong>, and select <strong>version 3.3.1</strong> exactly.</p>
 <p><img alt="Installing the esp32 board package" src="images/cv/image5.png" />
-<em>Board Manager: install esp32 by Espressif Systems, version 3.3.1</em></p>
+<em>Board Manager: install esp32 by Espressif Systems, version 3.3.1</em>
+</p>
 <p><strong>Step 5.</strong> Unzip the provided <strong><code>esp32_mannual.zip</code></strong> and place the folder into your Arduino hardware path:</p>
 <ul>
 <li><strong>macOS:</strong> <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/</code></li>
 <li><strong>Windows:</strong> <code>C:\Users\&lt;you&gt;\Documents\Arduino\hardware\</code></li>
 </ul>
-<p>The final path should look like: <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/esp32_mannual</code></p>
-<p><strong>Step 6.</strong> Back in the IDE: <em>Tools → Board → ESP32_mannual</em> → select <strong>ESP32P4 Dev Module</strong>, and copy the board settings shown in the manual <strong>one by one</strong> (for now, <strong>do not</strong> set the "Port" yet):</p>
+<p>The final path should be: <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/esp32_mannual</code></p>
+<p><strong>Step 6.</strong> Back in the IDE: <em>Tools → Board → ESP32_mannual</em> → select <strong>ESP32P4 Dev Module</strong>, and copy the board settings shown in the manual <strong>one by one</strong> (do not set the "Port" at this stage):</p>
 <p><img alt="Board settings for the ESP32P4 Dev Module" src="images/cv/image6.png" />
-<em>Copy the board variable settings one by one</em></p>
+<em>Copy the board variable settings one by one</em>
+</p>
 <p><strong>Step 7.</strong> Now choose the <strong>Port</strong> that connects to your board:</p>
 <p><img alt="Choosing the port" src="images/cv/image7.png" />
-<em>Select the port your board is connected to</em></p>
+<em>Select the port your board is connected to</em>
+</p>
 <p><strong>Step 8.</strong> Open and <strong>upload the sample code</strong> (it streams grayscale images from the camera over serial):</p>
 <p><img alt="Uploading the sample code" src="images/cv/image8.png" />
-<em>Click Upload and wait for success</em></p>
-<p><strong>Step 9.</strong> Open the <strong>Serial Monitor</strong>. If you see "garbled characters" streaming in the text box — that's the binary image data, and it means the upload <strong>worked</strong>. Then <strong>close the Serial Monitor</strong> (important: it occupies the port, and the TFLiteTraining app will need that port later).</p>
+<em>Click Upload and wait for success</em>
+</p>
+<p><strong>Step 9.</strong> Open the <strong>Serial Monitor</strong>. A continuous stream of garbled characters is the binary image data; it indicates a successful upload. Then <strong>close the Serial Monitor</strong> — it occupies the port, which the TFLiteTraining application requires later.</p>
 <p><img alt="Serial monitor showing the image stream" src="images/cv/image9.png" />
-<em>Garbled characters = the grayscale image stream — success!</em></p>
+<em>Garbled characters = the grayscale image stream — the upload succeeded</em>
+</p>
 <div class="cph">Check Point</div>
 <p>Show the TA / instructor: the sample code uploaded successfully, and the image stream visible in the Serial Monitor — then closed.</p>
 <hr />
 <h2>4. Task 2 — The TFLiteTraining App</h2>
 <h3>4.1 Install and Open the Project</h3>
-<p><strong>Step 1.</strong> Install the app from the provided <code>.dmg</code> (macOS) or <code>.exe</code> (Windows), and download the template project file <strong><code>template.tmproj</code></strong>.</p>
-<p><strong>Step 2.</strong> Open the app, click <strong>Open Project</strong>, and select <code>template.tmproj</code>:</p>
+<p><strong>Step 1.</strong> Install the application from the provided <code>.dmg</code> (macOS) or <code>.exe</code> (Windows), and download the template project file <strong><code>template.tmproj</code></strong>.</p>
+<p><strong>Step 2.</strong> Open the application, click <strong>Open Project</strong>, and select <code>template.tmproj</code>:</p>
 <p><img alt="Opening the template project" src="images/cv/image11.png" />
-<em>Open Project → template.tmproj</em></p>
+<em>Open Project → template.tmproj</em>
+</p>
 <h3>4.2 The Three Areas of the Workspace</h3>
 <p>The workspace is divided into three areas:</p>
 <div class="wrap-list"><table>
@@ -197,31 +205,34 @@
 </tbody>
 </table></div>
 <p><img alt="Full view of the TFLiteTraining workspace" src="images/cv/image12.png" />
-<em>Sample Area, Train Area, and Preview Area</em></p>
+<em>Sample Area, Train Area, and Preview Area</em>
+</p>
 <h3>4.3 Collecting Samples</h3>
 <p>There are three ways to collect images:</p>
 <ul>
-<li><strong>Webcam</strong> — uses your laptop's (or external) camera; pick a specific camera with the <strong>Gear</strong> icon</li>
-<li><strong>Upload</strong> — choose picture files from your computer</li>
-<li><strong>Device</strong> — captures images straight from the <strong>ESP32-P4's serial camera</strong></li>
+<li><strong>Webcam</strong> — uses the laptop's (or an external) camera; a specific camera can be selected with the <strong>Gear</strong> icon</li>
+<li><strong>Upload</strong> — chooses picture files from the computer</li>
+<li><strong>Device</strong> — captures images directly from the <strong>ESP32-P4's serial camera</strong></li>
 </ul>
-<p>For <strong>Device</strong> input: click <strong>Device</strong>, select the board's serial port, and check the <strong>Gear</strong> settings. The defaults — <strong>96×96, Grayscale, 115200 baud, sync header AA 55 AA</strong> — match the sample code you flashed in Task 1. Don't change them for this lab.</p>
+<p>For <strong>Device</strong> input: click <strong>Device</strong>, select the board's serial port, and check the <strong>Gear</strong> settings. The defaults — <strong>96×96, Grayscale, 115200 baud, sync header AA 55 AA</strong> — match the sample code flashed in Task 1. Do not change them in this lab.</p>
 <p>Capturing: click <strong>Capture</strong> for a single picture, or press-and-hold <strong>Hold to Capture</strong> for a continuous stream.</p>
 <p><img alt="Collecting samples: webcam, upload, or device" src="images/cv/image13.png" />
-<em>Sample collection — capture single images or hold to capture continuously</em></p>
-<p><strong>Classes:</strong> each category (e.g., "left arrow", "right arrow", "wall") is a <strong>class</strong>. Add classes with the + button, rename by clicking the name, delete with the × button. Aim for a <strong>similar number of samples in each class</strong> (e.g., 30–50 each).</p>
+<em>Sample collection — capture single images or hold to capture continuously</em>
+</p>
+<p><strong>Classes:</strong> each category (for example "left arrow", "right arrow", "wall") is a <strong>class</strong>. Add classes with the + button, rename by clicking the name, delete with the × button. Keep a <strong>similar number of samples in each class</strong> (for example 30–50 each).</p>
 <p><strong>Deleting a sample:</strong> hover over any sampled image and click to delete it.</p>
 <h3>4.4 Preprocessing — Making Cleaner Data</h3>
-<p>Good data matters more than a clever model. Enter the image-processing page by clicking the <strong>Edit</strong> icon. The page has two parts: the <strong>Image Viewer</strong> (left) and the <strong>Sample Worktable</strong> (right).</p>
+<p>Data quality matters more than model complexity. Enter the image-processing page by clicking the <strong>Edit</strong> icon. The page has two parts: the <strong>Image Viewer</strong> (left) and the <strong>Sample Worktable</strong> (right).</p>
 <p><img alt="The image processing page" src="images/cv/image14.png" />
-<em>Image Viewer (original + processed) and the Sample Worktable</em></p>
+<em>Image Viewer (original + processed) and the Sample Worktable</em>
+</p>
 <p>Key concepts:</p>
 <ul>
-<li><strong>ROI (Region of Interest)</strong> — the purple rectangle marking the area that will be <strong>cropped</strong> and used for training; everything outside is thrown away</li>
+<li><strong>ROI (Region of Interest)</strong> — the purple rectangle marking the area that will be <strong>cropped</strong> and used for training; everything outside is discarded</li>
 <li><strong>Dark Thr (Darkness Threshold)</strong> — pixels <strong>darker</strong> than this value become pure white</li>
 <li><strong>Lum Thr (Luminosity Threshold)</strong> — pixels <strong>brighter</strong> than this value become pure white</li>
 </ul>
-<p>These two thresholds remove environmental noise — background that is much darker or brighter than your subject simply disappears.</p>
+<p>These two thresholds remove environmental noise — background that is much darker or brighter than the subject disappears.</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
@@ -232,7 +243,7 @@
 <tbody>
 <tr>
 <td><strong>Preprocess Mode</strong></td>
-<td><strong>Auto</strong> — a search box in the middle finds and crops the darkest area automatically. <strong>Manual ROI</strong> — you drag the crop region yourself on the original image.</td>
+<td><strong>Auto</strong> — a search box in the middle finds and crops the darkest area automatically. <strong>Manual ROI</strong> — the crop region is dragged manually on the original image.</td>
 </tr>
 <tr>
 <td><strong>Dark Thr</strong></td>
@@ -244,7 +255,7 @@
 </tr>
 <tr>
 <td><strong>ROI x1, y1, x2, y2</strong></td>
-<td>Relative coordinates of the crop's top-left (x1, y1) and bottom-right (x2, y2) corners. E.g., x1 = 0.2, y1 = 0.1 on a 96×96 image → pixel (19, 10), rounded to the nearest integer. (Manual ROI mode only.)</td>
+<td>Relative coordinates of the crop's top-left (x1, y1) and bottom-right (x2, y2) corners. For example, x1 = 0.2, y1 = 0.1 on a 96×96 image → pixel (19, 10), rounded to the nearest integer. (Manual ROI mode only.)</td>
 </tr>
 </tbody>
 </table></div>
@@ -289,9 +300,9 @@
 </tbody>
 </table></div>
 <blockquote>
-<p> <strong>Remember to save after every change</strong> — unsaved preprocessing is lost.</p>
+<p><strong>Save after every change</strong> — unsaved preprocessing is lost.</p>
 </blockquote>
-<h3>4.5 Hyperparameters — The Knobs of Training</h3>
+<h3>4.5 Hyperparameters</h3>
 <p>Open the hyperparameter panel with the <strong>Advanced</strong> icon in the Train Area:</p>
 <div class="wrap-list"><table>
 <thead>
@@ -323,7 +334,7 @@
 <td><strong>Batch size</strong></td>
 <td>16</td>
 <td>8 / 16 / 32 / 64</td>
-<td>Samples per training step. Larger = faster but more RAM. 16 is good for 96×96.</td>
+<td>Samples per training step. Larger = faster but more RAM. 16 is suitable for 96×96.</td>
 </tr>
 <tr>
 <td>4</td>
@@ -370,29 +381,32 @@
 </tbody>
 </table></div>
 <p><img alt="Setting hyperparameters and starting training" src="images/cv/image15.png" />
-<em>The Advanced panel: set hyperparameters, then click "Train Embedded Model"</em></p>
+<em>The Advanced panel: set hyperparameters, then click "Train Embedded Model"</em>
+</p>
 <blockquote>
-<p><strong>The trade-off:</strong> bigger filters, more dense units, and larger image size <em>may</em> improve accuracy — but they <strong>always</strong> make inference slower. Real edge-AI engineering is finding the balance for real-time performance.</p>
+<p><strong>The trade-off:</strong> larger filters, more dense units, and a larger image size <em>may</em> improve accuracy — but they <strong>always</strong> make inference slower. Edge-AI engineering consists of finding the balance that preserves real-time performance.</p>
 </blockquote>
 <h3>4.6 Training</h3>
-<p>After setting the hyperparameters, click <strong>Train Embedded Model</strong> and wait for training to finish. Watch the validation accuracy — if it is high while live performance is poor, your model has probably <strong>overfit</strong> or your samples don't vary enough (try recapturing in different lighting and angles).</p>
+<p>After setting the hyperparameters, click <strong>Train Embedded Model</strong> and wait for training to complete. Monitor the <strong>validation accuracy</strong>: a high validation accuracy together with poor live performance indicates overfitting or insufficient sample variety — recapture samples in different lighting and at different angles.</p>
 <h3>4.7 Preview — Live Testing</h3>
-<p>Before previewing, make sure the image-uploading code from Task 1 is still flashed on the board.</p>
-<p><strong>Step 1.</strong> Click the <strong>Gear</strong> icon in the Preview Area, set the input source to <strong>Device</strong>, and choose the port. (The "export" setting doesn't matter here.) All preview images are resized to <em>image size × image size</em> in grayscale, exactly as in training.</p>
+<p>Before previewing, confirm that the image-uploading code from Task 1 is still flashed on the board.</p>
+<p><strong>Step 1.</strong> Click the <strong>Gear</strong> icon in the Preview Area, set the input source to <strong>Device</strong>, and choose the port. (The "export" setting is irrelevant here.) All preview images are resized to <em>image size × image size</em> in grayscale, exactly as in training.</p>
 <p><img alt="Preview settings" src="images/cv/image16.png" />
-<em>Set source to Device and choose the port</em></p>
-<p><strong>Step 2.</strong> Toggle <strong>Input</strong> to see the live image, and read the <strong>confidence bar</strong> at the bottom — switch between <strong>show %</strong> and <strong>show score</strong> to change its units. Toggle <strong>ROI</strong> to see exactly what the model receives, or <strong>Orig</strong> to see the processed image. You can also adjust the <strong>Dark/Lum thresholds</strong> here and watch the effect live.</p>
+<em>Set source to Device and choose the port</em>
+</p>
+<p><strong>Step 2.</strong> Toggle <strong>Input</strong> to see the live image, and read the <strong>confidence bar</strong> at the bottom — switch between <strong>show %</strong> and <strong>show score</strong> to change its units. Toggle <strong>ROI</strong> to see exactly what the model receives, or <strong>Orig</strong> to see the processed image. The <strong>Dark/Lum thresholds</strong> can also be adjusted here, with the effect visible live.</p>
 <p><img alt="Live interpretation view" src="images/cv/image17.png" />
-<em>Interpretation view: live image, ROI, and the confidence bar</em></p>
+<em>Interpretation view: live image, ROI, and the confidence bar</em>
+</p>
 <h3>4.8 Export and Save</h3>
-<p>When you're happy with the model: click <strong>Export model</strong>, and save your work via the top-left menu → <strong>Save Project</strong>.</p>
+<p>When the model performs satisfactorily, click <strong>Export model</strong>, and save the project via the top-left menu → <strong>Save Project</strong>.</p>
 <div class="cph">Check Point</div>
-<p>Show the TA / instructor: a trained model with at least two classes, live preview recognizing your objects, and the exported model files.</p>
+<p>Show the TA / instructor: a trained model with at least two classes, live preview recognizing the objects, and the exported model files.</p>
 <hr />
 <h2>5. Task 3 — Deploy the Model on the MCU</h2>
-<p>You now have a trained model — the final step is running it on the chip.</p>
-<p><strong>Step 1.</strong> Open the folder where you exported the model, and the project folder containing <strong><code>TFLite.ino</code></strong>.</p>
-<p><strong>Step 2.</strong> Copy these <strong>five files</strong> from the export folder into the project folder (replace existing ones):</p>
+<p>With the model trained, the final step is running it on the chip.</p>
+<p><strong>Step 1.</strong> Open the folder where the model was exported, and the project folder containing <strong><code>TFLite.ino</code></strong>.</p>
+<p><strong>Step 2.</strong> Copy these <strong>five files</strong> from the export folder into the project folder (replacing the existing versions):</p>
 <ul>
 <li><code>tm_model_data.cpp</code> — the quantized model weights</li>
 <li><code>tm_model_data.h</code></li>
@@ -401,22 +415,24 @@
 <li><code>model_settings.h</code></li>
 </ul>
 <p><img alt="Copying the five exported files" src="images/cv/image18.png" />
-<em>The five export files, copied into the TFLite.ino project</em></p>
-<p><strong>Step 3.</strong> Open <code>TFLite.ino</code> and make sure <strong><code>IMG_SIZE</code> matches the "image size"</strong> you chose in the TFLiteTraining app (default: 96). A mismatch means the model receives wrongly-sized images and outputs garbage.</p>
-<p><strong>Step 4.</strong> Upload the code, open the Serial Monitor, and watch your model classify the live camera stream:</p>
+<em>The five export files, copied into the TFLite.ino project</em>
+</p>
+<p><strong>Step 3.</strong> Open <code>TFLite.ino</code> and confirm that <strong><code>IMG_SIZE</code> matches the "image size"</strong> chosen in the TFLiteTraining application (default: 96). A mismatch supplies wrongly sized images to the model and produces meaningless output.</p>
+<p><strong>Step 4.</strong> Upload the code, open the Serial Monitor, and observe the model classifying the live camera stream:</p>
 <p><img alt="Live inference output on the board" src="images/cv/image19.png" />
-<em>The model running on the ESP32-P4 — live inference output</em></p>
+<em>The model running on the ESP32-P4 — live inference output</em>
+</p>
 <div class="cph">Check Point</div>
 <p>Show the TA / instructor: the model running on the ESP32-P4, classifying live camera images with sensible confidences.</p>
 <hr />
-<h2>6. Appendix — Experiments to Try</h2>
+<h2>6. Appendix — Suggested Experiments</h2>
 <ul>
-<li><strong>Epochs:</strong> train with 5, 20, and 60 epochs — watch validation accuracy and decide where more training stops helping</li>
-<li><strong>Model size:</strong> set Conv1/Conv2 filters and Dense units to the minimum vs. the maximum — compare accuracy <strong>and</strong> how fast the serial output updates</li>
-<li><strong>Data quality:</strong> train once with messy backgrounds, once with strict Dark/Lum thresholds — which matters more, cleaner data or a bigger model?</li>
-<li><strong>Image size:</strong> try 96 vs. 160 — can you measure the inference speed difference?</li>
+<li><strong>Epochs:</strong> train with 5, 20, and 60 epochs — observe the validation accuracy and determine the point at which further training stops helping</li>
+<li><strong>Model size:</strong> set Conv1/Conv2 filters and Dense units to the minimum and then to the maximum — compare accuracy <strong>and</strong> the update rate of the serial output</li>
+<li><strong>Data quality:</strong> train once with messy backgrounds and once with strict Dark/Lum thresholds — determine which matters more: cleaner data or a larger model</li>
+<li><strong>Image size:</strong> compare 96 and 160 — measure the difference in inference speed</li>
 </ul>
-<p>These are the same trade-offs professional edge-AI engineers make every day — you now have the tools to explore them yourself.</p>
+<p>These are the same trade-offs faced in professional edge-AI engineering.</p>
 </article>
 <footer>
   <div class="foot-inner">
