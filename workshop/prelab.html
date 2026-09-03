@@ -68,49 +68,53 @@
 <article class="article">
 <h1>Edge AI Vision Workshop — Pre-lab Manual</h1>
 <blockquote>
-<p>Read this before the workshop. It takes about <strong>15 minutes of reading + 30 minutes of installation</strong>. If you arrive with the software installed and the self-check passed, you will spend the whole session building — not downloading.</p>
+<p>This manual prepares you for the Edge AI Vision workshop. Complete the background reading (about 15 minutes) and the software installation (about 30 minutes) before the session. Students who arrive with the installation verified through the self-check in Section 4 can devote the full session to the project.</p>
 </blockquote>
 <hr />
-<h2>1. What This Workshop Is About</h2>
-<p>In the lesson (about 45 minutes) we will train a small neural network to <strong>recognize road signs</strong>, live, on a microcontroller — no machine-learning experience needed. Then, in the project session, <strong>you will build your own</strong>: a digit recognizer (0–9) that runs on the same board.</p>
-<p>Everything runs on real hardware:</p>
+<h2>1. Overview of the Workshop</h2>
+<p>The workshop consists of a 45-minute lesson followed by a 90-minute project session. In the lesson, the instructor trains a small neural network to <strong>recognize road signs</strong> live on a microcontroller, demonstrating the complete workflow. In the project session, each team applies the same workflow to its own system: a <strong>digit recognizer (0–9)</strong> that runs on the same board.</p>
+<p>All work runs on real hardware:</p>
 <ul>
 <li>The <strong>ESP32-P4</strong> development board with a camera module (provided at the workshop)</li>
-<li>The <strong>TFLiteTraining</strong> desktop app, which trains image classifiers without writing code</li>
-<li><strong>TensorFlow Lite Micro</strong>, Google's runtime that runs the trained model on the chip itself</li>
+<li>The <strong>TFLiteTraining</strong> desktop application, which trains image classifiers without programming</li>
+<li><strong>TensorFlow Lite Micro</strong>, Google's runtime that executes the trained model on the microcontroller itself</li>
 </ul>
-<p>You do not need to know how to program. Every step is menu-driven; the lab manual tells you exactly what to click.</p>
+<p>No programming experience is required. Every step in the lab manual is menu-driven and written out in full.</p>
 <hr />
 <h2>2. Background Reading (15 minutes)</h2>
-<p>You don't need to memorize this — it just makes the lesson much easier to follow.</p>
-<h3>2.1 Why not just write rules?</h3>
-<p>A normal program follows rules a human wrote: <em>"if the pixel is dark, do X."</em> That works for blinking an LED. It does not work for recognizing a road sign in a photo — nobody can write those rules by hand. <strong>Machine learning</strong> flips the approach: instead of writing rules, you show the computer many <strong>labeled examples</strong> (images with the correct answer attached) and let it find the rules by itself. That process is called <strong>training</strong>.</p>
+<p>This section introduces the concepts used in the lesson. The material does not need to be memorized, but familiarity with these terms makes the lesson considerably easier to follow.</p>
+<h3>2.1 Rules versus learning</h3>
+<p>A conventional program follows rules written by a programmer: <em>"if the pixel is dark, do X."</em> Such rules are sufficient for blinking an LED, but they cannot recognize a road sign in a photograph — no one can write those rules by hand. <strong>Machine learning</strong> inverts this arrangement: instead of receiving rules, the computer receives many <strong>labeled examples</strong> (images with the correct answer attached) and derives the rules itself. This process is called <strong>training</strong>.</p>
 <p><img alt="Classic programming vs. machine learning" src="img/rules-vs-learning.svg" />
-<em>What goes in, and what comes out: classic programming vs. machine learning</em></p>
-<h3>2.2 What gets trained? A CNN</h3>
-<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural network for images. Think of it as a stack of small <strong>feature detectors</strong>: the first layers detect simple patterns (edges, blobs), deeper layers combine them into shapes and objects, and the final layer outputs a <strong>confidence</strong> for each class — for example "left arrow: 91%, right arrow: 7%, wall: 2%". In this workshop the CNN is tiny — small enough to run on a microcontroller in real time.</p>
+<em>Inputs and outputs of classic programming versus machine learning</em>
+</p>
+<h3>2.2 Convolutional neural networks</h3>
+<p>A <strong>Convolutional Neural Network (CNN)</strong> is the standard neural-network architecture for images. It can be understood as a stack of small <strong>feature detectors</strong>: the first layers detect simple patterns such as edges and blobs; deeper layers combine these into shapes and objects; the final layer outputs a <strong>confidence</strong> for each class — for example, "left arrow: 91%, right arrow: 7%, wall: 2%". The CNN used in this workshop is small enough to run on a microcontroller in real time.</p>
 <p><img alt="How a CNN processes an image" src="img/cnn.svg" />
-<em>A small CNN, end to end: image → feature detectors → one confidence score per class</em></p>
-<h3>2.3 The failure mode to know: overfitting</h3>
-<p>A model can <strong>memorize</strong> your training photos instead of <strong>learning</strong> the concept — like a student who memorizes past papers but can't answer a new question. We detect this by holding part of the data out (<strong>validation split</strong>) and testing with images the model has never seen. You will meet this in the project when you test your digit recognizer on handwriting it wasn't trained on.</p>
+<em>A small CNN, end to end: image → feature detectors → one confidence score per class</em>
+</p>
+<h3>2.3 Overfitting and validation</h3>
+<p>A model may <strong>memorize</strong> its training images instead of <strong>learning</strong> the underlying concept — like a student who memorizes past examination papers but cannot answer a new question. This failure mode is called <strong>overfitting</strong>. It is detected by holding part of the dataset out of training (the <strong>validation split</strong>) and evaluating the model on those unseen images. The project session applies this principle directly: each digit recognizer is tested on handwriting that was never part of its training data.</p>
 <p><img alt="Generalizing vs. overfitting" src="img/overfitting.svg" />
-<em>How to read the training curves: healthy (left) vs. overfit (right)</em></p>
-<h3>2.4 Running AI on a chip: edge AI</h3>
-<p>Sending camera images to a server is slow and needs Wi-Fi. <strong>Edge AI</strong> runs the model directly on the device. To fit, the model is <strong>quantized</strong> to <strong>int8</strong> — every number stored as 1 byte instead of 4 — making it about 4× smaller and faster, at a negligible cost in accuracy. <strong>TensorFlow Lite Micro</strong> (now called LiteRT for Microcontrollers) is the runtime that executes such models on microcontrollers, in as little as 16 KB of memory.</p>
-<h3>2.5 The hardware: ESP32-P4</h3>
-<p>The <strong>ESP32-P4</strong> is a high-performance microcontroller from Espressif with a dual-core processor, camera support (e.g., the IMX219 module), and enough speed to run image classification in real time. You program it with the familiar <strong>Arduino IDE</strong> over a USB cable.</p>
-<h3>2.6 The tool: TFLiteTraining</h3>
-<p><strong>TFLiteTraining</strong> is a desktop app (inspired by Google's Teachable Machine) that gives you the whole pipeline in one window: <strong>collect</strong> images → <strong>preprocess</strong> (crop and clean) → <strong>train</strong> → <strong>preview</strong> live → <strong>export</strong> the model as files ready for the board.</p>
+<em>Reading the training curves: healthy training (left) versus overfitting (right)</em>
+</p>
+<h3>2.4 Edge AI and quantization</h3>
+<p>Sending camera images to a server introduces delay and requires network access. <strong>Edge AI</strong> runs the model directly on the device instead. To fit the microcontroller's memory, the model is <strong>quantized</strong> to <strong>int8</strong> — each number stored as 1 byte instead of 4 — which makes it roughly 4× smaller and faster at a negligible cost in accuracy. <strong>TensorFlow Lite Micro</strong> (now called LiteRT for Microcontrollers) is the runtime that executes such models on microcontrollers in as little as 16 KB of memory.</p>
+<h3>2.5 The ESP32-P4 development board</h3>
+<p>The <strong>ESP32-P4</strong> is a high-performance microcontroller from Espressif. It provides a dual-core processor, camera support (for example the IMX219 module), and sufficient processing speed to run image classification in real time. It is programmed with the <strong>Arduino IDE</strong> over a USB cable.</p>
+<h3>2.6 The TFLiteTraining application</h3>
+<p><strong>TFLiteTraining</strong> is a desktop application (inspired by Google's Teachable Machine) that provides the complete training pipeline in a single window: <strong>collect</strong> images → <strong>preprocess</strong> (crop and clean) → <strong>train</strong> → <strong>preview</strong> live → <strong>export</strong> the model as files ready for the board.</p>
 <p><img alt="The six-step pipeline" src="img/pipeline.svg" />
-<em>The six steps you will follow — first on road signs in the lesson, then on digits in the project</em></p>
+<em>The six-step workflow, applied to road signs in the lesson and to digits in the project</em>
+</p>
 <hr />
-<h2>3. Software Checklist (install before you come)</h2>
-<p>Install these in order. Versions matter — the workshop steps assume them.</p>
+<h2>3. Software Checklist (complete before the session)</h2>
+<p>Install the following items in order. The versions matter: the workshop instructions assume them.</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
 <th>#</th>
-<th>What</th>
+<th>Item</th>
 <th>Version</th>
 <th>Where / Notes</th>
 </tr>
@@ -125,60 +129,58 @@
 <tr>
 <td>2</td>
 <td><strong>esp32 board package</strong></td>
-<td><strong>3.3.1 exactly</strong></td>
+<td><strong>exactly 3.3.1</strong></td>
 <td>In the IDE: Settings → <em>Additional Boards Manager URLs</em> → add <code>https://dl.espressif.com/dl/package_esp32_index.json</code> → OK. Then <em>Tools → Board → Board Manager</em> → search "esp32" → install <strong>esp32 by Espressif Systems, version 3.3.1</strong></td>
 </tr>
 <tr>
 <td>3</td>
 <td><strong>esp32_mannual core</strong></td>
 <td>as provided</td>
-<td>Unzip <code>esp32_mannual.zip</code> (we will send it with this manual) into your Arduino hardware folder — see paths below</td>
+<td>Unzip <code>esp32_mannual.zip</code> (distributed with this manual) into your Arduino hardware folder — see the paths below</td>
 </tr>
 <tr>
 <td>4</td>
 <td><strong>TFLiteTraining app</strong></td>
 <td>as provided</td>
-<td>Install from the <code>.dmg</code> (macOS) or <code>.exe</code> (Windows) we send you. Do not launch it yet</td>
+<td>Install from the <code>.dmg</code> (macOS) or <code>.exe</code> (Windows) distributed with this manual. Do not launch it yet</td>
 </tr>
 <tr>
 <td>5</td>
 <td><strong>template project</strong></td>
 <td><code>template.tmproj</code></td>
-<td>Download it; you will open it during the workshop</td>
+<td>Download it; it is opened during the workshop</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Where the esp32_mannual folder goes</strong> — the final path must be:</p>
+<p><strong>Installation path for the esp32_mannual folder</strong> — after unzipping, the final path must be:</p>
 <ul>
 <li><strong>macOS:</strong> <code>/Users/&lt;you&gt;/Documents/Arduino/hardware/esp32_mannual</code></li>
 <li><strong>Windows:</strong> <code>C:\Users\&lt;you&gt;\Documents\Arduino\hardware\esp32_mannual</code></li>
 </ul>
 <p>If the <code>Arduino/hardware</code> folder does not exist, create it.</p>
 <hr />
-<h2>4. Self-Check (2 minutes, do this the night before)</h2>
+<h2>4. Self-Check (2 minutes, the day before)</h2>
 <ol>
 <li>Open the Arduino IDE</li>
 <li>Open <em>Tools → Board</em></li>
-<li>You should see an entry called <strong>ESP32_mannual</strong> in the list (with ESP32P4 Dev Module inside it)</li>
+<li>Confirm that an entry named <strong>ESP32_mannual</strong> appears in the list, containing the <strong>ESP32P4 Dev Module</strong></li>
 </ol>
-<p>If it's there, you're ready. If not, step 3 of the checklist didn't land in the right folder — recheck the path.</p>
+<p>If the entry is present, the installation is complete. If it is absent, the esp32_mannual folder was placed in the wrong location — verify the path against Section 3.</p>
 <hr />
 <h2>5. What to Bring</h2>
 <ul>
-<li>Laptop with the software above installed, <strong>fully charged</strong> (power sockets may be limited)</li>
-<li>A <strong>USB-C data cable</strong> (one that transfers data, not charge-only)</li>
-<li>About <strong>1 GB of free disk space</strong></li>
-<li>A thick black marker (for writing digits during the project — spares available)</li>
+<li>A laptop with the software in Section 3 installed and <strong>fully charged</strong> (power sockets may be limited)</li>
 </ul>
+<p>All other materials — the car kit, the USB-C cable, and the stationery used in the project — are provided at the session. The project lab manual lists them in full.</p>
 <hr />
-<h2>6. FAQ</h2>
-<p><strong>The port doesn't appear in the IDE.</strong> Try another USB port and another cable (charge-only cables are the most common cause). On Windows, the CH34x/CP210x driver may be needed.</p>
-<p><strong>I see "esp32" in Board Manager but version 3.3.1 is not listed.</strong> Make sure you added the Espressif board URL (checklist step 2) <em>before</em> opening Board Manager, then refresh.</p>
-<p><strong>macOS says the app "can't be opened because it is from an unidentified developer".</strong> Right-click the app → Open → Open. </p>
-<p><strong>I already have an older Arduino IDE.</strong> Install 2.3.10+ alongside it and use that one for the workshop.</p>
+<h2>6. Troubleshooting the Installation</h2>
+<p><strong>The port does not appear in the IDE.</strong> Use another USB port and another cable; charge-only cables are the most common cause. On Windows, the CH34x/CP210x driver may be required.</p>
+<p><strong>"esp32" appears in Board Manager, but version 3.3.1 is not listed.</strong> Confirm that the Espressif board URL (Section 3, item 2) was added <em>before</em> opening Board Manager, then refresh.</p>
+<p><strong>macOS reports that the application "cannot be opened because it is from an unidentified developer".</strong> Right-click the application → Open → Open.</p>
+<p><strong>An older Arduino IDE is already installed.</strong> Install 2.3.10 or higher alongside it and use that version for the workshop.</p>
 <hr />
-<h2>7. Where the Materials Live</h2>
-<p>All workshop materials (lesson slides, project lab manual) are on the workshop page you downloaded this manual from. See you at the session.</p>
+<h2>7. Workshop Materials</h2>
+<p>All workshop materials — the lesson slides and the project lab manual — are published on the workshop page from which this manual was downloaded.</p>
 </article>
 <footer>
   <div class="foot-inner">

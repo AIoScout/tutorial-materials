@@ -68,82 +68,126 @@
 <article class="article">
 <h1>Edge AI Vision Workshop — Project Lab Manual</h1>
 <blockquote>
-<p><strong>Your project: build a digit recognizer (0–9) and run it on the ESP32-P4.</strong> Follow the steps in order; every click is written out. Budget about <strong>75–90 minutes</strong>. Ask for help the moment something doesn't match what the manual says.</p>
+<p><strong>Project objective: train a digit recognizer (0–9) and run it on the ESP32-P4.</strong> Work through the steps in order; each required action is written out. The project is designed for <strong>75–90 minutes</strong>. If the software behaves differently from what this manual describes, consult an instructor before continuing.</p>
 </blockquote>
 <hr />
 <h2>0. The Project at a Glance</h2>
-<p><strong>Goal</strong> — train a CNN that recognizes handwritten digits 0–9, shown to it on paper, and runs live on the ESP32-P4 board.</p>
-<p><strong>Success criteria</strong> (for the demo at the end):</p>
+<p><strong>Objective</strong> — train a CNN that recognizes handwritten digits 0–9 presented on paper, and runs live on the ESP32-P4 board.</p>
+<p><strong>Success criteria</strong> (assessed at the final demonstration):</p>
 <ol>
-<li>Your model is deployed on the board and classifying live camera images</li>
-<li>It gets <strong>at least 8 of 10</strong> correct on a set of <strong>unseen</strong> test digits (written by someone other than you)</li>
-<li>You can explain one thing you changed to improve it</li>
+<li>The model is deployed on the board and classifies live camera images</li>
+<li>It classifies <strong>at least 8 of 10</strong> digits correctly on a set of <strong>unseen</strong> test digits written by someone other than the team</li>
+<li>The team can explain one change made to improve the model and its observed effect</li>
 </ol>
-<p><strong>Rules</strong> — the model must be trained by you in this session, with samples you collected here. No pre-trained networks.</p>
-<p><strong>Workflow</strong> (same as the road-sign demo in the lesson): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.</p>
+<p><strong>Rules</strong> — the model must be trained in this session, using samples collected in this session. Pre-trained networks are not permitted.</p>
+<p><strong>Workflow</strong> (identical to the road-sign demonstration in the lesson): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.</p>
 <hr />
-<h2>Part A — Setup Check (5 min)</h2>
-<p>If you completed the pre-lab installs, this is quick.</p>
-<p><strong>A1.</strong> Connect the board with your USB-C cable.</p>
-<p><strong>A2.</strong> Arduino IDE: <em>Tools → Board → ESP32_mannual → ESP32P4 Dev Module</em>, and copy the board settings shown by the instructor (do not set the Port yet).</p>
-<p><strong>A3.</strong> Open the provided <strong>camera-stream sample sketch</strong>, choose the Port, and click <strong>Upload</strong>.</p>
-<p><strong>A4.</strong> Open the <strong>Serial Monitor</strong>. A stream of garbled characters = the grayscale camera data = success.</p>
-<p><strong>A5.</strong> <strong>Close the Serial Monitor.</strong> It occupies the port that TFLiteTraining needs. (If you later see "port busy" in the app — this is why.)</p>
+<h2>Provided Materials</h2>
+<p>The following kit is provided to each team. Verify it against this list before starting Part A.</p>
+<div class="wrap-list"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Item</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Smart car</strong></td>
+<td>The robot car carrying the ESP32-P4 board and camera module — the platform used for training and deployment</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Map</strong></td>
+<td>The AIoScout playfield map — the surface on which the car and the road signs are set up</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Road sign stand</strong></td>
+<td>Stand with 3 changeable signs, used in the lesson demonstration</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>USB-C data cable</strong></td>
+<td>Connects the board to the laptop for programming and image transfer</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Batteries ×2</strong></td>
+<td>Power for the smart car</td>
+</tr>
+</tbody>
+</table></div>
+<p>Thick markers and blank paper for writing the digits in Part C are also provided.</p>
+<p>Teams bring only a laptop with the pre-lab software installed (see the pre-lab manual).</p>
 <hr />
-<h2>Part B — Create Your Project (3 min)</h2>
-<p><strong>B1.</strong> Open the TFLiteTraining app → <strong>Open Project</strong> → <code>template.tmproj</code>.</p>
-<p><strong>B2.</strong> Immediately save your own copy: menu (top-left) → <strong>Save Project</strong> → name it <code>digits.tmproj</code>. Save often from now on.</p>
-<p><strong>B3.</strong> Identify the three areas: <strong>Sample</strong> (left), <strong>Train</strong> (right), <strong>Preview</strong> (bottom).</p>
+<h2>Part A — Setup Verification (5 min)</h2>
+<p>With the pre-lab installation complete, this part requires only a few minutes.</p>
+<p><strong>A1.</strong> Connect the board with the USB-C cable.</p>
+<p><strong>A2.</strong> In the Arduino IDE, select <em>Tools → Board → ESP32_mannual → ESP32P4 Dev Module</em>, and enter the board settings provided by the instructor (leave the Port unset at this stage).</p>
+<p><strong>A3.</strong> Open the provided <strong>camera-stream sample sketch</strong>, select the Port, and click <strong>Upload</strong>.</p>
+<p><strong>A4.</strong> Open the <strong>Serial Monitor</strong>. A continuous stream of garbled characters is the binary camera data; it indicates a successful upload.</p>
+<p><strong>A5.</strong> <strong>Close the Serial Monitor.</strong> The Serial Monitor occupies the port that the TFLiteTraining application requires. (A "port busy" error in the application later in the session is caused by leaving it open.)</p>
+<hr />
+<h2>Part B — Create the Project (3 min)</h2>
+<p><strong>B1.</strong> Open the TFLiteTraining application → <strong>Open Project</strong> → <code>template.tmproj</code>.</p>
+<p><strong>B2.</strong> Save an independent copy immediately: top-left menu → <strong>Save Project</strong> → name it <code>digits.tmproj</code>. Save the project at regular intervals from this point onward.</p>
+<p><strong>B3.</strong> Note the three areas of the workspace: <strong>Sample</strong> (left), <strong>Train</strong> (right), <strong>Preview</strong> (bottom).</p>
 <p><img alt="The TFLiteTraining workspace" src="../images/cv/image12.png" />
-<em>The three areas of the workspace</em></p>
+<em>The three areas of the workspace</em>
+</p>
 <hr />
 <h2>Part C — Collect the Data (20 min)</h2>
-<p>The single biggest factor in your results. Follow this recipe.</p>
-<p><strong>C1. Prepare the paper digits.</strong> Use the thick marker and blank paper. Write each digit <strong>large and bold</strong> (about 8–10 cm tall), one digit per sheet — you will hold them up to the camera.</p>
-<p><strong>C2. Connect the camera.</strong> In the Sample Area click <strong>Device</strong>, select your board's port, and open the <strong>Gear</strong> settings. Keep the defaults exactly: <strong>96×96 · Grayscale · 115200 · sync header AA 55 AA</strong> — they match the flashed code.</p>
+<p>The dataset is the single largest factor in the quality of the final model. Follow this procedure.</p>
+<p><strong>C1. Prepare the paper digits.</strong> Use the provided thick marker and blank paper. Write each digit <strong>large and bold</strong> (about 8–10 cm tall), one digit per sheet; the sheets are held up to the camera.</p>
+<p><strong>C2. Connect the camera.</strong> In the Sample Area click <strong>Device</strong>, select the board's port, and open the <strong>Gear</strong> settings. Keep the defaults unchanged: <strong>96×96 · Grayscale · 115200 · sync header AA 55 AA</strong>. These values match the flashed sample code.</p>
 <p><img alt="Capturing samples" src="../images/cv/image13.png" />
-<em>Capture / Hold-to-Capture, and the Gear settings — defaults stay as shown</em></p>
-<p><strong>C3. Create the classes.</strong> Make one class per digit: name them <code>0</code>, <code>1</code>, … <code>9</code>. (Short of time? Do <code>1, 2, 3, 7</code> first — see Part D — and add the rest once the first version works. Four accurate classes beat ten broken ones.)</p>
-<p><strong>C4. Capture, with variety.</strong> For each class, capture <strong>30–50 samples</strong> using <em>Capture</em> (single) or <em>Hold to Capture</em> (continuous). While capturing, vary for every handful of shots:</p>
+<em>Capture / Hold-to-Capture and the Gear settings — the defaults remain as shown</em>
+</p>
+<p><strong>C3. Create the classes.</strong> Create one class per digit: <code>0</code>, <code>1</code>, … <code>9</code>. If time is limited, begin with <code>1, 2, 3, 7</code> (see Part D) and add the remaining classes once the first version works — four reliable classes produce better results than ten unreliable ones.</p>
+<p><strong>C4. Capture with variety.</strong> For each class, capture <strong>30–50 samples</strong> using <em>Capture</em> (single image) or <em>Hold to Capture</em> (continuous). While capturing, vary the following between groups of shots:</p>
 <ul>
-<li><strong>Distance</strong> — near, mid, far</li>
-<li><strong>Angle</strong> — straight on, tilted left/right</li>
-<li><strong>Position</strong> — center, edges of the frame</li>
-<li><strong>Lighting</strong> — turn to face different directions</li>
-<li><strong>Rotation</strong> — digits slightly rotated (as a driver would see them)</li>
+<li><strong>Distance</strong> — near, middle, far</li>
+<li><strong>Angle</strong> — straight on, tilted left and right</li>
+<li><strong>Position</strong> — centre and edges of the frame</li>
+<li><strong>Lighting</strong> — orient toward different light sources</li>
+<li><strong>Rotation</strong> — digits slightly rotated, as a driver would see them</li>
 </ul>
-<p>Keep the counts <strong>roughly equal</strong> across classes — an unbalanced dataset makes the model biased toward the biggest class.</p>
-<p><strong>C5. Clean up.</strong> Hover any blurry or accidental capture and click to delete it. Bad samples teach wrong things.</p>
+<p>Keep the sample counts <strong>approximately equal</strong> across classes. An unbalanced dataset biases the model toward the largest class.</p>
+<p><strong>C5. Remove poor samples.</strong> Hover over any blurry or accidental capture and click to delete it. Poor-quality samples degrade the trained model.</p>
 <blockquote>
-<p><strong>Why capture with Device instead of your laptop webcam?</strong> The model will live behind the board's camera — training on images from that same camera (same lens, same angle, same lighting) gives it the best chance. This general rule is called <em>matching the deployment domain</em>.</p>
+<p><strong>Why capture with Device rather than the laptop webcam?</strong> The model will run behind the board's camera. Training on images from that same camera — the same lens, the same angle, the same lighting — gives the model the best conditions to succeed. This principle is known as <em>matching the deployment domain</em>.</p>
 </blockquote>
 <hr />
 <h2>Part D — Preprocess (10 min)</h2>
-<p><strong>D1.</strong> Click the <strong>Edit</strong> icon to enter the image-processing page. Left is the <strong>Image Viewer</strong> (original + processed), right is the <strong>Sample Worktable</strong>.</p>
+<p><strong>D1.</strong> Click the <strong>Edit</strong> icon to enter the image-processing page. The left side is the <strong>Image Viewer</strong> (original and processed images); the right side is the <strong>Sample Worktable</strong>.</p>
 <p><img alt="The image processing page" src="../images/cv/image14.png" />
-<em>Edit page — Image Viewer with ROI, and the Sample Worktable</em></p>
+<em>Edit page — Image Viewer with ROI, and the Sample Worktable</em>
+</p>
 <p><strong>D2. Choose a mode:</strong></p>
 <ul>
-<li><strong>Auto</strong> (F1) — the app finds and crops the darkest region automatically. Good when the digit is the darkest thing in frame.</li>
-<li><strong>Manual ROI</strong> (F2) — you drag the crop box yourself (Shift + arrow keys nudge it). More control; use it if Auto grabs shadows or your hand.</li>
+<li><strong>Auto</strong> (F1) — the application finds and crops the darkest region automatically. Use it when the digit is the darkest object in the frame.</li>
+<li><strong>Manual ROI</strong> (F2) — the crop region is positioned manually (Shift + arrow keys move it). Use it when Auto selects shadows or the holding hand instead of the digit.</li>
 </ul>
 <p><strong>D3. Set the thresholds</strong> (they apply to the whole class):</p>
 <ul>
-<li><strong>Dark Thr</strong> — pixels darker than this become pure white (removes dark shadows, sleeves, background)</li>
-<li><strong>Lum Thr</strong> — pixels brighter than this become pure white (removes blown-out highlights)</li>
+<li><strong>Dark Thr</strong> — pixels darker than this value become pure white; this removes dark shadows, sleeves, and background</li>
+<li><strong>Lum Thr</strong> — pixels brighter than this value become pure white; this removes overexposed highlights</li>
 </ul>
-<p>The goal: on the processed preview, the digit is black and almost everything else is white. Keep the thresholds <em>moderate</em> — if the digit itself starts dissolving, you've gone too far.</p>
-<p><strong>D4. Move between samples</strong> with the arrow keys, check a few samples <strong>of every class</strong>, adjust per class as needed.</p>
-<p><strong>D5. Press S to save. Then press S again.</strong> Unsaved preprocessing is lost — this is the most common way groups lose 10 minutes.</p>
-<p><strong>D6.</strong> All processed images are automatically resized to <code>image size × image size</code> (default 96) for training — that's expected.</p>
+<p>The target result: in the processed preview, the digit is black and almost everything else is white. Keep the thresholds moderate — if the digit itself begins to disappear, the thresholds are too aggressive.</p>
+<p><strong>D4.</strong> Move between samples with the arrow keys. Inspect several samples <strong>of every class</strong> and adjust the settings per class as needed.</p>
+<p><strong>D5. Press S to save.</strong> Unsaved preprocessing is discarded on exit; failure to save is the most common cause of lost work in this project.</p>
+<p><strong>D6.</strong> All processed images are resized automatically to <code>image size × image size</code> (default 96) before training. This is expected behaviour.</p>
 <hr />
 <h2>Part E — Train (5 min)</h2>
-<p><strong>E1.</strong> In the Train Area click the <strong>Advanced</strong> icon. Start from the defaults:</p>
+<p><strong>E1.</strong> In the Train Area, click the <strong>Advanced</strong> icon. Begin with the default configuration:</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
 <th>Parameter</th>
-<th>Start with</th>
+<th>Starting value</th>
 </tr>
 </thead>
 <tbody>
@@ -181,42 +225,44 @@
 </tr>
 </tbody>
 </table></div>
-<p><strong>E2.</strong> Click <strong>Train Embedded Model</strong> and wait for training to finish.</p>
+<p><strong>E2.</strong> Click <strong>Train Embedded Model</strong> and wait for training to complete.</p>
 <p><img alt="The training panel" src="../images/cv/image15.png" />
-<em>Advanced panel — set hyperparameters, then Train Embedded Model</em></p>
-<p><strong>E3.</strong> Read the <strong>validation accuracy</strong>. Around/above 90% is a good first run for 4–10 digit classes. 60–70% means the data needs work, not the hyperparameters — go back to C4 (more variety) or D3 (cleaner preprocessing).</p>
+<em>Advanced panel — set the hyperparameters, then Train Embedded Model</em>
+</p>
+<p><strong>E3.</strong> Read the <strong>validation accuracy</strong>. For 4–10 digit classes, a first run at or above 90% is a sound result. A result of 60–70% indicates that the data — not the hyperparameters — is the limiting factor: return to C4 (more variety) or D3 (cleaner preprocessing).</p>
 <hr />
 <h2>Part F — Test on Unseen Data (10 min)</h2>
-<p>This is where you find out if your model <em>learned</em> or <em>memorized</em>.</p>
-<p><strong>F1.</strong> In the Preview Area, click the <strong>Gear</strong> → source <strong>Device</strong> + your port.</p>
-<p><strong>F2.</strong> Toggle <strong>Input</strong> and hold up a digit written by <strong>another team member</strong> (not in your training set).</p>
-<p><strong>F3.</strong> Read the <strong>confidence bar</strong> (toggle <em>show %</em>). Note what <strong>ROI</strong> shows — that's what the model actually sees.</p>
+<p>This step determines whether the model has learned the concept or has memorized the training set.</p>
+<p><strong>F1.</strong> In the Preview Area, click the <strong>Gear</strong> → source <strong>Device</strong> + the board's port.</p>
+<p><strong>F2.</strong> Toggle <strong>Input</strong> and present a digit written by <strong>another team member</strong> (not part of the training set).</p>
+<p><strong>F3.</strong> Read the <strong>confidence bar</strong> (toggle <em>show %</em>). The <strong>ROI</strong> display shows exactly what the model receives.</p>
 <p><img alt="Live interpretation view" src="../images/cv/image17.png" />
-<em>Interpretation view — live image, ROI, and the confidence bar</em></p>
-<p><strong>F4.</strong> Common confusions and their fixes:</p>
+<em>Interpretation view — live image, ROI, and the confidence bar</em>
+</p>
+<p><strong>F4.</strong> Common confusions and their remedies:</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
 <th>Confusion</th>
 <th>Usual cause</th>
-<th>Fix</th>
+<th>Remedy</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1 ↔ 7</td>
 <td>thin strokes, similar shapes</td>
-<td>more samples, thicker marker, larger ROI</td>
+<td>more samples; thicker marker; larger ROI</td>
 </tr>
 <tr>
 <td>3 ↔ 8, 9 ↔ 8</td>
 <td>loops closing up in gray</td>
-<td>raise Dark Thr so faint loops vanish; more lighting variety</td>
+<td>raise Dark Thr so faint loops vanish; add lighting variety</td>
 </tr>
 <tr>
 <td>4 ↔ 9</td>
-<td>open vs closed top</td>
-<td>more rotated variants of both</td>
+<td>open vs. closed top</td>
+<td>more rotated variants of both digits</td>
 </tr>
 <tr>
 <td>everything → one class</td>
@@ -224,31 +270,31 @@
 <td>equalize the sample counts (C4)</td>
 </tr>
 <tr>
-<td>great on training, poor live</td>
-<td>overfitting / too little variety</td>
-<td>more varied samples, sometimes fewer epochs</td>
+<td>strong on training data, weak live</td>
+<td>overfitting / insufficient variety</td>
+<td>more varied samples; sometimes fewer epochs</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>F5.</strong> After any fix: retrain (E2) and retest. Two or three iterations are normal — that's the engineering loop.</p>
+<p><strong>F5.</strong> After each remedy, retrain (E2) and retest. Two or three iterations are a normal part of the process.</p>
 <hr />
 <h2>Part G — Export and Deploy (10 min)</h2>
-<p><strong>G1.</strong> Click <strong>Export model</strong> and pick a folder you can find. Then menu → <strong>Save Project</strong>.</p>
-<p><strong>G2.</strong> From the export folder, copy these <strong>five files</strong> into the <code>TFLite.ino</code> project folder (replace existing):</p>
+<p><strong>G1.</strong> Click <strong>Export model</strong> and select a folder that is easy to locate. Then menu → <strong>Save Project</strong>.</p>
+<p><strong>G2.</strong> From the export folder, copy these <strong>five files</strong> into the <code>TFLite.ino</code> project folder, replacing the existing versions:</p>
 <p><img alt="The five exported files" src="../images/cv/image18.png" />
-<em>The five export files, ready to copy into the project folder</em></p>
+<em>The five export files, ready to be copied into the project folder</em>
+</p>
 <pre><code>tm_model_data.cpp     // the quantized model
 tm_model_data.h
 model_resolver.h
 model_settings.cpp
-model_settings.h
-</code></pre>
-<p><strong>G3.</strong> Open <code>TFLite.ino</code> and check that <strong><code>IMG_SIZE</code> equals the image size you trained with</strong> (default 96). A mismatch = nonsense predictions.</p>
-<p><strong>G4.</strong> Upload to the board, open the Serial Monitor, and hold up a digit — your model, running on the chip, answers live.</p>
+model_settings.h</code></pre>
+<p><strong>G3.</strong> Open <code>TFLite.ino</code> and confirm that <strong><code>IMG_SIZE</code> equals the image size used in training</strong> (default 96). A mismatch supplies wrongly sized images to the model and produces meaningless predictions.</p>
+<p><strong>G4.</strong> Upload to the board, open the Serial Monitor, and present a digit: the model now classifies the live camera stream on the board itself.</p>
 <hr />
 <h2>Part H — Final Evaluation (10 min)</h2>
-<p><strong>H1.</strong> Ask another team (or the instructor) to write <strong>10 test digits</strong> you have never shown the model.</p>
-<p><strong>H2.</strong> Show each one to the board and record the results:</p>
+<p><strong>H1.</strong> Ask another team (or the instructor) to write <strong>10 test digits</strong> that have never been shown to the model.</p>
+<p><strong>H2.</strong> Present each digit to the board and record the results:</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
@@ -290,14 +336,14 @@ model_settings.h
 </tr>
 </tbody>
 </table></div>
-<p><strong>H3.</strong> <strong>≥ 8/10 correct = project complete.</strong> Show your table and the live demo to the instructor.</p>
+<p><strong>H3.</strong> A result of <strong>≥ 8/10 correct completes the project.</strong> Present the results table and the live demonstration to the instructor.</p>
 <hr />
-<h2>Part I — Extensions (if you finish early)</h2>
+<h2>Part I — Extensions (if time remains)</h2>
 <ul>
-<li><strong>Sample efficiency:</strong> delete samples until accuracy drops — what's the minimum per class that still works?</li>
-<li><strong>Speed vs. size:</strong> set Conv1/Conv2/Dense to the maximums and retrain — can you <em>feel</em> the slower inference on the serial output? Compare against 4/8/16.</li>
-<li><strong>New handwriting:</strong> have a friend add 10 samples of their own handwriting per class — does the model generalize better?</li>
-<li><strong>Confuse the model:</strong> deliberately show partial digits, far digits, digits at extreme angles — where exactly does it break? That's your model's real-world boundary.</li>
+<li><strong>Sample efficiency:</strong> delete samples until accuracy degrades — what is the minimum number of samples per class that still yields a working model?</li>
+<li><strong>Speed versus size:</strong> set Conv1/Conv2/Dense to their maximum values and retrain; compare the inference rate on the serial output against the 4/8/16 configuration.</li>
+<li><strong>New handwriting:</strong> have a member of another team add 10 samples of their handwriting to each class — does the model generalize better?</li>
+<li><strong>Failure boundaries:</strong> present partial digits, distant digits, and digits at extreme angles, and document where the model begins to fail. This is its real-world operating boundary.</li>
 </ul>
 <hr />
 <h2>Troubleshooting</h2>
@@ -305,29 +351,29 @@ model_settings.h
 <thead>
 <tr>
 <th>Symptom</th>
-<th>Fix</th>
+<th>Remedy</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>"Port busy" in the app</td>
+<td>"Port busy" in the application</td>
 <td>Close the Arduino Serial Monitor (A5)</td>
 </tr>
 <tr>
-<td>No port in Device list</td>
-<td>Replug USB; try a data cable; check board is powered</td>
+<td>No port in the Device list</td>
+<td>Replug USB; use a data cable; confirm the board is powered</td>
 </tr>
 <tr>
-<td>All predictions one class, low confidence</td>
-<td>Unbalanced or too-few samples — see F4</td>
+<td>All predictions on one class, low confidence</td>
+<td>Unbalanced or insufficient samples — see F4</td>
 </tr>
 <tr>
 <td>Export missing files</td>
 <td>Re-export with the default settings; all five files generate together</td>
 </tr>
 <tr>
-<td>Upload fails in IDE</td>
-<td>Board settings mismatch — compare against the instructor's table again</td>
+<td>Upload fails in the IDE</td>
+<td>Board settings mismatch — compare against the instructor's settings</td>
 </tr>
 </tbody>
 </table></div>
