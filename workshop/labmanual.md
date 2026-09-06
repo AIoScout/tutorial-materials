@@ -157,10 +157,12 @@ This step determines whether the model has learned the concept or has memorized 
 
 **F3.** Read the **confidence bar** (toggle *show %*). The **ROI** display shows exactly what the model receives.
 
+**F4. Test the "No Sign" case.** Remove the digit and present an empty scene (plain background). The model should report **"No Sign"**: this is the OOD gate rejecting a frame that contains no digit, instead of forcing a confident answer. If an empty scene is classified as a digit, the OOD parameters are too loose (see the Lab 0 appendix).
+
 ![Live interpretation view](../images/cv/image17.png)
 *Interpretation view — live image, ROI, and the confidence bar*
 
-**F4.** Common confusions and their remedies:
+**F5.** Common confusions and their remedies:
 
 | Confusion | Usual cause | Remedy |
 | --------- | ----------- | ------ |
@@ -169,8 +171,9 @@ This step determines whether the model has learned the concept or has memorized 
 | 4 ↔ 9 | open vs. closed top | more rotated variants of both digits |
 | everything → one class | unbalanced dataset | equalize the sample counts (C4) |
 | strong on training data, weak live | overfitting / insufficient variety | more varied samples; sometimes fewer epochs |
+| empty scene classified as a digit | OOD gate too loose | empty scene must report "No Sign" — see F4 and the Lab 0 appendix |
 
-**F5.** After each remedy, retrain (E2) and retest. Two or three iterations are a normal part of the process.
+**F6.** After each remedy, retrain (E2) and retest. Two or three iterations are a normal part of the process.
 
 ---
 
@@ -194,6 +197,8 @@ model_settings.h
 **G3.** Open `TFLite.ino` and confirm that **`IMG_SIZE` equals the image size used in training** (default 96). A mismatch supplies wrongly sized images to the model and produces meaningless predictions.
 
 **G4.** Upload to the board, open the Serial Monitor, and present a digit: the model now classifies the live camera stream on the board itself.
+
+**G5.** In the Serial Monitor, commands can be typed to change the output mode and to inspect or adjust the OOD parameters: `get ood` reports the current values, and `set ood 0.3 70.0 0.60 0.70` restores the defaults. Guidance for fine-tuning these parameters appears in the Lab 0 appendix.
 
 ---
 

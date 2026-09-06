@@ -1,6 +1,6 @@
 # Lab 0 — Edge AI Vision: TensorFlow Lite Micro *(Student Guide)*
 
-> Adapted from the AIoScout TF Lite Training Manual (2026) for secondary school students.
+> Adapted from the AIoScout TF Lite Training Manual (2026, rev. 2) for secondary school students.
 >
 > **Lab focus** — collect images, train an image-classification neural network (no programming required), and run it live on the ESP32-P4 microcontroller.
 
@@ -230,6 +230,11 @@ Open the hyperparameter panel with the **Advanced** icon in the Train Area:
 
 > **The trade-off:** larger filters, more dense units, and a larger image size *may* improve accuracy — but they **always** make inference slower. Edge-AI engineering consists of finding the balance that preserves real-time performance.
 
+The current app version provides a **Use recommended** button in the Training panel. It applies the recommended hyperparameters automatically — the epoch count is chosen so that training performs approximately 800 total weight updates (for example, 7 steps per epoch × 115 epochs ≈ 805 updates). Use it as the starting point, then adjust individual hyperparameters one at a time.
+
+![The "Use recommended" button](images/cv/image22.png)
+*The "Use recommended" button fills in the recommended hyperparameters*
+
 ### 4.6 Training
 
 After setting the hyperparameters, click **Train Embedded Model** and wait for training to complete. Monitor the **validation accuracy**: a high validation accuracy together with poor live performance indicates overfitting or insufficient sample variety — recapture samples in different lighting and at different angles.
@@ -248,7 +253,24 @@ Before previewing, confirm that the image-uploading code from Task 1 is still fl
 ![Live interpretation view](images/cv/image17.png)
 *Interpretation view: live image, ROI, and the confidence bar*
 
-### 4.8 Export and Save
+### 4.8 The OOD Gate — Recognizing "No Sign"
+
+A SoftMax classifier produces a confident-looking output for any input — including an empty scene. To answer the separate question, *"does this frame contain a sign at all?"*, the new app version adds four **OOD (out-of-distribution) parameters** to the Preview settings. The same four parameters exist on the device, so the host preview and the board always apply the same gate.
+
+The gate runs three layers around inference; if any single layer fires, the frame is reported as **"No Sign"**:
+
+| Layer | Parameter | Default | Meaning | Fires "No Sign" when… |
+| ----- | --------- | ------- | ------- | --------------------- |
+| **1. Sign-pixel ratio** (before inference — cheapest) | sign_pct window | 0.3–70 % | Percentage of pixels whose brightness falls inside the Dark/Lum mask window | the ratio is below spmin (scene has almost no dark target) or above spmax (lens covered / all-dark scene) |
+| **2. SoftMax top probability** (after inference) | max_prob minimum | ≥ 0.60 | Confidence of the model in the top class | the top-class probability is below 0.60 — the model is not confident itself |
+| **3. Normalised entropy ratio** (after inference) | entropy_d maximum | ≤ 0.70 | How spread out the output distribution is (entropy / max entropy, normalized to 0–1) | the ratio exceeds 0.70 — the probabilities are spread too evenly; the model is guessing |
+
+![OOD parameters in the Preview settings](images/cv/image23.png)
+*The four OOD parameters in the Preview settings — the same values apply on the device*
+
+The default spmin of 0.3 % is deliberately small: a distant or small sign, whose dark pixels cover only a small fraction of the frame, still passes layer 1.
+
+### 4.9 Export and Save
 
 When the model performs satisfactorily, click **Export model**, and save the project via the top-left menu → **Save Project**.
 
@@ -282,13 +304,30 @@ With the model trained, the final step is running it on the chip.
 ![Live inference output on the board](images/cv/image19.png)
 *The model running on the ESP32-P4 — live inference output*
 
+**Step 5.** In the Serial Monitor, commands can be typed to set the output mode and the parameters:
+
+![Serial Monitor commands](images/cv/image24.png)
+*Serial commands: set the output mode, inspect the OOD parameters, and adjust them*
+
+In particular, `get ood` reports the current OOD values, and `set ood 0.3 70.0 0.60 0.70` restores the defaults. See the appendix (§6.1) for guidance on fine-tuning these parameters.
+
 ### Check Point
 
 Show the TA / instructor: the model running on the ESP32-P4, classifying live camera images with sensible confidences.
 
 ---
 
-## 6. Appendix — Suggested Experiments
+## 6. Appendix
+
+### 6.1 Fine-Tuning the OOD Parameters
+
+- **Missing detections** (a real sign reported as "No Sign") → loosen the gates: lower spmin, raise spmax, lower mpmin, raise ermax
+- **False detections** (an empty scene reported as a sign) → tighten the gates: raise spmin, lower spmax, raise mpmin, lower ermax
+- Use the debug readout to identify which layer fired before changing anything: a too-low or too-high `sign=` value indicates layer 1, a low `max=` indicates layer 2, a high `ent=` indicates layer 3. Adjust only that parameter — do not change several at once
+- The default spmin of 0.3 % is deliberately small so that distant or small signs still pass layer 1
+- Before a demonstration, run `get ood` and note the current values; if the settings are lost, restore the defaults with `set ood 0.3 70.0 0.60 0.70`
+
+### 6.2 Suggested Experiments
 
 - **Epochs:** train with 5, 20, and 60 epochs — observe the validation accuracy and determine the point at which further training stops helping
 - **Model size:** set Conv1/Conv2 filters and Dense units to the minimum and then to the maximum — compare accuracy **and** the update rate of the serial output

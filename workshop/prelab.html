@@ -104,6 +104,7 @@
 <p>The <strong>ESP32-P4</strong> is a high-performance microcontroller from Espressif. It provides a dual-core processor, camera support (for example the IMX219 module), and sufficient processing speed to run image classification in real time. It is programmed with the <strong>Arduino IDE</strong> over a USB cable.</p>
 <h3>2.6 The TFLiteTraining application</h3>
 <p><strong>TFLiteTraining</strong> is a desktop application (inspired by Google's Teachable Machine) that provides the complete training pipeline in a single window: <strong>collect</strong> images → <strong>preprocess</strong> (crop and clean) → <strong>train</strong> → <strong>preview</strong> live → <strong>export</strong> the model as files ready for the board.</p>
+<p>The application also includes an <strong>out-of-distribution (OOD) gate</strong>: three checks — the share of the frame covered by the target, the top-class confidence, and the spread of the class probabilities — decide whether a target is present in the frame at all. Frames that fail the gate are reported as <strong>"No Sign"</strong> rather than being forced into one of the classes.</p>
 <p><img alt="The six-step pipeline" src="img/pipeline.svg" />
 <em>The six-step workflow, applied to road signs in the lesson and to digits in the project</em>
 </p>
