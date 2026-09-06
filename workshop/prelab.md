@@ -55,6 +55,8 @@ The **ESP32-P4** is a high-performance microcontroller from Espressif. It provid
 
 **TFLiteTraining** is a desktop application (inspired by Google's Teachable Machine) that provides the complete training pipeline in a single window: **collect** images → **preprocess** (crop and clean) → **train** → **preview** live → **export** the model as files ready for the board.
 
+The Training panel provides a **Use recommended** button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates.
+
 The application also includes an **out-of-distribution (OOD) gate**: three checks — the share of the frame covered by the target, the top-class confidence, and the spread of the class probabilities — decide whether a target is present in the frame at all. Frames that fail the gate are reported as **"No Sign"** rather than being forced into one of the classes.
 
 ![The six-step pipeline](img/pipeline.svg)

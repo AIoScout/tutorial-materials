@@ -369,9 +369,9 @@ confidence per class <span class="cm">// left / right / stop…</span></div>
           </table>
           <div style="flex:1;">
             <div class="card">
-              <p class="step-num">Start from defaults</p>
+              <p class="step-num">Start from recommended</p>
               <h3>Change one thing at a time</h3>
-              <p>The defaults suit 96×96 grayscale input. In the project, the highest-leverage improvements come from the <strong style="color:var(--ink)">data</strong>, not from these values.</p>
+              <p><strong style="color:var(--ink)">Use recommended</strong> applies the recommended hyperparameters automatically — epochs are chosen for ≈800 total updates. In the project, the highest-leverage improvements come from the <strong style="color:var(--ink)">data</strong>, not from these values.</p>
             </div>
             <div class="card" style="background:var(--canvas); margin-top:16px; border:1px solid var(--hairline);">
               <p class="step-num">The trade-off</p>
@@ -504,7 +504,7 @@ confidence per class <span class="cm">// left / right / stop…</span></div>
           <p class="lbl-purple" style="margin-bottom:12px;">Demonstration 04</p>
           <h2 class="t-lg" style="margin-bottom:20px;">Training</h2>
           <ul class="tick body-md dim">
-            <li>Defaults everywhere: 96 · grayscale · batch 16 · 20 epochs · lr 0.001 · 8/16 filters · 32 dense</li>
+            <li>Click <strong style="color:var(--ink)">Use recommended</strong> to apply the recommended hyperparameters (epochs chosen for ≈800 total updates)</li>
             <li>Click <strong style="color:var(--ink)">Train Embedded Model</strong>; on this dataset, training completes in under a minute</li>
             <li>Observe the <strong style="color:var(--ink)">validation accuracy</strong> as it rises</li>
           </ul>
@@ -548,6 +548,7 @@ confidence per class <span class="cm">// left / right / stop…</span></div>
             <li>Copy them into the <strong style="color:var(--ink)">TFLite.ino</strong> project folder</li>
             <li>Check <strong style="color:var(--ink)">IMG_SIZE = 96</strong> (must equal the app's image size)</li>
             <li>Upload → Serial Monitor → the board classifies independently</li>
+            <li>Serial Monitor commands set the output mode and OOD parameters — <strong style="color:var(--ink)">get ood</strong> reports the values; <strong style="color:var(--ink)">set ood 0.3 70.0 0.60 0.70</strong> restores defaults</li>
           </ul>
           <p class="body-md" style="margin-top:16px;"><span class="hl-box">End of demonstration</span>&nbsp; every step required for the project has now been shown.</p>
         </div>

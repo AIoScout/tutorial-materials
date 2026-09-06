@@ -125,7 +125,7 @@ The target result: in the processed preview, the digit is black and almost every
 
 ## Part E — Train (5 min)
 
-**E1.** In the Train Area, click the **Advanced** icon. Begin with the default configuration:
+**E1.** In the Train Area, click the **Advanced** icon. Click **Use recommended** to apply the recommended hyperparameters automatically — the epoch count is chosen so that training performs approximately 800 total weight updates. Alternatively, begin with the default configuration:
 
 | Parameter | Starting value |
 | --------- | -------------- |
