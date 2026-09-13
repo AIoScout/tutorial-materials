@@ -1,6 +1,6 @@
-# Edge AI Vision Workshop — Project Lab Manual
+# AI Literacy Workshop — Project Lab Manual
 
-> **Project objective: train a digit recognizer (0–9) and run it on the ESP32-P4.** Work through the steps in order; each required action is written out. The project is designed for **75–90 minutes**. If the software behaves differently from what this manual describes, consult an instructor before continuing.
+> **Project objective: train a digit recognizer (0–9) and run it on the ESP32-P4.** Work through the steps in order; each required action is written out. The project is designed for **60–75 minutes**. If the software behaves differently from what this manual describes, consult an instructor before continuing.
 
 ---
 
@@ -16,13 +16,13 @@
 
 **Rules** — the model must be trained in this session, using samples collected in this session. Pre-trained networks are not permitted.
 
-**Workflow** (identical to the road-sign demonstration in the lesson): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.
+**Workflow** (identical to the road-sign demonstration in the lab tutorial): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.
 
 ---
 
 ## Provided Materials
 
-The following kit is provided to each team. Verify it against this list before starting Part A.
+The following kit is provided to each team of three students. Verify it against this list before starting Part A.
 
 | # | Item | Purpose |
 | - | ---- | ------- |
@@ -34,7 +34,7 @@ The following kit is provided to each team. Verify it against this list before s
 
 Thick markers and blank paper for writing the digits in Part C are also provided.
 
-Teams bring only a laptop with the pre-lab software installed (see the pre-lab manual).
+Each team of three brings only one laptop with the pre-lab software installed (see the pre-lab manual).
 
 ---
 
@@ -202,7 +202,7 @@ model_settings.h
 
 ---
 
-## Part H — Final Evaluation (10 min)
+## Part H — Final Evaluation (5 min)
 
 **H1.** Ask another team (or the instructor) to write **10 test digits** that have never been shown to the model.
 

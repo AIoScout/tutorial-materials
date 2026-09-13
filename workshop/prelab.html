@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edge AI Workshop — Pre-lab Manual</title>
+<title>AI Literacy Workshop — Pre-lab Manual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -66,13 +66,13 @@
   </div>
 </div>
 <article class="article">
-<h1>Edge AI Vision Workshop — Pre-lab Manual</h1>
+<h1>AI Literacy Workshop — Pre-lab Manual</h1>
 <blockquote>
-<p>This manual prepares you for the Edge AI Vision workshop. Complete the background reading (about 15 minutes) and the software installation (about 30 minutes) before the session. Students who arrive with the installation verified through the self-check in Section 4 can devote the full session to the project.</p>
+<p>This manual prepares you for the AI Literacy workshop. Complete the background reading (about 15 minutes) and the software installation (about 30 minutes) before the session. Students who arrive with the installation verified through the self-check in Section 4 can devote the full session to the project.</p>
 </blockquote>
 <hr />
 <h2>1. Overview of the Workshop</h2>
-<p>The workshop consists of a 45-minute lesson followed by a 90-minute project session. In the lesson, the instructor trains a small neural network to <strong>recognize road signs</strong> live on a microcontroller, demonstrating the complete workflow. In the project session, each team applies the same workflow to its own system: a <strong>digit recognizer (0–9)</strong> that runs on the same board.</p>
+<p>The workshop runs in four blocks: a <strong>15-minute intro lecture</strong> (Physical AI and its components, how models are trained, the key terms), a <strong>15-minute lab tutorial</strong> in which the instructor trains a small neural network to <strong>recognize road signs</strong> live on a microcontroller, approximately <strong>60 minutes of hands-on lab</strong>, and a <strong>30-minute demo &amp; sharing</strong> session. In the hands-on lab, each team of three applies the demonstrated workflow to its own system: a <strong>digit recognizer (0–9)</strong> that runs on the same board.</p>
 <p>All work runs on real hardware:</p>
 <ul>
 <li>The <strong>ESP32-P4</strong> development board with a camera module (provided at the workshop)</li>
@@ -104,7 +104,7 @@
 <p>The <strong>ESP32-P4</strong> is a high-performance microcontroller from Espressif. It provides a dual-core processor, camera support (for example the IMX219 module), and sufficient processing speed to run image classification in real time. It is programmed with the <strong>Arduino IDE</strong> over a USB cable.</p>
 <h3>2.6 The TFLiteTraining application</h3>
 <p><strong>TFLiteTraining</strong> is a desktop application (inspired by Google's Teachable Machine) that provides the complete training pipeline in a single window: <strong>collect</strong> images → <strong>preprocess</strong> (crop and clean) → <strong>train</strong> → <strong>preview</strong> live → <strong>export</strong> the model as files ready for the board.</p>
-<p>The Training panel provides a <strong>Use recommended</strong> button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates.</p>
+<p>The Training panel provides a <strong>Use recommended</strong> button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates. Hyperparameters are distinct from the model's <em>parameters</em>: parameters are the values the model learns by itself during training, while hyperparameters are the conditions chosen before training — how long it studies and how fast it adjusts.</p>
 <p>The application also includes an <strong>out-of-distribution (OOD) gate</strong>: three checks — the share of the frame covered by the target, the top-class confidence, and the spread of the class probabilities — decide whether a target is present in the frame at all. Frames that fail the gate are reported as <strong>"No Sign"</strong> rather than being forced into one of the classes.</p>
 <p><img alt="The six-step pipeline" src="img/pipeline.svg" />
 <em>The six-step workflow, applied to road signs in the lesson and to digits in the project</em>
@@ -187,7 +187,7 @@
 <footer>
   <div class="foot-inner">
     <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
-    <span class="foot-note">AIoScout · Edge AI Vision Workshop · Pre-lab Manual</span>
+    <span class="foot-note">AIoScout · AI Literacy Workshop · Pre-lab Manual</span>
   </div>
 </footer>
 </body>

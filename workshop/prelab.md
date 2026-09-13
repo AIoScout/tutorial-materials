@@ -1,12 +1,12 @@
-# Edge AI Vision Workshop — Pre-lab Manual
+# AI Literacy Workshop — Pre-lab Manual
 
-> This manual prepares you for the Edge AI Vision workshop. Complete the background reading (about 15 minutes) and the software installation (about 30 minutes) before the session. Students who arrive with the installation verified through the self-check in Section 4 can devote the full session to the project.
+> This manual prepares you for the AI Literacy workshop. Complete the background reading (about 15 minutes) and the software installation (about 30 minutes) before the session. Students who arrive with the installation verified through the self-check in Section 4 can devote the full session to the project.
 
 ---
 
 ## 1. Overview of the Workshop
 
-The workshop consists of a 45-minute lesson followed by a 90-minute project session. In the lesson, the instructor trains a small neural network to **recognize road signs** live on a microcontroller, demonstrating the complete workflow. In the project session, each team applies the same workflow to its own system: a **digit recognizer (0–9)** that runs on the same board.
+The workshop runs in four blocks: a **15-minute intro lecture** (Physical AI and its components, how models are trained, the key terms), a **15-minute lab tutorial** in which the instructor trains a small neural network to **recognize road signs** live on a microcontroller, approximately **60 minutes of hands-on lab**, and a **30-minute demo & sharing** session. In the hands-on lab, each team of three applies the demonstrated workflow to its own system: a **digit recognizer (0–9)** that runs on the same board.
 
 All work runs on real hardware:
 
@@ -38,7 +38,7 @@ A **Convolutional Neural Network (CNN)** is the standard neural-network architec
 
 ### 2.3 Overfitting and validation
 
-A model may **memorize** its training images instead of **learning** the underlying concept — like a student who memorizes past examination papers but cannot answer a new question. This failure mode is called **overfitting**. It is detected by holding part of the dataset out of training (the **validation split**) and evaluating the model on those unseen images. The project session applies this principle directly: each digit recognizer is tested on handwriting that was never part of its training data.
+A model may **memorize** its training images instead of **learning** the underlying concept — like a student who memorizes past examination papers but cannot answer a new question. This failure mode is called **overfitting**. It is detected by holding part of the dataset out of training (the **validation split**) and evaluating the model on those unseen images. The hands-on lab applies this principle directly: each digit recognizer is tested on handwriting that was never part of its training data.
 
 ![Generalizing vs. overfitting](img/overfitting.svg)
 *Reading the training curves: healthy training (left) versus overfitting (right)*
@@ -55,12 +55,12 @@ The **ESP32-P4** is a high-performance microcontroller from Espressif. It provid
 
 **TFLiteTraining** is a desktop application (inspired by Google's Teachable Machine) that provides the complete training pipeline in a single window: **collect** images → **preprocess** (crop and clean) → **train** → **preview** live → **export** the model as files ready for the board.
 
-The Training panel provides a **Use recommended** button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates.
+The Training panel provides a **Use recommended** button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates. Hyperparameters are distinct from the model's *parameters*: parameters are the values the model learns by itself during training, while hyperparameters are the conditions chosen before training — how long it studies and how fast it adjusts.
 
 The application also includes an **out-of-distribution (OOD) gate**: three checks — the share of the frame covered by the target, the top-class confidence, and the spread of the class probabilities — decide whether a target is present in the frame at all. Frames that fail the gate are reported as **"No Sign"** rather than being forced into one of the classes.
 
 ![The six-step pipeline](img/pipeline.svg)
-*The six-step workflow, applied to road signs in the lesson and to digits in the project*
+*The six-step workflow, applied to road signs in the lab tutorial and to digits in the project*
 
 ---
 

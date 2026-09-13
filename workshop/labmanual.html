@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edge AI Workshop — Project Lab Manual</title>
+<title>AI Literacy Workshop — Project Lab Manual</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -66,9 +66,9 @@
   </div>
 </div>
 <article class="article">
-<h1>Edge AI Vision Workshop — Project Lab Manual</h1>
+<h1>AI Literacy Workshop — Project Lab Manual</h1>
 <blockquote>
-<p><strong>Project objective: train a digit recognizer (0–9) and run it on the ESP32-P4.</strong> Work through the steps in order; each required action is written out. The project is designed for <strong>75–90 minutes</strong>. If the software behaves differently from what this manual describes, consult an instructor before continuing.</p>
+<p><strong>Project objective: train a digit recognizer (0–9) and run it on the ESP32-P4.</strong> Work through the steps in order; each required action is written out. The project is designed for <strong>60–75 minutes</strong>. If the software behaves differently from what this manual describes, consult an instructor before continuing.</p>
 </blockquote>
 <hr />
 <h2>0. The Project at a Glance</h2>
@@ -80,10 +80,10 @@
 <li>The team can explain one change made to improve the model and its observed effect</li>
 </ol>
 <p><strong>Rules</strong> — the model must be trained in this session, using samples collected in this session. Pre-trained networks are not permitted.</p>
-<p><strong>Workflow</strong> (identical to the road-sign demonstration in the lesson): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.</p>
+<p><strong>Workflow</strong> (identical to the road-sign demonstration in the lab tutorial): Collect → Preprocess → Train → Test → Iterate → Export → Deploy.</p>
 <hr />
 <h2>Provided Materials</h2>
-<p>The following kit is provided to each team. Verify it against this list before starting Part A.</p>
+<p>The following kit is provided to each team of three students. Verify it against this list before starting Part A.</p>
 <div class="wrap-list"><table>
 <thead>
 <tr>
@@ -121,7 +121,7 @@
 </tbody>
 </table></div>
 <p>Thick markers and blank paper for writing the digits in Part C are also provided.</p>
-<p>Teams bring only a laptop with the pre-lab software installed (see the pre-lab manual).</p>
+<p>Each team of three brings only one laptop with the pre-lab software installed (see the pre-lab manual).</p>
 <hr />
 <h2>Part A — Setup Verification (5 min)</h2>
 <p>With the pre-lab installation complete, this part requires only a few minutes.</p>
@@ -299,7 +299,7 @@ model_settings.h</code></pre>
 <p><strong>G4.</strong> Upload to the board, open the Serial Monitor, and present a digit: the model now classifies the live camera stream on the board itself.</p>
 <p><strong>G5.</strong> In the Serial Monitor, commands can be typed to change the output mode and to inspect or adjust the OOD parameters: <code>get ood</code> reports the current values, and <code>set ood 0.3 70.0 0.60 0.70</code> restores the defaults. Guidance for fine-tuning these parameters appears in the Lab 0 appendix.</p>
 <hr />
-<h2>Part H — Final Evaluation (10 min)</h2>
+<h2>Part H — Final Evaluation (5 min)</h2>
 <p><strong>H1.</strong> Ask another team (or the instructor) to write <strong>10 test digits</strong> that have never been shown to the model.</p>
 <p><strong>H2.</strong> Present each digit to the board and record the results:</p>
 <div class="wrap-list"><table>
@@ -388,7 +388,7 @@ model_settings.h</code></pre>
 <footer>
   <div class="foot-inner">
     <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
-    <span class="foot-note">AIoScout · Edge AI Vision Workshop · Project Lab Manual</span>
+    <span class="foot-note">AIoScout · AI Literacy Workshop · Project Lab Manual</span>
   </div>
 </footer>
 </body>
