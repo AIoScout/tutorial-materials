@@ -11,8 +11,6 @@ language tag, $$ math blocks, tables, ul/ol, image + optional *caption*,
 import re, sys
 
 PAIRS = [
-    ('workshop/prelab.md', 'workshop/prelab.html'),
-    ('workshop/labmanual.md', 'workshop/labmanual.html'),
     ('Lab0_EdgeAI_Vision_StudentGuide.md', 'Lab0_EdgeAI_Vision_StudentGuide.html'),
     ('Lab1_Motor_Motion_StudentGuide.md', 'Lab1_Motor_Motion_StudentGuide.html'),
     ('Lab2_Sensors_StudentGuide.md', 'Lab2_Sensors_StudentGuide.html'),
