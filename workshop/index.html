@@ -53,6 +53,14 @@
   .card .src { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); text-decoration: none; }
   .card .src:hover { color: var(--ink); }
 
+  .dl-banner { background: var(--primary); color: var(--on-primary); padding: 32px 48px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .dl-banner .tag { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent-orange); white-space: nowrap; }
+  .dl-banner p { font-size: 17px; line-height: 1.5; flex: 1; min-width: 260px; }
+  .dl-banner p strong { font-weight: 700; }
+  .dl-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .dl-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: var(--on-primary); border: 1px solid var(--on-primary); font: 700 12px/16px Inter, Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.6px; padding: 14px 22px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+  .dl-btn:hover { background: var(--accent-orange); border-color: var(--accent-orange); }
+
   footer { background: var(--canvas); border-top: 1px solid var(--hairline); padding: 48px 64px; }
   .foot-rail { max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
   footer a { color: var(--mute); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
@@ -91,29 +99,35 @@
 
 <section class="listing">
   <div class="rail">
-    <div class="cards">
+    <div class="dl-banner">
+      <span class="tag">Required software</span>
+      <p><strong>Download the TF Training app</strong> and install it before the session — the same app is used in the lab tutorial and the project.</p>
+      <div class="dl-btns">
+        <a class="dl-btn" href="https://drive.google.com/uc?export=download&id=1VTBZ_w0pF6N3cRCXX9jinRO6zYNs6z5v">macOS · .dmg</a>
+        <a class="dl-btn" href="https://drive.google.com/uc?export=download&id=1k3Nq1pvDf5uO4JrsGb4ja_flnQrJ0ABT">Windows · .exe</a>
+      </div>
+    </div>
+    <div class="cards" style="margin-top: 24px;">
       <div class="card">
         <span class="lbl-purple">Before the session</span>
         <h2>Pre-lab manual</h2>
         <p>Background reading (machine learning, CNNs, quantization, the hardware — about 15 minutes) and the software checklist with exact versions, followed by a two-minute self-check.</p>
-        <a class="go" href="prelab.html">Open pre-lab manual <span aria-hidden="true">→</span></a>
-        <a class="src" href="prelab.md">Markdown</a>
-        <a class="src" href="prelab.docx">Word</a>
+        <a class="go" href="https://docs.google.com/document/d/1scgi1VOND4T1Hf1RLEKCq05AYrFZ8v1g/edit">Open in Google Docs <span aria-hidden="true">→</span></a>
+        <a class="src" href="prelab.html">Read online</a>
       </div>
       <div class="card">
         <span class="lbl-purple">During the lesson</span>
         <h2>Lesson slides</h2>
         <p>Physical AI and its components, how models are trained, key terms one by one, a brief ethics moment (the Tesla Cybercab), and the live road-sign tutorial. Arrow keys to navigate; printable as handouts.</p>
-        <a class="go" href="AI_Literacy_Workshop_Slides.pdf">Open lesson slides (PDF) <span aria-hidden="true">→</span></a>
-        <a class="src" href="AI_Literacy_Workshop_Slides.pptx">PowerPoint · Canva import</a>
+        <a class="go" href="https://drive.google.com/file/d/1V_8A9IxS3Kjh1JxdOSphsMY5oRojxuCN/view">Open slides (PDF) <span aria-hidden="true">→</span></a>
+        <a class="src" href="https://canva.link/wymfkl9vptln9cv">Canva</a>
       </div>
       <div class="card">
         <span class="lbl-purple">During the project</span>
         <h2>Project lab manual</h2>
         <p>Step-by-step instructions for the digit recognizer: collect, preprocess, train, test on unseen handwriting, deploy to the board, and complete the final 10-digit evaluation. Includes a troubleshooting table.</p>
-        <a class="go" href="labmanual.html">Open lab manual <span aria-hidden="true">→</span></a>
-        <a class="src" href="labmanual.md">Markdown</a>
-        <a class="src" href="labmanual.docx">Word</a>
+        <a class="go" href="https://docs.google.com/document/d/1rRywoTusAY5V2UAzwKlV64o0t3lfK-hf/edit">Open in Google Docs <span aria-hidden="true">→</span></a>
+        <a class="src" href="labmanual.html">Read online</a>
       </div>
     </div>
   </div>
@@ -127,9 +141,9 @@
     </div>
     <div style="display:flex; gap:24px; flex-wrap:wrap;">
       <a href="../index.html">Full curriculum</a>
-      <a href="prelab.html">Pre-lab</a>
-      <a href="AI_Literacy_Workshop_Slides.pdf">Slides</a>
-      <a href="labmanual.html">Lab manual</a>
+      <a href="https://docs.google.com/document/d/1scgi1VOND4T1Hf1RLEKCq05AYrFZ8v1g/edit">Pre-lab</a>
+      <a href="https://drive.google.com/file/d/1V_8A9IxS3Kjh1JxdOSphsMY5oRojxuCN/view">Slides</a>
+      <a href="https://docs.google.com/document/d/1rRywoTusAY5V2UAzwKlV64o0t3lfK-hf/edit">Lab manual</a>
     </div>
   </div>
 </footer>

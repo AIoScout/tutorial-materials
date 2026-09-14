@@ -39,6 +39,7 @@
   .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:0; font-size:12px; font-weight:700; color:var(--mute); }
   .article blockquote { border-left:2px solid var(--ink); padding-left:24px; margin-top:24px; color:var(--body-c); }
   .article blockquote p { margin-top:8px; }
+  .article a { color:var(--accent-purple); text-decoration:underline; }
   .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
   .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:20px 24px; overflow-x:auto; margin-top:20px; }
   .article pre code { background:none; border:none; padding:0; font-size:13.5px; line-height:1.7; color:var(--ink); }
@@ -94,7 +95,7 @@
 <em>A small CNN, end to end: image → feature detectors → one confidence score per class</em>
 </p>
 <h3>2.3 Overfitting and validation</h3>
-<p>A model may <strong>memorize</strong> its training images instead of <strong>learning</strong> the underlying concept — like a student who memorizes past examination papers but cannot answer a new question. This failure mode is called <strong>overfitting</strong>. It is detected by holding part of the dataset out of training (the <strong>validation split</strong>) and evaluating the model on those unseen images. The project session applies this principle directly: each digit recognizer is tested on handwriting that was never part of its training data.</p>
+<p>A model may <strong>memorize</strong> its training images instead of <strong>learning</strong> the underlying concept — like a student who memorizes past examination papers but cannot answer a new question. This failure mode is called <strong>overfitting</strong>. It is detected by holding part of the dataset out of training (the <strong>validation split</strong>) and evaluating the model on those unseen images. The hands-on lab applies this principle directly: each digit recognizer is tested on handwriting that was never part of its training data.</p>
 <p><img alt="Generalizing vs. overfitting" src="img/overfitting.svg" />
 <em>Reading the training curves: healthy training (left) versus overfitting (right)</em>
 </p>
@@ -107,7 +108,7 @@
 <p>The Training panel provides a <strong>Use recommended</strong> button that applies the recommended hyperparameters automatically; the epoch count is chosen so that training performs approximately 800 total weight updates. Hyperparameters are distinct from the model's <em>parameters</em>: parameters are the values the model learns by itself during training, while hyperparameters are the conditions chosen before training — how long it studies and how fast it adjusts.</p>
 <p>The application also includes an <strong>out-of-distribution (OOD) gate</strong>: three checks — the share of the frame covered by the target, the top-class confidence, and the spread of the class probabilities — decide whether a target is present in the frame at all. Frames that fail the gate are reported as <strong>"No Sign"</strong> rather than being forced into one of the classes.</p>
 <p><img alt="The six-step pipeline" src="img/pipeline.svg" />
-<em>The six-step workflow, applied to road signs in the lesson and to digits in the project</em>
+<em>The six-step workflow, applied to road signs in the lab tutorial and to digits in the project</em>
 </p>
 <hr />
 <h2>3. Software Checklist (complete before the session)</h2>
@@ -144,7 +145,7 @@
 <td>4</td>
 <td><strong>TFLiteTraining app</strong></td>
 <td>as provided</td>
-<td>Install from the <code>.dmg</code> (macOS) or <code>.exe</code> (Windows) distributed with this manual. Do not launch it yet</td>
+<td>Download: <a href="https://drive.google.com/uc?export=download&amp;id=1VTBZ_w0pF6N3cRCXX9jinRO6zYNs6z5v">macOS (.dmg)</a> · <a href="https://drive.google.com/uc?export=download&amp;id=1k3Nq1pvDf5uO4JrsGb4ja_flnQrJ0ABT">Windows (.exe)</a>. Install but do not launch it yet</td>
 </tr>
 <tr>
 <td>5</td>

@@ -73,7 +73,7 @@ Install the following items in order. The versions matter: the workshop instruct
 | 1 | **Arduino IDE** | 2.3.10 or higher | https://www.arduino.cc/en/software |
 | 2 | **esp32 board package** | **exactly 3.3.1** | In the IDE: Settings → *Additional Boards Manager URLs* → add `https://dl.espressif.com/dl/package_esp32_index.json` → OK. Then *Tools → Board → Board Manager* → search "esp32" → install **esp32 by Espressif Systems, version 3.3.1** |
 | 3 | **esp32_mannual core** | as provided | Unzip `esp32_mannual.zip` (distributed with this manual) into your Arduino hardware folder — see the paths below |
-| 4 | **TFLiteTraining app** | as provided | Install from the `.dmg` (macOS) or `.exe` (Windows) distributed with this manual. Do not launch it yet |
+| 4 | **TFLiteTraining app** | as provided | Download: [macOS (.dmg)](https://drive.google.com/uc?export=download&id=1VTBZ_w0pF6N3cRCXX9jinRO6zYNs6z5v) · [Windows (.exe)](https://drive.google.com/uc?export=download&id=1k3Nq1pvDf5uO4JrsGb4ja_flnQrJ0ABT). Install but do not launch it yet |
 | 5 | **template project** | `template.tmproj` | Download it; it is opened during the workshop |
 
 **Installation path for the esp32_mannual folder** — after unzipping, the final path must be:
