@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Manual · Road-Sign Recognizer — AIoScout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
+    --hairline:#d8d9d8; --canvas:#ffffff; --canvas-soft:#f9f9f8; --accent-orange:#f58331; --accent-purple:#5b5ba8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:Inter,Arial,sans-serif; background:var(--canvas-soft); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .rail { max-width:1320px; margin:0 auto; padding:0 64px; }
+  @media (max-width:768px) { .rail { padding:0 24px; } }
+
+  .cap { font-size:12px; font-weight:700; line-height:16px; text-transform:uppercase; }
+  .lbl-purple { color:var(--accent-purple); font-size:12.5px; font-weight:700; line-height:1.6; letter-spacing:0.72px; text-transform:uppercase; }
+  .lbl-orange { color:var(--accent-orange); font-size:12.5px; font-weight:700; line-height:1.6; letter-spacing:0.72px; text-transform:uppercase; }
+
+  /* ---------- top bar with sticky task nav ---------- */
+  .topbar { position:sticky; top:0; z-index:50; background:var(--canvas); border-bottom:1px solid var(--hairline); }
+  .topbar-inner { display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; padding:14px 0; }
+  .wordmark { font-size:20px; font-weight:800; letter-spacing:-0.02em; color:var(--ink); text-decoration:none; white-space:nowrap; }
+  .wordmark span { color:var(--accent-orange); }
+  .tasknav { display:flex; gap:20px; flex-wrap:wrap; }
+  .tasknav a { font-size:12px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:var(--mute); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:2px; }
+  .tasknav a:hover { color:var(--ink); border-bottom-color:var(--ink); }
+  @media (max-width:640px) { .tasknav { gap:14px; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding:72px 0 48px; }
+  .hero h1 { font-size:clamp(28px,4vw,44px); font-weight:600; line-height:1.15; letter-spacing:-0.02em; text-wrap:balance; max-width:24ch; margin-top:16px; }
+  .hero .lede { font-size:17px; line-height:1.6; color:var(--body-c); max-width:66ch; margin-top:20px; }
+  .meta-chips { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+  .chip { border:1px solid var(--hairline); background:var(--canvas); padding:8px 16px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink); white-space:nowrap; }
+
+  /* ---------- downloads banner ---------- */
+  .dl-banner { background:var(--primary); color:var(--on-primary); padding:28px 40px; display:flex; gap:28px; align-items:center; flex-wrap:wrap; }
+  .dl-banner .tag { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--accent-orange); white-space:nowrap; }
+  .dl-banner p { font-size:15.5px; line-height:1.5; flex:1; min-width:260px; }
+  .dl-btns { display:flex; gap:10px; flex-wrap:wrap; }
+  .dl-btn { display:inline-flex; align-items:center; background:var(--primary); color:var(--on-primary); border:1px solid var(--on-primary); font:700 11.5px/16px Inter,Arial,sans-serif; text-transform:uppercase; letter-spacing:0.6px; padding:12px 18px; cursor:pointer; text-decoration:none; white-space:nowrap; }
+  .dl-btn:hover { background:var(--accent-orange); border-color:var(--accent-orange); }
+  @media (max-width:768px) { .dl-banner { padding:24px; } }
+
+  /* ---------- article ---------- */
+  .article { max-width:880px; margin:40px auto 96px; background:var(--canvas); border:1px solid var(--hairline); padding:clamp(28px,6vw,72px); }
+  @media (max-width:768px) { .article { margin:16px 12px 48px; } }
+  .article section { scroll-margin-top:96px; }
+  .article h2 { font-size:26px; font-weight:600; line-height:1.25; letter-spacing:-0.01em; margin-top:64px; padding-top:32px; border-top:1px solid var(--hairline); }
+  .article h2:first-child { margin-top:0; padding-top:0; border-top:none; }
+  .article h2 .step-no { color:var(--accent-orange); font-weight:800; margin-right:10px; }
+  .article h3 { color:var(--accent-purple); font-size:13px; font-weight:700; letter-spacing:0.72px; text-transform:uppercase; margin-top:44px; }
+  .article h4 { font-size:16.5px; font-weight:700; margin-top:32px; }
+  .article p, .article li { font-size:15.5px; line-height:1.65; color:var(--body-c); }
+  .article p { margin-top:14px; }
+  .article strong { color:var(--ink); font-weight:600; }
+  .article em { color:var(--mute); }
+  .article ul, .article ol { margin:14px 0 0; padding-left:4px; list-style:none; }
+  .article ul li, .article ol li { position:relative; padding-left:22px; margin-bottom:9px; }
+  .article ul li::before { content:""; position:absolute; left:0; top:.6em; width:7px; height:7px; background:var(--hairline); }
+  .article ol { counter-reset:oli; }
+  .article ol li::before { counter-increment:oli; content:counter(oli); position:absolute; left:0; top:.15em; font-size:12px; font-weight:700; color:var(--mute); }
+  .article code { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:0.88em; background:var(--canvas-soft); border:1px solid var(--hairline); padding:1px 6px; }
+  .article pre { background:var(--canvas-soft); border:1px solid var(--hairline); padding:18px 22px; overflow-x:auto; margin-top:18px; }
+  .article pre code { background:none; border:none; padding:0; font-size:13px; line-height:1.7; color:var(--ink); }
+  .article a { color:var(--ink); font-weight:600; }
+  .article hr { border:none; border-top:1px solid var(--hairline); margin:48px 0 0; }
+
+  /* ---------- figures ---------- */
+  .fig { margin:22px 0 6px; }
+  .fig img { display:block; max-width:100%; height:auto; border:1px solid var(--hairline); background:var(--canvas); padding:10px; margin:0 auto; }
+  .figcap { font-size:13px; line-height:1.5; color:var(--mute); font-style:italic; margin-top:8px; text-align:center; }
+  .fig-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
+  @media (max-width:680px) { .fig-grid { grid-template-columns:1fr; } }
+
+  /* ---------- callouts ---------- */
+  .brief { border-left:2px solid var(--ink); padding:2px 0 2px 20px; margin-top:20px; }
+  .brief p { margin-top:8px; }
+  .tip, .warn { border:1px solid var(--hairline); background:var(--canvas-soft); padding:16px 20px; margin-top:22px; }
+  .tip p, .warn p { margin-top:6px; }
+  .goal { background:var(--primary); color:var(--on-primary); display:inline-block; padding:10px 20px; margin:36px 0 6px; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+
+  /* ---------- collapsible config details ---------- */
+  .fold { margin:14px 0 6px; border:1px solid var(--hairline); background:var(--canvas-soft); }
+  .step .fold, .article ol .fold, .article ul .fold { margin-left:22px; }
+  .fold summary { cursor:pointer; list-style:none; display:flex; align-items:baseline; gap:10px; padding:13px 18px; font-size:12px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:var(--accent-purple); user-select:none; }
+  .fold summary::-webkit-details-marker { display:none; }
+  .fold summary::before { content:"▸"; color:var(--accent-orange); font-size:13px; transition:transform .15s ease; }
+  .fold[open] summary::before { transform:rotate(90deg); }
+  .fold summary:hover { color:var(--ink); }
+  .fold .fold-body { border-top:1px dashed var(--hairline); padding:6px 18px 16px; }
+  .fold .fold-body > :first-child { margin-top:10px; }
+
+  /* ---------- tables ---------- */
+  .wrap-list { overflow-x:auto; margin-top:18px; }
+  .article table { border-collapse:collapse; width:100%; }
+  .article th, .article td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--hairline); vertical-align:top; }
+  .article th { font-size:11.5px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:var(--mute); }
+  .article td { font-size:14.5px; color:var(--ink); }
+  .article thead th { border-bottom:1px solid var(--ink); }
+  .article td p { margin-top:4px; font-size:14px; }
+  .article td code { white-space:nowrap; }
+
+  footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:44px 64px; }
+  .foot-rail { max-width:1320px; margin:0 auto; display:flex; justify-content:space-between; gap:32px; flex-wrap:wrap; align-items:flex-start; }
+  footer a { color:var(--mute); text-decoration:none; font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; }
+  footer a:hover { color:var(--ink); }
+  @media (max-width:768px) { footer { padding:36px 24px; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="rail topbar-inner">
+    <a class="wordmark" href="index.html">AIo<span>Scout</span></a>
+    <nav class="tasknav" aria-label="Manual sections">
+      <a href="#hardware">Hardware</a>
+      <a href="#task1">Task 1 · Setup</a>
+      <a href="#task2">Task 2 · Train</a>
+      <a href="#task3">Task 3 · Deploy</a>
+      <a href="#troubleshoot">Troubleshooting</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="rail">
+    <span class="lbl-purple">AI Literacy Workshop · Lab manual</span>
+    <h1>Road-sign recognizer — the step-by-step lab manual.</h1>
+    <p class="lede">
+      The same workflow as the live tutorial, at your own pace: get to know the smart car, set up the Arduino IDE,
+      then <strong>collect → preprocess → train → preview</strong> a road-sign classifier (left · stop · right) in the
+      TF Training app, and deploy it to the ESP32-P4 so the car reacts to the signs it sees.
+      Detailed settings you can tweak are folded away — tap a
+      <span style="color:var(--accent-purple); font-weight:700;">▸ detail</span> row to open one only when you need it.
+    </p>
+    <div class="meta-chips">
+      <span class="chip">3 classes · left / stop / right</span>
+      <span class="chip">ESP32-P4 + OV5647 camera</span>
+      <span class="chip">~60 min</span>
+      <span class="chip">No coding</span>
+    </div>
+  </div>
+</header>
+
+<div class="rail" style="padding-bottom:8px;">
+  <div class="dl-banner">
+    <span class="tag">Downloads</span>
+    <p><strong>Everything the manual references</strong> — the TF Training app, the template project, the deploy project and the customized Arduino core.</p>
+    <div class="dl-btns">
+      <a class="dl-btn" href="https://drive.google.com/uc?export=download&amp;id=1VTBZ_w0pF6N3cRCXX9jinRO6zYNs6z5v">App · macOS</a>
+      <a class="dl-btn" href="https://drive.google.com/uc?export=download&amp;id=1k3Nq1pvDf5uO4JrsGb4ja_flnQrJ0ABT">App · Windows</a>
+      <a class="dl-btn" href="https://drive.google.com/file/d/1jeTNu3Ee0rlPY9d_MnReV0mYREP7bdBm/view">template.tmproj</a>
+      <a class="dl-btn" href="https://drive.google.com/file/d/1ETk4z3XXpb0vlzICYN-7oh5wLsO1cdlZ/view">TFLite.zip</a>
+      <a class="dl-btn" href="https://drive.google.com/file/d/1zFGIRnXYss-tK-C3H1xLX9aSRR_CXKc7/view">esp32_mannual.zip</a>
+    </div>
+  </div>
+</div>
+
+<main class="article">
+
+  <!-- ============================ HARDWARE ============================ -->
+  <section id="hardware">
+    <h2><span class="step-no">Task 0</span>Get familiar with the hardware</h2>
+
+    <h3>Part A — what's in the kit</h3>
+    <p>Each team gets five items:</p>
+    <figure class="fig">
+      <img src="images/kit-items.jpg" alt="The five kit items side by side: smart car, USB cable and converter, signpost with three road signs, battery, and the map" width="1120" height="790" loading="lazy">
+      <figcaption class="figcap">Left to right: Smart Car · cable &amp; converter · signpost &amp; road signs · battery (the map completes the kit).</figcaption>
+    </figure>
+    <ul>
+      <li><strong>Smart Car</strong> — the assembled car used for flashing and running programs: two motors, two MCUs, three IR sensors, one RFID reader, and one OV5647 camera module.</li>
+      <li><strong>USB cable + USB-A→USB-C converter</strong> — the cable flashes code into the MCUs; the converter is for laptops without a USB-A port.</li>
+      <li><strong>Signpost with three road signs</strong> — a holder that secures the signs magnetically on an elevated base. Each sign has a magnet on one side, so one sign can display <strong>STOP</strong>, <strong>ARROW</strong> (left or right) or <strong>TRIANGLE</strong> by rotating it.</li>
+      <li><strong>7.4&nbsp;V battery</strong> — powers the motors. Keep it in a safe place; never stab or break it with sharp objects.</li>
+      <li><strong>Map</strong> — you will train the model and move the car on the map.</li>
+    </ul>
+
+    <h4>Battery — connect it in this order</h4>
+    <ol>
+      <li>Make sure the power switch is <strong>off</strong> (pointing down) <em>before</em> connecting the battery.</li>
+      <li>Plug the battery into the battery plugger and place it in the battery cabin — the <strong>5&nbsp;V power indicator</strong> lights up.</li>
+      <li>Flip the switch up to turn the battery on — the <strong>battery power indicator</strong> lights up.</li>
+    </ol>
+    <div class="fig-grid">
+      <figure class="fig">
+        <img src="images/battery-switch.jpg" alt="Close-up of the board showing the power switch and the 5V power indicator, with the switch direction annotated" width="1422" height="580" loading="lazy">
+        <figcaption class="figcap">Power switch and 5&nbsp;V indicator — up = battery on, down = off.</figcaption>
+      </figure>
+      <figure class="fig">
+        <img src="images/battery-ports.jpg" alt="Labeled photo of the board before the battery is plugged in: battery power indicator, USB port, battery plugger and battery cabin" width="1410" height="396" loading="lazy">
+        <figcaption class="figcap">Before plugging the battery — USB plugger, battery plugger, battery cabin.</figcaption>
+      </figure>
+    </div>
+    <figure class="fig">
+      <img src="images/battery-after.jpg" alt="The board with the battery correctly connected and indicators lit" width="486" height="366" loading="lazy">
+      <figcaption class="figcap">After plugging the battery, the power indicator is lit.</figcaption>
+    </figure>
+
+    <h4>Map setup</h4>
+    <ul>
+      <li>Align the signpost with the <strong>edge of the map</strong> so the car does not collide with it.</li>
+      <li>Place the car on the <strong>RFID area</strong> when collecting data — the car's pre-set movement logic is designed around this starting point.</li>
+    </ul>
+    <figure class="fig">
+      <img src="images/map-rfid.jpg" alt="Two views of the map: the full driving map and a close-up of the RFID starting area" width="1310" height="504" loading="lazy">
+      <figcaption class="figcap">The map and its RFID starting area.</figcaption>
+    </figure>
+
+    <h3>Part B — the two MCUs on the car</h3>
+    <p>The car is controlled by two microcontroller units working together:</p>
+    <ul>
+      <li><strong>ESP32-S3 (lower deck)</strong> — drives the motors and reads the IR sensors, ultrasonic sensor and RFID reader. In Task 3 it receives the recognized label from the P4 and reacts.</li>
+      <li><strong>ESP32-P4 (upper deck)</strong> — the vision board. It captures images with the OV5647 camera, runs the TensorFlow Lite model, and records images to the <strong>TF card</strong> while running <code>TFLite.ino</code> (handy for debugging).</li>
+    </ul>
+    <p>Each board has three interfaces worth remembering — the <strong>Enable button</strong> (reset the MCU and rerun the flashed program), the <strong>Boot button</strong> (opposite side; forces upload mode), and the <strong>USB port</strong> (5&nbsp;V power + data).</p>
+    <figure class="fig">
+      <img src="images/board-camera.jpg" alt="Annotated photo of the car's boards showing the boot and enable buttons, USB ports and TF card slot, with the OV5647 camera module" width="1022" height="756" loading="lazy">
+      <figcaption class="figcap">The development boards with Enable / Boot buttons, USB ports and TF card slot, and the OV5647 camera module.</figcaption>
+    </figure>
+
+    <details class="fold">
+      <summary>Detail — boot-button recovery when the port won't respond</summary>
+      <div class="fold-body">
+        <p>If uploading fails with an error like <em>"Arduino can't receive any message from the port"</em>, put the MCU into upload mode manually:</p>
+        <ol>
+          <li>Press and <strong>hold the Boot button</strong>.</li>
+          <li>Quickly press and release the <strong>Enable button</strong> once — the MCU enters upload mode.</li>
+          <li>Upload your code.</li>
+          <li>After the upload completes, press the <strong>Enable button</strong> once to exit upload mode.</li>
+        </ol>
+        <p>You normally don't need this — the Arduino app switches the MCU into upload mode automatically.</p>
+      </div>
+    </details>
+
+    <h4>Camera module — three rules</h4>
+    <ul>
+      <li><strong>Never hot-plug the camera</strong> — connecting it while powered can damage it.</li>
+      <li>If the <strong>camera LED is lit</strong>, the camera is connected properly; if not, it isn't.</li>
+      <li>You can remove the protective cover from the camera lens.</li>
+    </ul>
+
+    <div class="tip">
+      <span class="lbl-purple">Tip</span>
+      <p>The OV5647 module attaches with a 15-pin CSI cable. If previews stay black, power everything off and reseat that cable before anything else.</p>
+    </div>
+  </section>
+
+  <!-- ============================ TASK 1 ============================ -->
+  <section id="task1">
+    <span class="goal">Task 1 · Goal</span>
+    <h2>Install Arduino IDE and flash the camera uploader</h2>
+    <div class="brief">
+      <p>In this task you learn the basic Arduino operations — downloading libraries and flashing code. Your goal: capture images from the car's camera and see them arrive in the Serial Monitor. The uploader sketch you flash here is reused in Task 2 (live capture) and Task 3 builds on this setup.</p>
+    </div>
+    <div class="tip">
+      <span class="lbl-orange">Timing tip</span>
+      <p>The board library download can take a while — the uploader code is <strong>pre-flashed</strong>, so you can jump ahead to Task 2 and come back. Just make sure Task 1 is finished before Task 3.</p>
+    </div>
+
+    <h3>Step by step</h3>
+    <ol>
+      <li><strong>Install Arduino IDE</strong> (2.3.10 or higher) from <a href="https://www.arduino.cc/en/software">arduino.cc/en/software</a>.</li>
+
+      <li><strong>Open the settings page</strong> (<code>cmd/ctrl + ,</code>):
+        <ul>
+          <li>macOS — <em>Arduino IDE → Settings → Additional Boards Manager URLs</em></li>
+          <li>Windows — <em>File → Preferences → Settings → Additional Boards Manager URLs</em></li>
+        </ul>
+        <div class="fig-grid">
+          <figure class="fig">
+            <img src="images/arduino-settings-mac.png" alt="Arduino IDE settings on macOS with the Additional Boards Manager URLs field highlighted" width="1500" height="957" loading="lazy">
+            <figcaption class="figcap">macOS settings.</figcaption>
+          </figure>
+          <figure class="fig">
+            <img src="images/arduino-settings-win.png" alt="Arduino IDE preferences on Windows with the Additional Boards Manager URLs field highlighted" width="1500" height="976" loading="lazy">
+            <figcaption class="figcap">Windows preferences.</figcaption>
+          </figure>
+        </div>
+      </li>
+
+      <li><strong>Add the Espressif board index URL</strong> and click <strong>OK</strong>:
+        <pre><code>https://dl.espressif.com/dl/package_esp32_index.json</code></pre>
+        <figure class="fig">
+          <img src="images/boards-url.png" alt="The Additional Boards Manager URLs dialog with the Espressif package index URL entered" width="1354" height="892" loading="lazy">
+          <figcaption class="figcap">Paste the URL into this dialog.</figcaption>
+        </figure>
+      </li>
+
+      <li><strong>Install the ESP32 board package</strong> — <em>Tools → Board → Boards Manager</em>, search <code>esp32</code>, install <strong>esp32 by Espressif Systems</strong>, and pick version <strong>3.3.1</strong>.
+        <figure class="fig">
+          <img src="images/boards-manager.png" alt="Boards Manager showing the esp32 package by Espressif Systems with version 3.3.1 selected" width="1500" height="976" loading="lazy">
+          <figcaption class="figcap">Install “esp32 by Espressif Systems”, version 3.3.1.</figcaption>
+        </figure>
+      </li>
+
+      <li><strong>Add the customized core</strong> — unzip <code>esp32_mannual.zip</code> (see downloads above) and drop the folder into your Arduino hardware path:
+        <ul>
+          <li>macOS — <code>/Users/{username}/Documents/Arduino/hardware/</code></li>
+          <li>Windows — <code>C:\Users\{username}\Documents\Arduino\hardware\</code></li>
+        </ul>
+        <p>The final path should look like <code>…/Documents/Arduino/hardware/esp32_mannual</code>.</p>
+      </li>
+
+      <li><strong>Select the board</strong> — <em>Tools → Board → ESP32_mannual → ESP32P4 Dev Module</em>. Leave the Port unselected for now.
+        <details class="fold">
+          <summary>Detail — full flash settings for the ESP32P4 Dev Module</summary>
+          <div class="fold-body">
+            <p>Open <em>Tools</em> and match these one by one:</p>
+            <div class="wrap-list">
+              <table>
+                <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+                <tbody>
+                  <tr><td>USB CDC On Boot</td><td><code>Enabled</code></td></tr>
+                  <tr><td>CPU Frequency</td><td><code>360MHz</code></td></tr>
+                  <tr><td>Core Debug Level</td><td><code>None</code></td></tr>
+                  <tr><td>USB DFU On Boot</td><td><code>Disabled</code></td></tr>
+                  <tr><td>Erase All Flash Before Sketch Upload</td><td><code>Disabled</code></td></tr>
+                  <tr><td>Flash Frequency</td><td><code>80MHz</code></td></tr>
+                  <tr><td>Flash Mode</td><td><code>QIO</code></td></tr>
+                  <tr><td>JTAG Adapter</td><td><code>Disabled</code></td></tr>
+                  <tr><td>USB Firmware MSC On Boot</td><td><code>Disabled</code></td></tr>
+                  <tr><td>Partition Scheme</td><td><code>8M with spiffs (3MB APP/1.5MB SPIFFS)</code></td></tr>
+                  <tr><td>PSRAM</td><td><code>Enabled</code></td></tr>
+                  <tr><td>Upload Mode</td><td><code>UART0 / Hardware CDC</code></td></tr>
+                  <tr><td>Upload Speed</td><td><code>921600</code></td></tr>
+                  <tr><td>USB Mode</td><td><code>Hardware CDC and JTAG</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <figure class="fig">
+              <img src="images/board-settings.png" alt="Arduino IDE Tools menu showing the ESP32P4 Dev Module flash settings" width="1431" height="931" loading="lazy">
+              <figcaption class="figcap">The Tools menu with every flash setting as configured.</figcaption>
+            </figure>
+          </div>
+        </details>
+      </li>
+
+      <li><strong>Select the port</strong> — <em>Tools → Port</em>, choose the one the board is connected to.
+        <figure class="fig">
+          <img src="images/port-select.png" alt="Tools Port menu with the ESP32P4 board's serial port selected" width="1431" height="774" loading="lazy">
+          <figcaption class="figcap">Pick your board's port (e.g. <code>/dev/cu.usbmodem…</code> on macOS).</figcaption>
+        </figure>
+      </li>
+
+      <li><strong>Open the sample uploader sketch</strong> provided with the kit.
+        <figure class="fig">
+          <img src="images/sample-code-open.png" alt="Arduino IDE with a sample sketch open from the sketchbook examples" width="1500" height="976" loading="lazy">
+          <figcaption class="figcap">Open the image-upload sample code.</figcaption>
+        </figure>
+      </li>
+
+      <li><strong>Flash it</strong> — click <em>Upload</em> and wait for the build and upload to finish.
+        <figure class="fig">
+          <img src="images/upload-sample.png" alt="Arduino IDE upload button and successful upload output for the grayscale camera sketch" width="1500" height="976" loading="lazy">
+          <figcaption class="figcap">Click Upload; a successful flash reports done in the output panel.</figcaption>
+        </figure>
+      </li>
+
+      <li><strong>Verify in the Serial Monitor</strong> — garbled characters mean the camera stream is arriving: success. Close the Serial Monitor afterwards so the port is free for the app.
+        <figure class="fig">
+          <img src="images/serial-garbled.png" alt="Serial Monitor showing garbled binary output from the grayscale camera uploader" width="1431" height="931" loading="lazy">
+          <figcaption class="figcap">Garbled text = the image stream is live.</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <div class="warn">
+      <span class="lbl-orange">No output?</span>
+      <p>If the Serial Monitor shows nothing, first re-check every setting above, then press the <strong>Enable button</strong> once to rerun the flashed program.</p>
+    </div>
+  </section>
+
+  <!-- ============================ TASK 2 ============================ -->
+  <section id="task2">
+    <span class="goal">Task 2 · Goal</span>
+    <h2>Train a road-sign model in the TF Training app</h2>
+    <div class="brief">
+      <p>Using the template project, walk the full pipeline — <strong>collect → preprocess → train → preview</strong> — and export a TensorFlow Lite model in <code>.cpp</code>/<code>.hpp</code> form. The model must recognize the three road signs in the order <strong>Left, Stop, Right</strong>.</p>
+    </div>
+    <div class="tip">
+      <span class="lbl-purple">Two habits</span>
+      <p>Save the project regularly (crashes lose unsaved samples), and <strong>write down your OOD thresholds and Dark/Lum values</strong> — you'll type them into the MCU in Task 3.</p>
+    </div>
+
+    <h3>2.1 · Open the app and the template project</h3>
+    <ol>
+      <li>Install the TF Training app from the downloads banner (`.dmg` / `.exe`).</li>
+      <li>Click <strong>Open Project</strong> and select the downloaded <code>template.tmproj</code> — or click <em>Open Image Project → Start from Empty</em> for a blank project.</li>
+    </ol>
+    <figure class="fig">
+      <img src="images/app-open.png" alt="TF Training app start screen with the Open Project and Start from Empty options" width="1431" height="931" loading="lazy">
+      <figcaption class="figcap">The app's start screen — open <code>template.tmproj</code> or start empty.</figcaption>
+    </figure>
+
+    <h3>2.2 · The three areas</h3>
+    <p>The app is organized into three areas you'll move between:</p>
+    <ul>
+      <li><strong>Sample area</strong> — collect and preprocess data.</li>
+      <li><strong>Train area</strong> — set hyperparameters and train.</li>
+      <li><strong>Preview area</strong> — preview the TensorFlow Lite Micro model live.</li>
+    </ul>
+    <figure class="fig">
+      <img src="images/app-areas.png" alt="The app's interface with the Sample, Train and Preview areas labeled" width="982" height="644" loading="lazy">
+      <figcaption class="figcap">Sample · Train · Preview.</figcaption>
+    </figure>
+
+    <h3>2.3 · Collect samples</h3>
+    <p>Three ways to get images into a class:</p>
+    <ol>
+      <li><strong>Webcam</strong> — uses your laptop's built-in or an external camera; pick a specific camera via the <em>Gear</em> icon. <em>Capture</em> takes single photos; hold <em>Hold to Capture</em> for a burst.</li>
+      <li><strong>Upload</strong> — choose one or more photos from the file browser.</li>
+      <li><strong>Device</strong> — the car's serial camera. Click <strong>Device</strong>, select the board's serial port (board plugged in), then capture.
+        <figure class="fig">
+          <img src="images/device-capture.png" alt="Clicking the Device icon and selecting the serial port to capture images from the car's camera" width="984" height="718" loading="lazy">
+          <figcaption class="figcap">Device capture — pick the board's port.</figcaption>
+        </figure>
+        <details class="fold">
+          <summary>Detail — device capture settings (gear icon)</summary>
+          <div class="fold-body">
+            <p>The gear next to the source controls the serial camera. The defaults are pre-matched to the uploader sketch from Task 1 — leave them unless you re-flashed different settings:</p>
+            <ul>
+              <li><strong>Input image size</strong> — <code>96 × 96</code></li>
+              <li><strong>Colour mode</strong> — <code>Grayscale</code></li>
+              <li><strong>Baud rate</strong> — <code>115200</code></li>
+              <li><strong>Sync header</strong> — <code>AA 55 AA</code></li>
+            </ul>
+          </div>
+        </details>
+      </li>
+    </ol>
+    <div class="warn">
+      <span class="lbl-orange">Class order matters</span>
+      <p>Arrange the three classes as <strong>Left → Stop → Right</strong>, top to bottom — this is the order the MCU expects. If you started from the template you can capture “Left” first and rename/reorder later on the edit page (next step).</p>
+    </div>
+
+    <h3>2.4 · Preprocess the samples</h3>
+    <p>Basic image processing removes environmental noise (extraneous variables) and boosts training quality — mainly by filtering pixels with <strong>Darkness/Luminance thresholds</strong>. Click the <strong>Edit</strong> icon to enter the image-processing page.</p>
+    <figure class="fig">
+      <img src="images/edit-classes.png" alt="The edit page listing image classes with controls to rename, reorder, delete a class or delete all samples" width="1431" height="931" loading="lazy">
+      <figcaption class="figcap">Edit page — rename, reorder (drag) or delete classes here.</figcaption>
+    </figure>
+    <p>The page has two parts: the <strong>Image Viewer</strong> (left) and the <strong>Sample Worktable</strong> (right). The viewer shows the original image with a purple <strong>ROI box</strong> (the region that will be cropped and processed) beside the processed preview, where pixels below the <strong>Dark Thr</strong> or above the <strong>Lum Thr</strong> turn pure white.</p>
+    <figure class="fig">
+      <img src="images/edit-sample.png" alt="Image viewer comparing the original sample with its ROI box against the thresholded preview, with the save button annotated" width="1128" height="700" loading="lazy">
+      <figcaption class="figcap">Original + ROI (left) vs. processed preview (right) — remember to save.</figcaption>
+    </figure>
+    <details class="fold">
+      <summary>Detail — every preprocessing parameter</summary>
+      <div class="fold-body">
+        <div class="wrap-list">
+          <table>
+            <thead><tr><th>Parameter</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Preprocess mode</strong></td>
+                <td><p><strong>Auto</strong> — a search box in the middle of the image finds the darkest area and crops it as the ROI.</p><p><strong>Manual ROI</strong> — crop by dragging your mouse directly on the original image.</p></td>
+              </tr>
+              <tr>
+                <td><strong>Dark Thr</strong> (darkness threshold)</td>
+                <td>Original-image pixels with luminosity <em>below</em> this value turn full white. A global setting for the whole class.</td>
+              </tr>
+              <tr>
+                <td><strong>Lum Thr</strong> (luminosity threshold)</td>
+                <td>Original-image pixels with luminosity <em>above</em> this value turn full white. Also global for the class.</td>
+              </tr>
+              <tr>
+                <td><strong>ROI x1, x2, y1, y2</strong> <p>(Manual ROI only)</p></td>
+                <td>Relative positions of the top-left (x1, y1) and bottom-right (x2, y2) corners. E.g. x1=0.2, y1=0.1 on a 96×96 image → point (0.2·96, 0.1·96) = (19, 10), rounded to the nearest integer.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <details class="fold">
+      <summary>Detail — keyboard shortcuts on the edit page</summary>
+      <div class="fold-body">
+        <ul>
+          <li><strong>↑ ↓ ← →</strong> — select the sample to process or inspect.</li>
+          <li><strong>Shift + arrows</strong> — move the ROI (Manual ROI mode).</li>
+          <li><strong>F1 / F2</strong> — switch to Auto / Manual ROI preprocess mode.</li>
+          <li><strong>D</strong> — delete the selected sample.</li>
+          <li><strong>ESC</strong> — exit the Edit view.</li>
+          <li><strong>S</strong> — save changes. <strong>Save after every change!</strong></li>
+        </ul>
+      </div>
+    </details>
+    <p>All processed images are resized to <em>image size × image size</em> (set in the Train area) before training. Collect and process data for all three classes — <strong>Left, Stop, Right</strong> — to finish this part.</p>
+
+    <h3>2.5 · Train</h3>
+    <ol>
+      <li>Move to the <strong>Train area</strong> and click the <strong>Advanced</strong> icon to unfold the hyperparameters.</li>
+      <li>Set hyperparameters (or click <strong>Use recommendation</strong> on the new app version), then click <strong>Train Embedded Model</strong> and wait.</li>
+    </ol>
+    <div class="fig-grid">
+      <figure class="fig">
+        <img src="images/train-area.png" alt="Train area with the settings folded, the hyperparameter panel and the Train Embedded Model button" width="1431" height="931" loading="lazy">
+        <figcaption class="figcap">Unfold settings → set hyperparameters → train.</figcaption>
+      </figure>
+      <figure class="fig">
+        <img src="images/train-advanced.png" alt="Advanced hyperparameter panel with image size, color mode, batch size, epochs and learning rate" width="1429" height="831" loading="lazy">
+        <figcaption class="figcap">The advanced panel.</figcaption>
+      </figure>
+    </div>
+    <figure class="fig">
+      <img src="images/train-done.png" alt="Training finished with a window showing model quality and accuracy" width="1500" height="976" loading="lazy">
+      <figcaption class="figcap">A quality window appears when training finishes — tap for accuracy.</figcaption>
+    </figure>
+    <details class="fold">
+      <summary>Detail — every hyperparameter, its range and its effect</summary>
+      <div class="fold-body">
+        <div class="wrap-list">
+          <table>
+            <thead><tr><th>#</th><th>Hyperparameter</th><th>Default</th><th>Range</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td><strong>Image size</strong></td><td>96</td><td>96, 160, 384</td><td>Input resolution; must match the input size used in the Preview area. Larger = more detail but slower training and inference.</td></tr>
+              <tr><td>2</td><td><strong>Color mode</strong></td><td>grayscale</td><td>rgb / grayscale</td><td>Input channels (1 or 3). Always use grayscale for the B-G/G-channel pipeline.</td></tr>
+              <tr><td>3</td><td><strong>Batch size</strong></td><td>16</td><td>8 / 16 / 32 / 64</td><td>Samples per training step. Larger = faster but more RAM; 16 works well at 96×96.</td></tr>
+              <tr><td>4</td><td><strong>Epochs</strong></td><td>20</td><td>1–200</td><td>Full passes through the dataset. More = better fit, but risk of overfitting.</td></tr>
+              <tr><td>5</td><td><strong>Validation split</strong></td><td>0.25</td><td>0.05–0.50</td><td>Fraction of data held out for validation, e.g. 0.20 = 80% train / 20% validate.</td></tr>
+              <tr><td>6</td><td><strong>Learning rate</strong></td><td>0.001</td><td>0.00001–0.1</td><td>Step size for weight updates. Higher learns faster but can be unstable; 0.001 is a safe default.</td></tr>
+              <tr><td>7</td><td><strong>Conv1 filters</strong></td><td>8</td><td>4 / 8 / 16 / 32</td><td>Feature detectors in the first convolution layer. More = better pattern recognition, larger model.</td></tr>
+              <tr><td>8</td><td><strong>Conv2 filters</strong></td><td>16</td><td>8 / 16 / 32 / 64</td><td>Feature detectors in the second convolution layer — typically 2× conv1.</td></tr>
+              <tr><td>9</td><td><strong>Dense units</strong></td><td>32</td><td>16 / 32 / 64 / 128</td><td>Neurons in the fully-connected layer. More = more complex decision boundaries.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Balancing act:</strong> more conv1/conv2 filters, dense units, or a larger image size can raise accuracy (not guaranteed) but always slows inference — balance accuracy against real-time performance on the car.</p>
+      </div>
+    </details>
+
+    <h3>2.6 · Preview and tune the OOD gate</h3>
+    <ol>
+      <li>Make sure the Task 1 uploader is still flashed. Click the <strong>Gear</strong> icon, set the input source to <strong>Device</strong>, and select the correct port. (Everything is resized and converted to <em>image size × image size</em> grayscale.)</li>
+      <li>Toggle <strong>Input</strong> to view the captured image; the confidence bar at the bottom shows the result — switch between <em>show %</em> and <em>show score</em>. <strong>ROI</strong> shows what the model actually sees, <strong>Orig</strong> the processed image. Dark/Lum thresholds can be adjusted live here too.</li>
+    </ol>
+    <div class="fig-grid">
+      <figure class="fig">
+        <img src="images/preview-gear.png" alt="Preview gear settings to change the input source and serial port" width="956" height="632" loading="lazy">
+        <figcaption class="figcap">Point the preview at the device.</figcaption>
+      </figure>
+      <figure class="fig">
+        <img src="images/preview-ood.png" alt="Preview panel with OOD sign min, OOD sign max and max prob settings" width="1430" height="807" loading="lazy">
+        <figcaption class="figcap">The OOD parameters in the preview panel.</figcaption>
+      </figure>
+    </div>
+    <p>A SoftMax classifier produces a confident-looking output for <em>any</em> input — even an empty scene. To answer the real question, <em>“is there actually a sign in this frame?”</em>, the system runs three gating layers around the inference; if any single layer fires, the frame reports <strong>No Sign</strong>.</p>
+    <details class="fold">
+      <summary>Detail — the three OOD gating layers</summary>
+      <div class="fold-body">
+        <div class="wrap-list">
+          <table>
+            <thead><tr><th>Layer</th><th>Parameter</th><th>Default</th><th>Meaning</th><th>Fires “No Sign” when…</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Sign-pixel ratio</strong><p>(before inference — cheapest)</p></td>
+                <td><code>sign_pct</code> window</td>
+                <td>0.3–70 %</td>
+                <td>Percentage of pixels whose brightness falls inside the Dark/Lum mask window (default 0–100).</td>
+                <td>The ratio is below <code>spmin</code> (scene has almost no dark target) or above <code>spmax</code> (lens covered / all-dark scene).</td>
+              </tr>
+              <tr>
+                <td><strong>2. SoftMax top probability</strong><p>(after inference)</p></td>
+                <td><code>max_prob</code> minimum</td>
+                <td>≥ 0.60</td>
+                <td>How confident the model is in the top class.</td>
+                <td>Top-class probability falls below 0.60 — the model isn't confident in itself.</td>
+              </tr>
+              <tr>
+                <td><strong>3. Normalised entropy ratio</strong><p>(after inference)</p></td>
+                <td><code>entropy_d</code> maximum</td>
+                <td>≤ 0.70</td>
+                <td>How “spread out” the output distribution is (entropy ÷ max entropy, normalized to 0–1).</td>
+                <td>The ratio exceeds 0.70 — probabilities are spread evenly; the model is guessing.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The same four parameters are also available on the device, so the host preview and the car always use the same gate.</p>
+      </div>
+    </details>
+    <div class="tip">
+      <span class="lbl-purple">Starting values</span>
+      <p>For the OOD parameters, <code>0.1, 20, 0.1, 0.9</code> are convenient starting values when checking performance. If the result is unsatisfactory, inspect the output messages beneath the preview area and adjust from there.</p>
+    </div>
+
+    <h3>2.7 · Export and save</h3>
+    <ol>
+      <li>Click <strong>Export model</strong> to export the model files.</li>
+      <li>Open the top-left menu and choose <strong>Save Project</strong>.</li>
+    </ol>
+    <figure class="fig">
+      <img src="images/interpretation.png" alt="Interpretation view showing live input, ROI and original image with the confidence readout" width="1431" height="931" loading="lazy">
+      <figcaption class="figcap">The interpretation view — your live preview before export.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ TASK 3 ============================ -->
+  <section id="task3">
+    <span class="goal">Task 3 · Goal</span>
+    <h2>Deploy the model on the car</h2>
+    <div class="brief">
+      <p>Import the exported model into the TFLite project, flash it, and confirm the car's movements match the signs it sees — <strong>Left</strong> turns left, <strong>Stop</strong> stops, <strong>Right</strong> turns right.</p>
+    </div>
+
+    <h3>Step by step</h3>
+    <ol>
+      <li><strong>Open both folders</strong> — the folder with your exported model, and the deploy project containing <code>TFLite.ino</code> (TFLite.zip in the downloads banner).
+        <figure class="fig">
+          <img src="images/tflite-files.png" alt="Arduino IDE with the TFLite project open showing TFLite.ino, tm_model_data.cpp and the model source files" width="1045" height="680" loading="lazy">
+          <figcaption class="figcap">The deploy project in Arduino IDE.</figcaption>
+        </figure>
+      </li>
+      <li><strong>Copy these five files</strong> from the export folder into the project folder, overwriting the existing ones:
+        <ul>
+          <li><code>tm_model_data.cpp</code></li>
+          <li><code>tm_model_data.h</code></li>
+          <li><code>model_resolver.h</code></li>
+          <li><code>model_settings.cpp</code></li>
+          <li><code>model_settings.h</code></li>
+        </ul>
+      </li>
+      <li><strong>Upload <code>TFLite.ino</code></strong> — with the same flash settings from Task 1 — and watch the model output.
+        <details class="fold">
+          <summary>Detail — IMG_SIZE must match the app</summary>
+          <div class="fold-body">
+            <p>Before uploading, make sure <code>IMG_SIZE</code> equals the image size you trained with in the TF Training app:</p>
+            <pre><code>#ifndef IMG_SIZE
+#define IMG_SIZE 160
+#endif</code></pre>
+            <p>A mismatch between this and the app's image size is the first thing to check if the results look wrong.</p>
+          </div>
+        </details>
+      </li>
+      <li><strong>Adjust over serial</strong> — in the Serial Monitor you can type commands to change parameters or the output mode without re-flashing.
+        <details class="fold">
+          <summary>Detail — the full serial command set</summary>
+          <div class="fold-body">
+            <div class="wrap-list">
+              <table>
+                <thead><tr><th>Command</th><th>Example</th><th>What it does</th></tr></thead>
+                <tbody>
+                  <tr><td><code>help</code> / <code>?</code></td><td><code>help</code></td><td>Print the on-device command list.</td></tr>
+                  <tr><td><code>ping</code></td><td><code>ping</code> → <code>&gt; PONG</code></td><td>Connectivity check.</td></tr>
+                  <tr><td><code>get mask</code></td><td>→ <code>MASK: dark=0 lum=100</code></td><td>Read the G-channel Dark/Lum sign-mask thresholds.</td></tr>
+                  <tr><td><code>set mask &lt;D&gt; &lt;L&gt;</code></td><td><code>set mask 0 100</code></td><td>Write Dark/Lum (auto-clamped so <code>dark &lt; lum</code>); used by the next GetImage frame.</td></tr>
+                  <tr><td><code>get ood</code></td><td>→ <code>OOD: sp=0.30..70.00 mp=0.600 er=0.700</code></td><td>Read the four OOD thresholds.</td></tr>
+                  <tr><td><code>set ood &lt;spmin&gt; &lt;spmax&gt; &lt;mpmin&gt; &lt;ermax&gt;</code></td><td><code>set ood 0.3 70.0 0.60 0.70</code></td><td>Write the four OOD thresholds (host-aligned defaults shown).</td></tr>
+                  <tr><td><code>get mode</code></td><td>→ <code>MODE: inference</code></td><td>Read the current output mode.</td></tr>
+                  <tr><td><code>mode &lt;keyword&gt;</code></td><td><code>mode infergray</code></td><td>Switch mode. Keywords: <code>infer</code>/<code>inference</code>/<code>0</code>, <code>rgb</code>/<code>1</code>, <code>gray</code>/<code>grey</code>, <code>infergray</code>/<code>infer_gray</code>/<code>3</code>, <code>ext_rgb</code>/<code>11</code>, <code>ext_gray</code>/<code>12</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <figure class="fig">
+              <img src="images/serial-commands.png" alt="Reference card of serial commands with example outputs" width="1430" height="924" loading="lazy">
+              <figcaption class="figcap">The on-device command reference.</figcaption>
+            </figure>
+          </div>
+        </details>
+      </li>
+      <li><strong>Run the car</strong> — position it in front of the cross / RFID area. Plug in the battery, turn the power switch on, then press the <strong>Enable button</strong>: you'll hear a beep from the buzzer, the car starts moving, and the ESP32-S3 reads label messages from the ESP32-P4. Open the Serial Monitor (921600 baud) on the S3 port to verify accuracy — it prints a few <em>waiting</em> messages before the label data arrives.</li>
+    </ol>
+    <figure class="fig">
+      <img src="images/serial-output.png" alt="ESP32-S3 serial output showing IR, ultrasonic, RFID, P4 label and encoder RPM readings after waiting messages" width="1500" height="336" loading="lazy">
+      <figcaption class="figcap">Sample ESP32-S3 output — waiting lines, then sensor + label telemetry.</figcaption>
+    </figure>
+    <p>Finish with the final evaluation: <strong>10 unseen sign presentations</strong> — record how many the car calls correctly, and share the result in the demo &amp; sharing session.</p>
+  </section>
+
+  <!-- ============================ TROUBLESHOOT ============================ -->
+  <section id="troubleshoot">
+    <h2>Troubleshooting &amp; fine-tuning</h2>
+    <div class="wrap-list" style="margin-top:24px;">
+      <table>
+        <thead><tr><th>Symptom</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td>Serial Monitor shows nothing</td><td>Verify every Task 1 setting, then press the <strong>Enable button</strong> once.</td></tr>
+          <tr><td>“Can't receive any message from the port” while uploading</td><td>Use the <a href="#hardware">boot-button recovery procedure</a> (hold Boot, tap Enable, upload, tap Enable again).</td></tr>
+          <tr><td>Camera LED not lit</td><td>Camera not connected — power off first, never hot-plug, reseat the 15-pin CSI cable.</td></tr>
+          <tr><td>Garbled text in the Serial Monitor after uploading</td><td>That's the binary image stream — success. Close the monitor to free the port.</td></tr>
+          <tr><td>A real sign keeps reporting <em>No Sign</em></td><td>Loosen the OOD gates — see the recipe below.</td></tr>
+          <tr><td>An empty scene reports a sign</td><td>Tighten the OOD gates — see the recipe below.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="fold" style="margin-top:24px;">
+      <summary>Detail — how to fine-tune the OOD parameters</summary>
+      <div class="fold-body">
+        <ul>
+          <li><strong>Missing detections</strong> (a real sign reported as <em>No Sign</em>) → loosen the gates: lower <code>spmin</code>, raise <code>spmax</code>, lower <code>mpmin</code>, raise <code>ermax</code>.</li>
+          <li><strong>False detections</strong> (an empty scene reports a sign) → tighten the gates: raise <code>spmin</code>, lower <code>spmax</code>, raise <code>mpmin</code>, lower <code>ermax</code>.</li>
+          <li><strong>Find the firing layer first</strong> — use the debug readout: a too-low or too-high <code>sign=</code> value is layer 1, a low <code>max=</code> is layer 2, a high <code>ent=</code> is layer 3. Adjust only that parameter; don't change them all at once.</li>
+          <li>The default <code>spmin</code> of 0.3&nbsp;% is deliberately tiny so a distant or small sign (dark pixels covering only a small fraction of the frame) still passes layer 1.</li>
+          <li>Before a demo, run <code>get ood</code> to note the current values; if you get lost, restore the defaults with <code>set ood 0.3 70.0 0.60 0.70</code>.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="fold">
+      <summary>Detail — user config at the top of each source file</summary>
+      <div class="fold-body">
+        <p>Edit the user configuration at the top of each source file (<code>user_config.h</code>) to change the output resolution and enable or disable the flip function:</p>
+        <pre><code>// —— USER CONFIG —— output resolution / orientation, edit these two only ——
+int  g_frame_side = 160; // output resolution (8–512); capture + model input follow it
+bool g_flip_180   = true; // camera is mounted upside down → rotate 180° to match capture/training orientation</code></pre>
+        <figure class="fig">
+          <img src="images/user-config.png" alt="Source file snippet defining g_frame_side and g_flip_180 in the user config section" width="1500" height="249" loading="lazy">
+          <figcaption class="figcap">The user-config block in the source.</figcaption>
+        </figure>
+      </div>
+    </details>
+
+    <p style="margin-top:28px;">The project folders also ship with <code>README.md</code> files covering further development and more detailed examples — dig in if you want to go beyond the workshop.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-rail">
+    <div>
+      <a class="wordmark" href="index.html" style="display:block; margin-bottom:12px;">AIo<span>Scout</span></a>
+      <p style="font-size:12px; color:var(--mute); font-weight:700; letter-spacing:1.2px; text-transform:uppercase;">AI Literacy Workshop · Lab manual</p>
+    </div>
+    <div style="display:flex; gap:24px; flex-wrap:wrap;">
+      <a href="index.html">Workshop</a>
+      <a href="../index.html">Full curriculum</a>
+      <a href="https://docs.google.com/document/d/1rRywoTusAY5V2UAzwKlV64o0t3lfK-hf/edit">Google Doc version</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Open every folded section when printing so the paper copy is complete.
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details.fold').forEach(function (d) { d.dataset.wasOpen = d.open ? '1' : ''; d.open = true; });
+  });
+  window.addEventListener('afterprint', function () {
+    document.querySelectorAll('details.fold').forEach(function (d) { if (d.dataset.wasOpen !== '1') d.open = false; });
+  });
+</script>
+
+</body>
+</html>
