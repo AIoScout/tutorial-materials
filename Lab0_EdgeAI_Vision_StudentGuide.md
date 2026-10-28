@@ -1,8 +1,8 @@
-# Lab 0 — Edge AI Vision: TensorFlow Lite Micro *(Student Guide)*
+# Lab 0 · Edge AI Vision: TensorFlow Lite Micro *(Student Guide)*
 
 > Adapted from the AIoScout TF Lite Training Manual (2026, rev. 2) for secondary school students.
 >
-> **Lab focus** — collect images, train an image-classification neural network (no programming required), and run it live on the ESP32-P4 microcontroller.
+> **Lab focus**: collect images, train an image-classification neural network (no programming required), and run it live on the ESP32-P4 microcontroller.
 
 ---
 
@@ -20,19 +20,19 @@ This laboratory equips the robot car with visual recognition. By the end you can
 
 ---
 
-## 2. Background — Machine Learning on a Chip
+## 2. Background: Machine Learning on a Chip
 
 ### 2.1 Rules versus learning
 
-A conventional program follows rules written by a programmer: *if the pixel is dark, do X.* Such rules cannot describe how to recognize a stop sign in an image — no one can write them by hand. **Machine learning** inverts this arrangement: instead of receiving rules, the computer receives many **labeled examples** (images with the correct answer attached) and derives the rules itself. This process is called **training**.
+A conventional program follows rules written by a programmer: *if the pixel is dark, do X.* No one can write such rules for recognizing a stop sign in an image. **Machine learning** flips the arrangement: the computer receives many **labeled examples** (images with the correct answer attached) and derives the rules itself. This process is called **training**.
 
 ### 2.2 What Is a CNN?
 
-A **Convolutional Neural Network (CNN)** is the standard neural-network architecture for images. It can be understood as a stack of small **feature detectors**: early layers detect simple patterns (edges, blobs), later layers combine them into complex ones (shapes, objects). The final layer outputs a **confidence** for each class — for example, "sign: 92%, wall: 5%, floor: 3%".
+A **Convolutional Neural Network (CNN)** is the standard neural-network architecture for images. It can be understood as a stack of small **feature detectors**: early layers detect simple patterns (edges, blobs), later layers combine them into complex ones (shapes, objects). The final layer outputs a **confidence** for each class, for example "sign: 92%, wall: 5%, floor: 3%".
 
 ### 2.3 What Is TensorFlow Lite Micro?
 
-**TensorFlow Lite Micro** (now called **LiteRT for Microcontrollers**) is a version of Google's ML runtime designed for microcontrollers — chips with only kilobytes of memory:
+**TensorFlow Lite Micro** (now called **LiteRT for Microcontrollers**) is a version of Google's ML runtime designed for microcontrollers, chips with only kilobytes of memory:
 
 - The core runtime fits in **16 KB** of memory
 - No operating system, no standard C/C++ libraries, and no dynamic memory allocation are required
@@ -48,14 +48,14 @@ The **ESP32-P4** is a high-performance system-on-a-chip (SoC) from Espressif, de
 - Rich peripheral interfaces and **camera support** (for example the IMX219 camera module)
 - Captures images, processes them on-device, and runs TensorFlow Lite models in real time
 
-It is programmed with the **Arduino IDE** — the same environment used in the earlier labs.
+It is programmed with the **Arduino IDE**: the same environment used in the earlier labs.
 
 ### 2.5 The TFLiteTraining Application
 
 **TFLiteTraining** is a desktop application for training lightweight image classifiers, inspired by Google's Teachable Machine. It supports the complete workflow:
 
-1. **Collect** labeled image samples — from a **webcam**, **uploaded files**, or a **serial camera** (the ESP32-P4)
-2. **Preprocess** them (crop, filter noise) — no code required
+1. **Collect** labeled image samples from a **webcam**, **uploaded files**, or a **serial camera** (the ESP32-P4)
+2. **Preprocess** them (crop, filter noise); no code is required
 3. **Train** a CNN by adjusting hyperparameters
 4. **Preview** the model's live performance
 5. **Export** a fully quantized **int8 TensorFlow Lite model** plus the C/C++ files, ready to deploy to the microcontroller
@@ -64,7 +64,7 @@ The workflow of this lab: **Collect → Preprocess → Train → Preview → Exp
 
 ---
 
-## 3. Task 1 — Set Up Arduino IDE and the ESP32-P4
+## 3. Task 1: Set Up Arduino IDE and the ESP32-P4
 
 ### Step-by-step
 
@@ -117,18 +117,18 @@ The final path should be: `/Users/<you>/Documents/Arduino/hardware/esp32_mannual
 ![Uploading the sample code](images/cv/image8.png)
 *Click Upload and wait for success*
 
-**Step 9.** Open the **Serial Monitor**. A continuous stream of garbled characters is the binary image data; it indicates a successful upload. Then **close the Serial Monitor** — it occupies the port, which the TFLiteTraining application requires later.
+**Step 9.** Open the **Serial Monitor**. A continuous stream of garbled characters is the binary image data; it indicates a successful upload. Then **close the Serial Monitor**: it occupies the port, which the TFLiteTraining application requires later.
 
 ![Serial monitor showing the image stream](images/cv/image9.png)
-*Garbled characters = the grayscale image stream — the upload succeeded*
+*Garbled characters mean the grayscale image stream is arriving: the upload succeeded*
 
 ### Check Point
 
-Show the TA / instructor: the sample code uploaded successfully, and the image stream visible in the Serial Monitor — then closed.
+Show the TA / instructor: the sample code uploaded successfully, and the image stream visible in the Serial Monitor and then closed.
 
 ---
 
-## 4. Task 2 — The TFLiteTraining App
+## 4. Task 2: The TFLiteTraining App
 
 ### 4.1 Install and Open the Project
 
@@ -156,22 +156,22 @@ The workspace is divided into three areas:
 
 There are three ways to collect images:
 
-- **Webcam** — uses the laptop's (or an external) camera; a specific camera can be selected with the **Gear** icon
-- **Upload** — chooses picture files from the computer
-- **Device** — captures images directly from the **ESP32-P4's serial camera**
+- **Webcam**: uses the laptop's (or an external) camera; a specific camera can be selected with the **Gear** icon
+- **Upload**: chooses picture files from the computer
+- **Device**: captures images directly from the **ESP32-P4's serial camera**
 
-For **Device** input: click **Device**, select the board's serial port, and check the **Gear** settings. The defaults — **96×96, Grayscale, 115200 baud, sync header AA 55 AA** — match the sample code flashed in Task 1. Do not change them in this lab.
+For **Device** input: click **Device**, select the board's serial port, and check the **Gear** settings. The defaults (**96×96, Grayscale, 115200 baud, sync header AA 55 AA**) match the sample code flashed in Task 1. Do not change them in this lab.
 
 Capturing: click **Capture** for a single picture, or press-and-hold **Hold to Capture** for a continuous stream.
 
 ![Collecting samples: webcam, upload, or device](images/cv/image13.png)
-*Sample collection — capture single images or hold to capture continuously*
+*Sample collection: capture single images, or hold to capture continuously*
 
 **Classes:** each category (for example "left arrow", "right arrow", "wall") is a **class**. Add classes with the + button, rename by clicking the name, delete with the × button. Keep a **similar number of samples in each class** (for example 30–50 each).
 
 **Deleting a sample:** hover over any sampled image and click to delete it.
 
-### 4.4 Preprocessing — Making Cleaner Data
+### 4.4 Preprocessing: Making Cleaner Data
 
 Data quality matters more than model complexity. Enter the image-processing page by clicking the **Edit** icon. The page has two parts: the **Image Viewer** (left) and the **Sample Worktable** (right).
 
@@ -180,15 +180,15 @@ Data quality matters more than model complexity. Enter the image-processing page
 
 Key concepts:
 
-- **ROI (Region of Interest)** — the purple rectangle marking the area that will be **cropped** and used for training; everything outside is discarded
-- **Dark Thr (Darkness Threshold)** — pixels **darker** than this value become pure white
-- **Lum Thr (Luminosity Threshold)** — pixels **brighter** than this value become pure white
+- **ROI (Region of Interest)**: the purple rectangle marking the area that will be **cropped** and used for training; everything outside is discarded
+- **Dark Thr (Darkness Threshold)**: pixels **darker** than this value become pure white
+- **Lum Thr (Luminosity Threshold)**: pixels **brighter** than this value become pure white
 
-These two thresholds remove environmental noise — background that is much darker or brighter than the subject disappears.
+These two thresholds remove environmental noise: background much darker or brighter than the subject disappears.
 
 | Parameter | Effect |
 | --------- | ------ |
-| **Preprocess Mode** | **Auto** — a search box in the middle finds and crops the darkest area automatically. **Manual ROI** — the crop region is dragged manually on the original image. |
+| **Preprocess Mode** | **Auto**: a search box in the middle finds and crops the darkest area automatically. **Manual ROI**: the crop region is dragged manually on the original image. |
 | **Dark Thr** | Pixels below this brightness → white. Global setting for the whole class. |
 | **Lum Thr** | Pixels above this brightness → white. Global setting for the whole class. |
 | **ROI x1, y1, x2, y2** | Relative coordinates of the crop's top-left (x1, y1) and bottom-right (x2, y2) corners. For example, x1 = 0.2, y1 = 0.1 on a 96×96 image → pixel (19, 10), rounded to the nearest integer. (Manual ROI mode only.) |
@@ -207,7 +207,7 @@ All processed images are **resized to image size × image size** (set in the Tra
 | S | **Save changes** |
 | ESC | Exit the edit view |
 
-> **Save after every change** — unsaved preprocessing is lost.
+> **Save after every change**: unsaved preprocessing is lost.
 
 ### 4.5 Hyperparameters
 
@@ -228,18 +228,18 @@ Open the hyperparameter panel with the **Advanced** icon in the Train Area:
 ![Setting hyperparameters and starting training](images/cv/image15.png)
 *The Advanced panel: set hyperparameters, then click "Train Embedded Model"*
 
-> **The trade-off:** larger filters, more dense units, and a larger image size *may* improve accuracy — but they **always** make inference slower. Edge-AI engineering consists of finding the balance that preserves real-time performance.
+> **The trade-off:** larger filters, more dense units, and a larger image size *may* improve accuracy, but they **always** make inference slower. The job is balancing the two so the model still runs in real time.
 
-The current app version provides a **Use recommended** button in the Training panel. It applies the recommended hyperparameters automatically — the epoch count is chosen so that training performs approximately 800 total weight updates (for example, 7 steps per epoch × 115 epochs ≈ 805 updates). Use it as the starting point, then adjust individual hyperparameters one at a time.
+The current app version provides a **Use recommended** button in the Training panel. It fills in the recommended hyperparameters automatically (the epoch count is chosen so that training performs roughly 800 total weight updates; for example, 7 steps per epoch × 115 epochs ≈ 805 updates). Use it as the starting point, then adjust individual hyperparameters one at a time.
 
 ![The "Use recommended" button](images/cv/image22.png)
 *The "Use recommended" button fills in the recommended hyperparameters*
 
 ### 4.6 Training
 
-After setting the hyperparameters, click **Train Embedded Model** and wait for training to complete. Monitor the **validation accuracy**: a high validation accuracy together with poor live performance indicates overfitting or insufficient sample variety — recapture samples in different lighting and at different angles.
+After setting the hyperparameters, click **Train Embedded Model** and wait for training to complete. Monitor the **validation accuracy**: high validation accuracy together with poor live performance points to overfitting or too little sample variety. Recapture samples in different lighting and at different angles and try again.
 
-### 4.7 Preview — Live Testing
+### 4.7 Preview: Live Testing
 
 Before previewing, confirm that the image-uploading code from Task 1 is still flashed on the board.
 
@@ -248,25 +248,25 @@ Before previewing, confirm that the image-uploading code from Task 1 is still fl
 ![Preview settings](images/cv/image16.png)
 *Set source to Device and choose the port*
 
-**Step 2.** Toggle **Input** to see the live image, and read the **confidence bar** at the bottom — switch between **show %** and **show score** to change its units. Toggle **ROI** to see exactly what the model receives, or **Orig** to see the processed image. The **Dark/Lum thresholds** can also be adjusted here, with the effect visible live.
+**Step 2.** Toggle **Input** to see the live image, and read the **confidence bar** at the bottom; switch between **show %** and **show score** to change its units. Toggle **ROI** to see exactly what the model receives, or **Orig** to see the processed image. The **Dark/Lum thresholds** can also be adjusted here, with the effect visible live.
 
 ![Live interpretation view](images/cv/image17.png)
 *Interpretation view: live image, ROI, and the confidence bar*
 
-### 4.8 The OOD Gate — Recognizing "No Sign"
+### 4.8 The OOD Gate: Recognizing "No Sign"
 
-A SoftMax classifier produces a confident-looking output for any input — including an empty scene. To answer the separate question, *"does this frame contain a sign at all?"*, the new app version adds four **OOD (out-of-distribution) parameters** to the Preview settings. The same four parameters exist on the device, so the host preview and the board always apply the same gate.
+A SoftMax classifier produces a confident-looking output for any input, including an empty scene. To answer the separate question, *"does this frame contain a sign at all?"*, the new app version adds four **OOD (out-of-distribution) parameters** to the Preview settings. The same four parameters exist on the device, so the host preview and the board always apply the same gate.
 
 The gate runs three layers around inference; if any single layer fires, the frame is reported as **"No Sign"**:
 
 | Layer | Parameter | Default | Meaning | Fires "No Sign" when… |
 | ----- | --------- | ------- | ------- | --------------------- |
-| **1. Sign-pixel ratio** (before inference — cheapest) | sign_pct window | 0.3–70 % | Percentage of pixels whose brightness falls inside the Dark/Lum mask window | the ratio is below spmin (scene has almost no dark target) or above spmax (lens covered / all-dark scene) |
-| **2. SoftMax top probability** (after inference) | max_prob minimum | ≥ 0.60 | Confidence of the model in the top class | the top-class probability is below 0.60 — the model is not confident itself |
-| **3. Normalised entropy ratio** (after inference) | entropy_d maximum | ≤ 0.70 | How spread out the output distribution is (entropy / max entropy, normalized to 0–1) | the ratio exceeds 0.70 — the probabilities are spread too evenly; the model is guessing |
+| **1. Sign-pixel ratio** (before inference; cheapest) | sign_pct window | 0.3–70 % | Percentage of pixels whose brightness falls inside the Dark/Lum mask window | the ratio is below spmin (scene has almost no dark target) or above spmax (lens covered / all-dark scene) |
+| **2. SoftMax top probability** (after inference) | max_prob minimum | ≥ 0.60 | Confidence of the model in the top class | the top-class probability is below 0.60, meaning the model is not confident itself |
+| **3. Normalised entropy ratio** (after inference) | entropy_d maximum | ≤ 0.70 | How spread out the output distribution is (entropy / max entropy, normalized to 0–1) | the ratio exceeds 0.70; the probabilities are spread too evenly and the model is guessing |
 
 ![OOD parameters in the Preview settings](images/cv/image23.png)
-*The four OOD parameters in the Preview settings — the same values apply on the device*
+*The four OOD parameters in the Preview settings; the same values apply on the device*
 
 The default spmin of 0.3 % is deliberately small: a distant or small sign, whose dark pixels cover only a small fraction of the frame, still passes layer 1.
 
@@ -280,7 +280,7 @@ Show the TA / instructor: a trained model with at least two classes, live previe
 
 ---
 
-## 5. Task 3 — Deploy the Model on the MCU
+## 5. Task 3: Deploy the Model on the MCU
 
 With the model trained, the final step is running it on the chip.
 
@@ -288,7 +288,7 @@ With the model trained, the final step is running it on the chip.
 
 **Step 2.** Copy these **five files** from the export folder into the project folder (replacing the existing versions):
 
-- `tm_model_data.cpp` — the quantized model weights
+- `tm_model_data.cpp` (the quantized model weights)
 - `tm_model_data.h`
 - `model_resolver.h`
 - `model_settings.cpp`
@@ -302,7 +302,7 @@ With the model trained, the final step is running it on the chip.
 **Step 4.** Upload the code, open the Serial Monitor, and observe the model classifying the live camera stream:
 
 ![Live inference output on the board](images/cv/image19.png)
-*The model running on the ESP32-P4 — live inference output*
+*The model running on the ESP32-P4: live inference output*
 
 **Step 5.** In the Serial Monitor, commands can be typed to set the output mode and the parameters:
 
@@ -323,15 +323,15 @@ Show the TA / instructor: the model running on the ESP32-P4, classifying live ca
 
 - **Missing detections** (a real sign reported as "No Sign") → loosen the gates: lower spmin, raise spmax, lower mpmin, raise ermax
 - **False detections** (an empty scene reported as a sign) → tighten the gates: raise spmin, lower spmax, raise mpmin, lower ermax
-- Use the debug readout to identify which layer fired before changing anything: a too-low or too-high `sign=` value indicates layer 1, a low `max=` indicates layer 2, a high `ent=` indicates layer 3. Adjust only that parameter — do not change several at once
+- Use the debug readout to identify which layer fired before changing anything: a too-low or too-high `sign=` value indicates layer 1, a low `max=` indicates layer 2, a high `ent=` indicates layer 3. Adjust only that parameter, not several at once
 - The default spmin of 0.3 % is deliberately small so that distant or small signs still pass layer 1
 - Before a demonstration, run `get ood` and note the current values; if the settings are lost, restore the defaults with `set ood 0.3 70.0 0.60 0.70`
 
 ### 6.2 Suggested Experiments
 
-- **Epochs:** train with 5, 20, and 60 epochs — observe the validation accuracy and determine the point at which further training stops helping
-- **Model size:** set Conv1/Conv2 filters and Dense units to the minimum and then to the maximum — compare accuracy **and** the update rate of the serial output
-- **Data quality:** train once with messy backgrounds and once with strict Dark/Lum thresholds — determine which matters more: cleaner data or a larger model
-- **Image size:** compare 96 and 160 — measure the difference in inference speed
+- **Epochs:** train with 5, 20, and 60 epochs and watch the validation accuracy; find the point where more training stops helping
+- **Model size:** set Conv1/Conv2 filters and Dense units to the minimum and then to the maximum, comparing accuracy **and** the update rate of the serial output
+- **Data quality:** train once with messy backgrounds and once with strict Dark/Lum thresholds; which matters more, cleaner data or a larger model?
+- **Image size:** compare 96 and 160 and measure the difference in inference speed
 
-These are the same trade-offs faced in professional edge-AI engineering.
+Each experiment changes one thing at a time; keep notes so the comparison is fair.

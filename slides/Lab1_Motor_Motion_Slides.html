@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lab 1 · Motor &amp; Motion</title>
+<link rel="icon" type="image/svg+xml" href="../logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -29,8 +30,8 @@
   .deck { height: 100dvh; display: flex; flex-direction: column; }
   .bar { flex: none; display: flex; align-items: center; justify-content: space-between; background: var(--canvas); padding: 0 var(--sp-4xl); }
   .bar.top { height: 56px; border-bottom: 1px solid var(--hairline); }
-  .wordmark { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; text-decoration: none; }
-  .wordmark span { color: var(--accent-orange); }
+  .wordmark { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .wordmark img { width: 28px; height: 28px; display: block; }
   .bar.bottom { height: 52px; border-top: 1px solid var(--hairline); gap: var(--sp-lg); }
   .counter { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .counter .of { color: var(--mute); }
@@ -111,10 +112,10 @@
 <div class="deck">
 
   <header class="bar top">
-    <a class="wordmark" href="../index.html">AIo<span>Scout</span></a>
+    <a class="wordmark" href="../index.html"><img src="../logo.svg" alt="" width="28" height="28">AIoScout</a>
     <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; justify-content:flex-end;">
       <a class="cap" href="../index.html" style="color:var(--ink); text-decoration:none; border-bottom:1px solid var(--ink); padding-bottom:2px;">← Index</a>
-      <span class="cap quiet bar-label">HKUST ISDN 2602 · Lab 1 · Motor &amp; Motion</span>
+      <span class="cap quiet bar-label">Motor &amp; Motion</span>
     </div>
   </header>
 
@@ -163,7 +164,7 @@
             <p>Progress from P to PI to PID and tune the controller until the car runs straight.</p>
           </div>
         </div>
-        <p class="cap quiet" style="margin-top:32px;">Keywords — motor · PWM · duty cycle · H-bridge · encoder · quadrature · error · steady-state error · overshoot · tuning</p>
+        <p class="cap quiet" style="margin-top:32px;">Keywords: motor · PWM · duty cycle · H-bridge · encoder · quadrature · error · steady-state error · overshoot · tuning</p>
       </div>
     </section>
 
@@ -179,13 +180,13 @@
           <ul class="tick body-md dim">
             <li>A motor cannot be supplied with a clean "half a voltage" directly</li>
             <li>Instead, full voltage is applied <strong style="color:var(--ink)">half the time</strong></li>
-            <li>The switching is <strong style="color:var(--ink)">PWM</strong> — thousands of on/off cycles per second</li>
-            <li>The ON fraction — the <span class="hl-orange" style="font-weight:700;">duty cycle</span> — sets the average power, and the speed</li>
+            <li>The switching is <strong style="color:var(--ink)">PWM</strong>: thousands of on/off cycles per second</li>
+            <li>The ON fraction (the <span class="hl-orange" style="font-weight:700;">duty cycle</span>) sets the average power, and the speed</li>
           </ul>
         </div>
         <figure class="figure">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzAwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8cmVjdCB3aWR0aD0iODgwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2ZmZmZmZiIvPgogIDx0ZXh0IHg9IjM2IiB5PSI0MCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9IjcwMCIgbGV0dGVyLXNwYWNpbmc9IjEuNSIgZmlsbD0iIzViNWJhOCI+UFVMU0UtV0lEVEggTU9EVUxBVElPTiAoUFdNKTwvdGV4dD4KCiAgPCEtLSAyNSUgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNMTIwLDgwIHYtMzUgaDI3IHYzNSBoODEgdi0zNSBoMjcgdjM1IGg4MSB2LTM1IGgyNyB2MzUgaDgxIHYtMzUgaDI3IHYzNSBoODEiLz4KICA8L2c+CiAgPHRleHQgeD0iMzYiIHk9Ijg1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNjAwIiBmaWxsPSIjMWExYzFjIj4yNSU8L3RleHQ+CiAgPHRleHQgeD0iNTAwIiB5PSI4NSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUyNTI1MiI+b24gMSBtcywgb2ZmIDMgbXMg4oCUIHNsb3c8L3RleHQ+CgogIDwhLS0gNTAlIC0tPgogIDxnIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiPgogICAgPHBhdGggZD0iTTEyMCwxNzAgdi0zNSBoNTQgdjM1IGg1NCB2LTM1IGg1NCB2MzUgaDU0IHYtMzUgaDU0IHYzNSBoNTQgdi0zNSBoNTQgdjM1IGg1NCB2LTM1IGg1NCB2MzUgaDU0Ii8+CiAgPC9nPgogIDx0ZXh0IHg9IjM2IiB5PSIxNzUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI2MDAiIGZpbGw9IiMxYTFjMWMiPjUwJTwvdGV4dD4KICA8dGV4dCB4PSI1MDAiIHk9IjE3NSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUyNTI1MiI+b24gMiBtcywgb2ZmIDIgbXMg4oCUIG1lZGl1bTwvdGV4dD4KCiAgPCEtLSA3NSUgLS0+CiAgPGcgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNMTIwLDI2MCB2LTM1IGg4MSB2MzUgaDI3IHYtMzUgaDgxIHYzNSBoMjcgdi0zNSBoODEgdjM1IGgyNyB2LTM1IGg4MSB2MzUgaDI3IHYtMzUgaDgxIHYzNSBoMjciLz4KICA8L2c+CiAgPHRleHQgeD0iMzYiIHk9IjI2NSIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iIzFhMWMxYyI+NzUlPC90ZXh0PgogIDx0ZXh0IHg9IjUwMCIgeT0iMjY1IiBmb250LXNpemU9IjEzIiBmaWxsPSIjNTI1MjUyIj5vbiAzIG1zLCBvZmYgMSBtcyDigJQgZmFzdDwvdGV4dD4KCiAgPCEtLSBwZXJpb2QgYW5ub3RhdGlvbiAtLT4KICA8bGluZSB4MT0iMTIwIiB5MT0iMjk1IiB4Mj0iMjI4IiB5Mj0iMjk1IiBzdHJva2U9IiM3ODcxNmMiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPGxpbmUgeDE9IjEyMCIgeTE9IjI4OCIgeDI9IjEyMCIgeTI9IjMwMiIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMjgiIHkxPSIyODgiIHgyPSIyMjgiIHkyPSIzMDIiIHN0cm9rZT0iIzc4NzE2YyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8dGV4dCB4PSIxNzQiIHk9IjI4NSIgZm9udC1zaXplPSIxMSIgZmlsbD0iIzc4NzE2YyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+b25lIHBlcmlvZCAoZS5nLiA0IG1zKTwvdGV4dD4KPC9zdmc+Cg==" alt="PWM square waves at 25, 50 and 75 percent duty cycle">
-          <figcaption>PWM — same voltage, different ON-time</figcaption>
+          <figcaption>PWM: same voltage, different ON-time</figcaption>
         </figure>
       </div>
     </section>
@@ -208,7 +209,7 @@
         </div>
         <figure class="figure">
           <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4ODAgMzgwIiBmb250LWZhbWlseT0iSW50ZXIsIEFyaWFsLCBzYW5zLXNlcmlmIj4KICA8ZGVmcz4KICAgIDxtYXJrZXIgaWQ9ImlhcnIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjciIG1hcmtlckhlaWdodD0iNyIgb3JpZW50PSJhdXRvIj4KICAgICAgPHBhdGggZD0iTTAsMCBMMTAsNSBMMCwxMCB6IiBmaWxsPSIjZjU4MzMxIi8+CiAgICA8L21hcmtlcj4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9Ijg4MCIgaGVpZ2h0PSIzODAiIGZpbGw9IiNmZmZmZmYiLz4KICA8dGV4dCB4PSIzNiIgeT0iNDAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGxldHRlci1zcGFjaW5nPSIxLjUiIGZpbGw9IiM1YjViYTgiPlRIRSBILUJSSURHRSDigJQgRElSRUNUSU9OIENPTlRST0w8L3RleHQ+CgogIDwhLS0gcmFpbHMgLS0+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjgwIiB4Mj0iNjIwIiB5Mj0iODAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI2NDAiIHk9Ijg1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj4rViAoYmF0dGVyeSk8L3RleHQ+CiAgPGxpbmUgeDE9IjE0MCIgeTE9IjMwMCIgeDI9IjYyMCIgeTI9IjMwMCIgc3Ryb2tlPSIjNzg3MTZjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDx0ZXh0IHg9IjY0MCIgeT0iMzA1IiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNzg3MTZjIj5HTkQ8L3RleHQ+CgogIDwhLS0gc3dpdGNoZXM6IFMxIFMyICh0b3ApLCBTMyBTNCAoYm90dG9tKSwgY2xvc2VkIHBhaXJzIGRyYXduIGFzIHNvbGlkIGxpbmUsIG9wZW4gYXMgZ2FwIC0tPgogIDwhLS0gUzEgdG9wLWxlZnQ6IENMT1NFRCAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iODAiIHgyPSIyMDAiIHkyPSIxMjUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8bGluZSB4MT0iMjAwIiB5MT0iMTI1IiB4Mj0iMjAwIiB5Mj0iMTgwIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDx0ZXh0IHg9IjE2MCIgeT0iMTYwIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIj5TMTwvdGV4dD4KICA8dGV4dCB4PSIxMzgiIHk9IjE1OCIgZm9udC1zaXplPSIxMSIgZmlsbD0iI2Y1ODMzMSI+Y2xvc2VkPC90ZXh0PgogIDwhLS0gUzIgdG9wLXJpZ2h0OiBPUEVOIC0tPgogIDxsaW5lIHgxPSI1NjAiIHkxPSI4MCIgeDI9IjU2MCIgeTI9IjEzMCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxNzUiIHgyPSI1NjAiIHkyPSIxOTUiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjE2MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzI8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIxNzYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM3ODcxNmMiPm9wZW48L3RleHQ+CiAgPCEtLSBTMyBib3R0b20tbGVmdDogT1BFTiAtLT4KICA8bGluZSB4MT0iMjAwIiB5MT0iMjY1IiB4Mj0iMjAwIiB5Mj0iMzAwIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPHRleHQgeD0iMTYwIiB5PSIyODUiIGZvbnQtc2l6ZT0iMTMiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxYTFjMWMiPlMzPC90ZXh0PgogIDx0ZXh0IHg9IjEzOCIgeT0iMjgzIiBmb250LXNpemU9IjExIiBmaWxsPSIjNzg3MTZjIj5vcGVuPC90ZXh0PgogIDwhLS0gUzQgYm90dG9tLXJpZ2h0OiBDTE9TRUQgLS0+CiAgPGxpbmUgeDE9IjU2MCIgeTE9IjI0MCIgeDI9IjU2MCIgeTI9IjMwMCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8dGV4dCB4PSI1ODUiIHk9IjI4MCIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzFhMWMxYyI+UzQ8L3RleHQ+CiAgPHRleHQgeD0iNTg1IiB5PSIyOTYiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiNmNTgzMzEiPmNsb3NlZDwvdGV4dD4KCiAgPCEtLSBtb3RvciBicmlkZ2UgLS0+CiAgPGxpbmUgeDE9IjIwMCIgeTE9IjE5MCIgeDI9IjMzMCIgeTI9IjE5MCIgc3Ryb2tlPSIjMWExYzFjIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxsaW5lIHgxPSI0MzAiIHkxPSIxOTAiIHgyPSI1NjAiIHkyPSIxOTAiIHN0cm9rZT0iIzFhMWMxYyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8Y2lyY2xlIGN4PSIzODAiIGN5PSIxOTAiIHI9IjUwIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMxYTFjMWMiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjM4MCIgeT0iMTk4IiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMWExYzFjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0PgogIDx0ZXh0IHg9IjM4MCIgeT0iMTMyIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNzg3MTZjIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5tb3RvcjwvdGV4dD4KCiAgPCEtLSBjdXJyZW50IHBhdGggKG9yYW5nZSkgLS0+CiAgPHBhdGggZD0iTTIwMCw4NCBMMjAwLDEyMCBNMjAwLDE4MiBMMjAwLDE4OCBMMzMyLDE4OCIgc3Ryb2tlPSIjZjU4MzMxIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KICA8bGluZSB4MT0iNDI4IiB5MT0iMTkyIiB4Mj0iNTU2IiB5Mj0iMTkyIiBzdHJva2U9IiNmNTgzMzEiIHN0cm9rZS13aWR0aD0iMyIgbWFya2VyLWVuZD0idXJsKCNpYXJyKSIvPgogIDxsaW5lIHgxPSI1NjAiIHkxPSIxOTYiIHgyPSI1NjAiIHkyPSIyMzYiIHN0cm9rZT0iI2Y1ODMzMSIgc3Ryb2tlLXdpZHRoPSIzIiBtYXJrZXItZW5kPSJ1cmwoI2lhcnIpIi8+CiAgPHRleHQgeD0iMzgwIiB5PSIyMzAiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmNTgzMzEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmN1cnJlbnQgZmxvd3MgbGVmdCDihpIgcmlnaHQgOiBGT1JXQVJEPC90ZXh0PgoKICA8IS0tIHN0YXRlcyBzdW1tYXJ5IC0tPgogIDxnIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1MjUyNTIiPgogICAgPHRleHQgeD0iMzYiIHk9IjM0NSI+Rm9yd2FyZDogUzEgKyBTNCBjbG9zZWQgKGFzIGRyYXduKSAgIMK3ICAgUmV2ZXJzZTogUzIgKyBTMyBjbG9zZWQgICDCtyAgIEJyYWtlL3N0b3A6IGFsbCBvcGVuPC90ZXh0PgogICAgPHRleHQgeD0iMzYiIHk9IjM2OCI+U3BlZWQ6IFBXTSBzd2l0Y2hlcyBTMS9TNCAob3IgUzIvUzMpIG9uIGFuZCBvZmYgdGhvdXNhbmRzIG9mIHRpbWVzIHBlciBzZWNvbmQg4oCUIGR1dHkgY3ljbGUgc2V0cyBzcGVlZCwgc3dpdGNoIHBhaXIgc2V0cyBkaXJlY3Rpb24uPC90ZXh0PgogIDwvZz4KPC9zdmc+Cg==" alt="H-bridge circuit with S1 and S4 closed and current flowing through the motor">
-          <figcaption>Forward state — S1 + S4 closed</figcaption>
+          <figcaption>Forward state: S1 + S4 closed</figcaption>
         </figure>
       </div>
     </section>
@@ -217,7 +218,7 @@
       <div class="rail">
         <p style="font-size:clamp(72px,10vw,140px); font-weight:800; letter-spacing:-0.05em; line-height:1; color:transparent; -webkit-text-stroke:1.5px var(--mute);">01</p>
         <p class="lbl-purple">Task 1 · First motion</p>
-        <h2 class="t-lg">Open-loop driving — command without measurement</h2>
+        <h2 class="t-lg">Open-loop driving: command without measurement</h2>
         <div class="meta-strip">
           <span class="chip">Same PWM, both wheels</span>
           <span class="chip">Three runs</span>
@@ -271,7 +272,7 @@
             <p>Why identical commands do not produce identical motion.</p>
           </div>
         </div>
-        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">Keep the drift numbers — you will compare them with the PID runs at the end of the lab</p>
+        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">Keep the drift numbers; you will compare them with the PID runs at the end of the lab</p>
       </div>
     </section>
 
@@ -285,7 +286,7 @@
           <span class="chip">Counts → distance</span>
           <span class="chip">Counts → speed</span>
         </div>
-        <p class="body-lg dim" style="max-width:56ch;">In the body analogy, encoders are proprioception — the sense that tells the body where its limbs are without vision.</p>
+        <p class="body-lg dim" style="max-width:56ch;">In the body analogy, encoders are proprioception, the sense that tells the body where its limbs are without vision.</p>
       </div>
     </section>
 
@@ -296,9 +297,9 @@
           <h2 class="t-lg" style="margin-bottom:20px;">A disk that interrupts a light beam</h2>
           <ul class="tick body-md dim">
             <li>An <strong style="color:var(--ink)">LED</strong> shines through a slotted <strong style="color:var(--ink)">code disk</strong> on the wheel shaft</li>
-            <li>A <strong style="color:var(--ink)">photosensor</strong> sees light — slot — or dark — spoke</li>
+            <li>A <strong style="color:var(--ink)">photosensor</strong> sees light at a slot, dark at a spoke</li>
             <li>Each slot that passes produces one <strong style="color:var(--ink)">pulse</strong>; counting pulses gives the rotation</li>
-            <li>Two channels <strong style="color:var(--ink)">A and B</strong>, offset by 90° — <strong style="color:var(--ink)">quadrature</strong></li>
+            <li>Two channels <strong style="color:var(--ink)">A and B</strong>, offset by 90°: <strong style="color:var(--ink)">quadrature</strong></li>
           </ul>
           <p class="body-md" style="margin-top:16px;"><span class="hl-box">Quadrature provides</span>&nbsp; direction (which channel rises first) and 4× resolution (counting every edge of both channels).</p>
         </div>
@@ -344,11 +345,11 @@ speed      = distance / time
           <p class="body-lg dim" style="margin-bottom:16px;">
             <strong style="color:var(--ink)">Open loop</strong>: command → motion, with no measurement; the result drifts.
             <strong style="color:var(--ink)">Closed loop</strong>: measure the output, compare with the target, and
-            <strong style="color:var(--ink)">correct the difference</strong> — every few milliseconds.
+            <strong style="color:var(--ink)">correct the difference</strong>: every few milliseconds.
           </p>
           <p class="body-md dim" style="margin-bottom:16px;">
             Cruise control: without feedback the car slows on every hill; with speed feeding back, power is added the
-            instant speed drops. The same four parts appear in every control system — the air conditioner (thermostat → controller
+            instant speed drops. The same four parts appear in every control system: the air conditioner (thermostat → controller
             → compressor → room) and this car (encoder → PID → H-bridge + motor → wheel speed).
           </p>
           <p class="body-md"><span class="hl-box">The loop</span>&nbsp; setpoint → error → controller → actuator → process → sensor → back to the start.</p>
@@ -367,20 +368,20 @@ speed      = distance / time
           <h2 class="t-lg" style="margin-bottom:16px;">Three terms, one controller</h2>
           <p class="body-md dim" style="margin-bottom:16px;">
             Patented in 1936, it still runs in over 90% of industrial control loops. The lectures explain it with a
-            <strong style="color:var(--ink)">leaking water tank</strong> — hold the level at A while it drains toward B:
+            <strong style="color:var(--ink)">leaking water tank</strong>: hold the level at A while it drains toward B:
           </p>
           <div style="display:flex; flex-direction:column; gap:12px;">
             <div class="card" style="background:var(--canvas); padding:20px 24px;">
-              <h3 style="font-size:17px;">P — react to the present</h3>
-              <p style="font-size:14px;">Tap opens in proportion to the gap. With a leak, it settles below target — the steady-state error.</p>
+              <h3 style="font-size:17px;">P: react to the present</h3>
+              <p style="font-size:14px;">Tap opens in proportion to the gap. With a leak, it settles below target: the steady-state error.</p>
             </div>
             <div class="card" style="background:var(--canvas); padding:20px 24px;">
-              <h3 style="font-size:17px;">I — remember the past</h3>
+              <h3 style="font-size:17px;">I: remember the past</h3>
               <p style="font-size:14px;">Error accumulates until the gap is gone. The cost is overshoot and slower settling.</p>
             </div>
             <div class="card" style="background:var(--canvas); padding:20px 24px;">
-              <h3 style="font-size:17px;">D — anticipate the future</h3>
-              <p style="font-size:14px;">It brakes when the level rises quickly — smaller overshoot, faster settling.</p>
+              <h3 style="font-size:17px;">D: anticipate the future</h3>
+              <p style="font-size:14px;">It brakes when the level rises quickly: smaller overshoot, faster settling.</p>
             </div>
           </div>
         </div>
@@ -414,9 +415,9 @@ void controlLoop(float target) {
         <div>
           <p class="lbl-dark" style="margin-bottom:16px;">What to observe, in order</p>
           <ul class="tick body-md dim">
-            <li><strong style="color:var(--ink)">P only</strong> — speed settles <em>below</em> target: friction is the leak, the gap is the steady-state error</li>
-            <li><strong style="color:var(--ink)">Add I</strong> — gap closes, overshoot appears</li>
-            <li><strong style="color:var(--ink)">Add D</strong> — overshoot shrinks, settle time drops</li>
+            <li><strong style="color:var(--ink)">P only</strong>: speed settles <em>below</em> target: friction is the leak, the gap is the steady-state error</li>
+            <li><strong style="color:var(--ink)">Add I</strong>: gap closes, overshoot appears</li>
+            <li><strong style="color:var(--ink)">Add D</strong>: overshoot shrinks, settle time drops</li>
           </ul>
           <p class="body-md" style="margin-top:16px;"><span class="hl-box">Task 3</span>&nbsp; applies exactly this procedure on the car, one term at a time, printing the measured speed throughout.</p>
         </div>
@@ -438,7 +439,7 @@ void controlLoop(float target) {
             <div class="card">
               <p class="step-num">Rules</p>
               <h3>One constant at a time</h3>
-              <p>Changing two at once gives no information about either. Log every setting together with the observed behavior — the log is the tuning evidence.</p>
+              <p>Changing two at once gives no information about either. Log every setting together with the observed behavior; that log is the tuning evidence.</p>
             </div>
             <div class="card" style="background:var(--canvas); border:1px solid var(--hairline); margin-top:16px;">
               <p class="step-num">Checkpoint</p>
@@ -457,7 +458,7 @@ void controlLoop(float target) {
           <h2 class="t-lg" style="margin-bottom:20px;">The perfectly straight line</h2>
           <ul class="tick body-md dim">
             <li>Both wheels under PID, same target speed</li>
-            <li>Run <strong style="color:var(--ink)">2 metres</strong> from a fixed line — three times</li>
+            <li>Run <strong style="color:var(--ink)">2 metres</strong> from a fixed line, three times</li>
             <li>Measure the lateral deviation at the 2 m mark on each run</li>
           </ul>
           <table class="spec" style="margin-top:16px;">
@@ -472,7 +473,7 @@ void controlLoop(float target) {
           <div class="card">
             <p class="step-num">Same car, same motors</p>
             <h3>What changed is the feedback</h3>
-            <p>The loop corrects every difference between the wheels dozens of times per second — the drift from Task 1 cannot accumulate.</p>
+            <p>The loop corrects every difference between the wheels dozens of times per second, so the drift from Task 1 cannot accumulate.</p>
           </div>
           <div class="card" style="background:var(--canvas); border:1px solid var(--hairline);">
             <p class="step-num">Part 1 milestone</p>
@@ -501,10 +502,10 @@ void controlLoop(float target) {
           <div class="card">
             <p class="step-num" style="color:rgba(255,255,255,.55);">Learning outcome</p>
             <h3 style="color:var(--on-primary);">Feedback fixes drift</h3>
-            <p>P, I, and D each serve a distinct purpose — and tuning is a systematic method rather than chance.</p>
+            <p>P, I, and D each fix a different problem, and tuning them is a step-by-step procedure.</p>
           </div>
         </div>
-        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">AIoScout · adapted from HKUST ISDN 2601 lectures · full guide: Lab1_Motor_Motion_StudentGuide.md · End of Lab 1</p>
+        <p class="keys" style="color:rgba(255,255,255,.55); margin-top:40px;">AIoScout · full guide: Lab1_Motor_Motion_StudentGuide.md · End of Lab 1</p>
       </div>
     </section>
 
