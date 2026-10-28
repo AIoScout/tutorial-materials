@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robotics · AIoScout Curriculum</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #000000; --on-primary: #ffffff; --ink: #1a1c1c; --body-c: #525252; --mute: #78716c;
+    --hairline: #d8d9d8; --canvas: #ffffff; --canvas-soft: #f9f9f8; --accent-orange: #f58331; --accent-purple: #5b5ba8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: Inter, Arial, sans-serif; background: var(--canvas-soft); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .t-lg { font-size: clamp(30px, 4vw, 48px); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+  .body-lg { font-size: 18px; font-weight: 400; line-height: 1.6; }
+  .body-md { font-size: 16px; font-weight: 400; line-height: 1.55; }
+  .body-sm { font-size: 14px; font-weight: 400; line-height: 1.5; }
+  .lbl-purple { color: var(--accent-purple); font-size: 14.4px; font-weight: 700; line-height: 1.6; letter-spacing: 0.72px; }
+  .lbl-dark { color: var(--ink); font-size: 12px; font-weight: 700; line-height: 1.4; letter-spacing: 1.2px; text-transform: uppercase; }
+  .dim { color: var(--body-c); }
+  .quiet { color: var(--mute); }
+
+  .rail { max-width: 1320px; margin: 0 auto; padding-left: 64px; padding-right: 64px; }
+  @media (max-width: 768px) { .rail { padding-left: 24px; padding-right: 24px; } }
+  section.band { padding-top: 48px; padding-bottom: 48px; }
+
+  .nav { position: sticky; top: 0; z-index: 50; background: var(--canvas); border-bottom: 1px solid var(--hairline); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .wordmark { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .wordmark img { width: 28px; height: 28px; display: block; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+    color: var(--mute); text-decoration: none; padding: 0 0 6px 0; border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); border-bottom-color: var(--ink); }
+  @media (max-width: 900px) { .nav-links { display: none; } }
+
+  .path-head { padding-top: 72px; padding-bottom: 8px; }
+  .part-head { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .part-index {
+    font-size: 64px; font-weight: 800; letter-spacing: -0.05em; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px var(--mute);
+  }
+  .abstract { border-left: 2px solid var(--ink); padding-left: 24px; padding-bottom: 8px; margin-top: 24px; max-width: 80ch; }
+  .meta-chips { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 8px; }
+  .chip { border: 1px solid var(--hairline); background: var(--canvas); padding: 8px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+  .chip.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+  .sec-head { margin-bottom: 40px; }
+  .sec-head .lbl-purple { display: block; margin-bottom: 12px; }
+
+  /* unit blocks */
+  .unit { border: 1px solid var(--hairline); background: var(--canvas); padding: clamp(24px, 4vw, 48px); margin-top: 32px; }
+  .unit h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+  .unit .u-sub { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); margin: 10px 0 18px; }
+  .unit > p.intro { max-width: 78ch; margin-bottom: 8px; }
+  .u-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--hairline); }
+  .u-links a {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 3px;
+  }
+  .u-links a:hover { color: var(--accent-orange); border-color: var(--accent-orange); }
+  .u-links .deliver { margin-left: auto; }
+
+  /* figures */
+  .figure { border: 1px solid var(--hairline); background: var(--canvas); padding: 16px; margin: 24px 0 8px; max-width: 560px; }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure figcaption { margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+
+  /* module lists (what a unit covers) */
+  .module { border-top: 1px solid var(--hairline); padding-top: 20px; margin-top: 24px; }
+  .module:first-of-type { border-top: none; margin-top: 20px; padding-top: 0; }
+  .module .lbl-purple { margin-bottom: 8px; display: block; }
+  .module ul { list-style: none; }
+  .module ul li { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 15.5px; line-height: 1.55; color: var(--body-c); }
+  .module ul li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; background: var(--hairline); }
+  .module ul li strong { color: var(--ink); font-weight: 600; }
+
+  /* outcomes */
+  .outcome-card { border: 1px solid var(--hairline); background: var(--canvas); padding: 32px 40px; margin-top: 48px; }
+  .outcome-card .lbl-dark { display: block; margin-bottom: 16px; }
+  .outcome-card ul { list-style: none; }
+  .outcome-card li { position: relative; padding-left: 24px; margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: var(--body-c); }
+  .outcome-card li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; background: var(--accent-orange); }
+  .outcome-card li:last-child { margin-bottom: 0; }
+
+  /* final project strip */
+  .milestone { background: var(--primary); color: var(--on-primary); padding: 32px 48px; margin-top: 48px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .milestone .tag { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent-orange); white-space: nowrap; }
+  .milestone p { font-size: 17px; line-height: 1.5; }
+  .milestone p strong { font-weight: 700; }
+
+  footer { background: var(--canvas); border-top: 1px solid var(--hairline); padding: 44px 64px; margin-top: 64px; }
+  .foot-rail { max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+  footer .f-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  footer a { color: var(--mute); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+  footer a.wordmark { text-transform: none; }
+  footer a:hover { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="rail nav-inner">
+    <a class="wordmark" href="index.html"><img src="logo.svg" alt="" width="28" height="28">AIoScout</a>
+    <div class="nav-links">
+      <a href="index.html">All materials</a>
+      <a href="robotics.html" class="active">Robotics</a>
+      <a href="iot.html">IoT</a>
+      <a href="physical-ai.html">Physical AI</a>
+    </div>
+  </div>
+</nav>
+
+<header class="path-head">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">01</span>
+      <div>
+        <span class="lbl-purple">Pathway 01</span>
+        <h1 class="t-lg" style="margin-top:8px;">Robotics</h1>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Motor &amp; Motion</span>
+      <span class="chip">Sensors</span>
+      <span class="chip orange">Final hands-on project</span>
+    </div>
+    <p class="body-lg dim abstract">
+      How the car moves and senses. Students build the motion stack from the battery to the PID loop,
+      then add distance and motion sensing, and learn to clean up noisy data with filters. The pathway
+      ends with a hands-on project that combines both units. Further units are planned.
+    </p>
+  </div>
+</header>
+
+<section class="band">
+  <div class="rail">
+    <div class="sec-head">
+      <span class="lbl-purple">Units</span>
+      <h2 class="t-lg">What is in this pathway</h2>
+    </div>
+
+    <div class="unit">
+      <h3>Motor &amp; Motion</h3>
+      <p class="u-sub">PWM, encoders, and PID control</p>
+      <p class="body-md dim intro">
+        Drive the motors, measure motion with encoders, and close the loop with PID control until the
+        car holds a straight line on its own. No prior robotics experience is assumed.
+      </p>
+      <figure class="figure">
+        <img src="images/lab5/p05_03.jpg" alt="Robot car hardware kit: chassis, motors, wheels, battery and controller">
+        <figcaption>The hardware the students work on</figcaption>
+      </figure>
+
+      <div class="module">
+        <span class="lbl-purple">What it covers</span>
+        <ul>
+          <li><strong>Power &amp; actuation:</strong> battery packs and voltage sag, regulators and brownouts, wiring gauges, and computing a current budget for motors + logic.</li>
+          <li><strong>Motor architectures:</strong> DC brushed motors (voltage ↔ speed, torque curves), servo actuation, and quadrature encoders (tick counts → distance and speed).</li>
+          <li><strong>H-Bridge driver circuits:</strong> transistors as switches, the direction truth table, PWM for speed, and braking vs. coasting.</li>
+          <li><strong>Differential drive:</strong> body speed and turn rate from the two wheel speeds; turn radius, centre of rotation, and pivot turns.</li>
+          <li><strong>Chassis dynamics:</strong> mass distribution, centre of gravity, friction and traction, and why real robots slip.</li>
+          <li><strong>Control:</strong> open-loop vs. closed-loop, P response and the steady-state error, then full PID with a step-by-step tuning procedure.</li>
+        </ul>
+      </div>
+      <div class="u-links">
+        <a href="slides/Lab1_Motor_Motion_Slides.html">Slides</a>
+        <a href="Lab1_Motor_Motion_StudentGuide.html">Student guide</a>
+        <span class="chip deliver">Deliverable · straight-line PID demo + tuning log</span>
+      </div>
+    </div>
+
+    <div class="unit">
+      <h3>Sensors</h3>
+      <p class="u-sub">Ultrasonic, IMU, and filters</p>
+      <p class="body-md dim intro">
+        Give the car distance and motion senses. An ultrasonic sensor measures distance by timing sound,
+        and an IMU reports acceleration and rotation. Real sensor data is noisy, so the unit also covers
+        the filters that make it usable.
+      </p>
+      <figure class="figure">
+        <img src="images/lab2/p03_03.jpg" alt="Diagram of an ultrasonic sensor transmitting a pulse and receiving its echo">
+        <figcaption>Ultrasonic sensing: send a pulse, wait for the echo</figcaption>
+      </figure>
+
+      <div class="module">
+        <span class="lbl-purple">What it covers</span>
+        <ul>
+          <li><strong>Signal acquisition:</strong> analog vs. digital signals, ADC resolution and sampling rates; ultrasonic time-of-flight with the speed-of-sound equation; accelerometer, gyroscope, and magnetometer.</li>
+          <li><strong>Calibration &amp; noise reduction:</strong> noise and drift, threshold calibration against ground truth; moving averages, low-pass filters, and hysteresis.</li>
+          <li><strong>Sensor fusion:</strong> combining a drifting gyroscope with a noisy accelerometer through the complementary filter.</li>
+        </ul>
+      </div>
+      <div class="u-links">
+        <a href="slides/Lab2_Sensors_Slides.html">Slides</a>
+        <a href="Lab2_Sensors_StudentGuide.html">Student guide</a>
+        <span class="chip deliver">Deliverable · measurement table + filter comparison</span>
+      </div>
+    </div>
+
+    <div class="outcome-card">
+      <span class="lbl-dark">Students will be able to</span>
+      <ul>
+        <li>Trace the chain from battery → driver → motor → motion, and budget power for it</li>
+        <li>Predict a differential-drive robot's path from its two wheel speeds</li>
+        <li>Implement and tune a PID loop that holds a commanded speed or heading</li>
+        <li>Wire a sensor to a microcontroller and convert raw readings into physical units</li>
+        <li>Diagnose noise and drift, then fix them with calibration and filters</li>
+      </ul>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Final hands-on project</span>
+      <p><strong>Straight and safe.</strong> The car holds a commanded heading for two metres under PID (measured deviation under 5 cm across three runs) and stops at a set distance from an obstacle using its ultrasonic sensor. <em>Materials in preparation.</em></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-rail">
+    <div>
+      <a class="wordmark" href="index.html" style="display:inline-flex; margin-bottom:12px;"><img src="logo.svg" alt="" width="28" height="28">AIoScout</a>
+      <p class="body-sm quiet">Pathway 01 · Robotics</p>
+      <p class="body-sm quiet">© 2026 AIoScout · aioscout.io</p>
+    </div>
+    <div class="f-links">
+      <a href="index.html">All materials</a>
+      <a href="iot.html">IoT</a>
+      <a href="physical-ai.html">Physical AI</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robotics · AIoScout Curriculum</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #000000; --on-primary: #ffffff; --ink: #1a1c1c; --body-c: #525252; --mute: #78716c;
+    --hairline: #d8d9d8; --canvas: #ffffff; --canvas-soft: #f9f9f8; --accent-orange: #f58331; --accent-purple: #5b5ba8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: Inter, Arial, sans-serif; background: var(--canvas-soft); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .t-lg { font-size: clamp(30px, 4vw, 48px); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+  .body-lg { font-size: 18px; font-weight: 400; line-height: 1.6; }
+  .body-md { font-size: 16px; font-weight: 400; line-height: 1.55; }
+  .body-sm { font-size: 14px; font-weight: 400; line-height: 1.5; }
+  .lbl-purple { color: var(--accent-purple); font-size: 14.4px; font-weight: 700; line-height: 1.6; letter-spacing: 0.72px; }
+  .lbl-dark { color: var(--ink); font-size: 12px; font-weight: 700; line-height: 1.4; letter-spacing: 1.2px; text-transform: uppercase; }
+  .dim { color: var(--body-c); }
+  .quiet { color: var(--mute); }
+
+  .rail { max-width: 1320px; margin: 0 auto; padding-left: 64px; padding-right: 64px; }
+  @media (max-width: 768px) { .rail { padding-left: 24px; padding-right: 24px; } }
+  section.band { padding-top: 48px; padding-bottom: 48px; }
+
+  .nav { position: sticky; top: 0; z-index: 50; background: var(--canvas); border-bottom: 1px solid var(--hairline); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .wordmark { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+  .wordmark img { width: 28px; height: 28px; display: block; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+    color: var(--mute); text-decoration: none; padding: 0 0 6px 0; border-bottom: 1px solid transparent;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); border-bottom-color: var(--ink); }
+  @media (max-width: 900px) { .nav-links { display: none; } }
+
+  .path-head { padding-top: 72px; padding-bottom: 8px; }
+  .part-head { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; flex-wrap: wrap; }
+  .part-index {
+    font-size: 64px; font-weight: 800; letter-spacing: -0.05em; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px var(--mute);
+  }
+  .abstract { border-left: 2px solid var(--ink); padding-left: 24px; padding-bottom: 8px; margin-top: 24px; max-width: 80ch; }
+  .meta-chips { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 8px; }
+  .chip { border: 1px solid var(--hairline); background: var(--canvas); padding: 8px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+  .chip.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+  .sec-head { margin-bottom: 40px; }
+  .sec-head .lbl-purple { display: block; margin-bottom: 12px; }
+
+  /* unit blocks */
+  .unit { border: 1px solid var(--hairline); background: var(--canvas); padding: clamp(24px, 4vw, 48px); margin-top: 32px; }
+  .unit h3 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+  .unit .u-sub { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); margin: 10px 0 18px; }
+  .unit > p.intro { max-width: 78ch; margin-bottom: 8px; }
+  .u-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--hairline); }
+  .u-links a {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 3px;
+  }
+  .u-links a:hover { color: var(--accent-orange); border-color: var(--accent-orange); }
+  .u-links .deliver { margin-left: auto; }
+
+  /* figures */
+  .figure { border: 1px solid var(--hairline); background: var(--canvas); padding: 16px; margin: 24px 0 8px; max-width: 560px; }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure figcaption { margin-top: 12px; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--mute); }
+
+  /* module lists (what a unit covers) */
+  .module { border-top: 1px solid var(--hairline); padding-top: 20px; margin-top: 24px; }
+  .module:first-of-type { border-top: none; margin-top: 20px; padding-top: 0; }
+  .module .lbl-purple { margin-bottom: 8px; display: block; }
+  .module ul { list-style: none; }
+  .module ul li { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 15.5px; line-height: 1.55; color: var(--body-c); }
+  .module ul li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; background: var(--hairline); }
+  .module ul li strong { color: var(--ink); font-weight: 600; }
+
+  /* outcomes */
+  .outcome-card { border: 1px solid var(--hairline); background: var(--canvas); padding: 32px 40px; margin-top: 48px; }
+  .outcome-card .lbl-dark { display: block; margin-bottom: 16px; }
+  .outcome-card ul { list-style: none; }
+  .outcome-card li { position: relative; padding-left: 24px; margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: var(--body-c); }
+  .outcome-card li::before { content: ""; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; background: var(--accent-orange); }
+  .outcome-card li:last-child { margin-bottom: 0; }
+
+  /* final project strip */
+  .milestone { background: var(--primary); color: var(--on-primary); padding: 32px 48px; margin-top: 48px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .milestone .tag { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent-orange); white-space: nowrap; }
+  .milestone p { font-size: 17px; line-height: 1.5; }
+  .milestone p strong { font-weight: 700; }
+
+  footer { background: var(--canvas); border-top: 1px solid var(--hairline); padding: 44px 64px; margin-top: 64px; }
+  .foot-rail { max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+  footer .f-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  footer a { color: var(--mute); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+  footer a.wordmark { text-transform: none; }
+  footer a:hover { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="rail nav-inner">
+    <a class="wordmark" href="index.html"><img src="logo.svg" alt="" width="28" height="28">AIoScout</a>
+    <div class="nav-links">
+      <a href="index.html">All materials</a>
+      <a href="robotics.html">Robotics</a>
+      <a href="iot.html">IoT</a>
+      <a href="physical-ai.html" class="active">Physical AI</a>
+    </div>
+  </div>
+</nav>
+
+<header class="path-head">
+  <div class="rail">
+    <div class="part-head">
+      <span class="part-index">03</span>
+      <div>
+        <span class="lbl-purple">Pathway 03</span>
+        <h1 class="t-lg" style="margin-top:8px;">Physical AI</h1>
+      </div>
+    </div>
+    <div class="meta-chips">
+      <span class="chip">Edge AI Vision</span>
+      <span class="chip orange">Final hands-on project</span>
+      <span class="chip">More units coming</span>
+    </div>
+    <p class="body-lg dim abstract">
+      Machine learning that runs on the car itself. Students collect images, train a convolutional
+      neural network without writing code, and deploy it to the ESP32-P4 camera board for live
+      inference. The pathway ends with a vision-driven mission, and further units are on the way.
+    </p>
+  </div>
+</header>
+
+<section class="band">
+  <div class="rail">
+    <div class="sec-head">
+      <span class="lbl-purple">Units</span>
+      <h2 class="t-lg">What is in this pathway</h2>
+    </div>
+
+    <div class="unit">
+      <h3>Edge AI Vision</h3>
+      <p class="u-sub">Train and deploy a CNN on the ESP32-P4 · TensorFlow Lite Micro</p>
+      <p class="body-md dim intro">
+        From labeled examples to a model running in real time on a microcontroller: collect and
+        preprocess images, train a CNN in the TF Training app, preview it live, and export a quantized
+        model to the board.
+      </p>
+      <figure class="figure">
+        <img src="images/cv/image12.png" alt="The training app workspace with sample, train and preview areas">
+        <figcaption>The training workspace: sample, train, preview</figcaption>
+      </figure>
+
+      <div class="module">
+        <span class="lbl-purple">What it covers</span>
+        <ul>
+          <li><strong>Why learn:</strong> the limits of deterministic code vs. learning-based perception on messy real-world input.</li>
+          <li><strong>Vision pipelines:</strong> an image as a matrix; downsampling, colour-space transformations (RGB → HSV), and convolution as a matrix operation.</li>
+          <li><strong>CNNs:</strong> building and training an image classifier; hyperparameters and what each one does to the result.</li>
+          <li><strong>Deployment:</strong> int8 quantization, export, and live on-device inference within a frame-rate budget.</li>
+        </ul>
+      </div>
+      <div class="u-links">
+        <a href="slides/Lab0_EdgeAI_Vision_Slides.html">Slides</a>
+        <a href="Lab0_EdgeAI_Vision_StudentGuide.html">Student guide</a>
+        <span class="chip deliver">Deliverable · trained classifier running on the board</span>
+      </div>
+    </div>
+
+    <div class="unit">
+      <h3>Planned units</h3>
+      <p class="u-sub">In preparation · this pathway keeps growing</p>
+      <figure class="figure">
+        <img src="images/lab5/p17_25.jpg" alt="The playfield track with a crossroad where the car must decide its route">
+        <figcaption>The playfield where the final mission runs</figcaption>
+      </figure>
+
+      <div class="module">
+        <span class="lbl-purple">What is coming</span>
+        <ul>
+          <li><strong>Visual driving:</strong> lane detection and extracting a steering signal from the image; road-sign recognition driving the motors.</li>
+          <li><strong>Voice and language:</strong> spoken commands interpreted by an LLM, spoken feedback via text-to-speech, and visual question answering.</li>
+        </ul>
+      </div>
+      <div class="u-links">
+        <span class="avail-note quiet" style="font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;">Materials in preparation</span>
+      </div>
+    </div>
+
+    <div class="outcome-card">
+      <span class="lbl-dark">Students will be able to</span>
+      <ul>
+        <li>Train, evaluate, and deploy a compact CNN on edge hardware within a frame-rate budget</li>
+        <li>Turn camera input into control commands for the car</li>
+        <li>Anticipate failure modes and design fallback behaviours for AI-driven motion</li>
+      </ul>
+    </div>
+
+    <div class="milestone">
+      <span class="tag">Final hands-on project</span>
+      <p><strong>A vision-driven mission.</strong> The car recognizes road signs with its onboard camera, navigates the playfield on its own, and parks itself, then reports completion. <em>Materials in preparation.</em></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-rail">
+    <div>
+      <a class="wordmark" href="index.html" style="display:inline-flex; margin-bottom:12px;"><img src="logo.svg" alt="" width="28" height="28">AIoScout</a>
+      <p class="body-sm quiet">Pathway 03 · Physical AI</p>
+      <p class="body-sm quiet">© 2026 AIoScout · aioscout.io</p>
+    </div>
+    <div class="f-links">
+      <a href="index.html">All materials</a>
+      <a href="robotics.html">Robotics</a>
+      <a href="iot.html">IoT</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
