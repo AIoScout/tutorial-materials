@@ -12,6 +12,17 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}]});"></script>
+<meta name="theme-color" content="#f9f9f8">
+<script>
+  (function () {
+    var stored = null;
+    try { stored = localStorage.getItem("theme"); } catch (e) {}
+    var theme = stored === "light" || stored === "dark"
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
 <style>
   :root {
     --primary:#000000; --on-primary:#ffffff; --ink:#1a1c1c; --body-c:#525252; --mute:#78716c;
@@ -61,6 +72,32 @@
   footer { background:var(--canvas); border-top:1px solid var(--hairline); padding:32px 64px; }
   .foot-inner { max-width:880px; margin:0 auto; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; align-items:center; }
   .foot-note { font-size:12px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+
+  /* dark theme — token set from the AIoScout design guideline (colors-dark) */
+  :root { color-scheme: light; }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --primary: #ffffff; --on-primary: #000000;
+    --ink: #f2f2f0; --body-c: #b6b6b2; --mute: #8f8f8a;
+    --hairline: #33363a; --canvas: #191b1e; --canvas-soft: #101214;
+    --accent-purple: #9a9ade;
+  }
+  /* photos dim slightly on dark canvas; the mark swaps to its dark asset instead */
+  [data-theme="dark"] img { filter: brightness(0.86); }
+  [data-theme="dark"] .wordmark img { filter: none; }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center; flex: none;
+    width: 36px; height: 36px; padding: 0; cursor: pointer;
+    border: 1px solid var(--ink); background: var(--canvas); color: var(--ink);
+  }
+  .theme-toggle svg { width: 18px; height: 18px; display: none; }
+  .theme-toggle .theme-toggle__moon { display: block; }
+  [data-theme="dark"] .theme-toggle .theme-toggle__moon { display: none; }
+  .theme-toggle .theme-toggle__sun { display: none; }
+  [data-theme="dark"] .theme-toggle .theme-toggle__sun { display: block; }
+
+  body { transition: background-color 220ms ease, color 220ms ease; }
 </style>
 </head>
 <body>
@@ -70,6 +107,10 @@
     <div class="nav-right">
       <a class="nav-index" href="index.html">&larr; Index</a>
       <span class="nav-label">Lab 1 · Student Guide</span>
+      <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+            <svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
     </div>
   </div>
 </div>
@@ -281,5 +322,35 @@ void controlLoop(float target) {
     <span class="foot-note">Motor &amp; Motion · Student Guide</span>
   </div>
 </footer>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var icon = document.querySelector('link[rel="icon"]');
+    var marks = document.querySelectorAll(".wordmark img");
+    var buttons = document.querySelectorAll(".theme-toggle");
+    function isDark() { return root.getAttribute("data-theme") === "dark"; }
+    function sync() {
+      var dark = isDark();
+      if (meta) meta.setAttribute("content", dark ? "#101214" : "#f9f9f8");
+      if (icon) icon.setAttribute("href", dark ? "logo-dark.svg" : "logo.svg");
+      marks.forEach(function (m) { m.setAttribute("src", dark ? "logo-dark.svg" : "logo.svg"); });
+      buttons.forEach(function (b) {
+        b.setAttribute("aria-pressed", String(dark));
+        b.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+      });
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var next = isDark() ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try { localStorage.setItem("theme", next); } catch (e) {}
+        sync();
+      });
+    });
+    sync();
+  })();
+</script>
+
 </body>
 </html>
